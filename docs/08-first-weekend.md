@@ -62,6 +62,7 @@ You've now used the whole loop once on something small.
 | check things myself | `./harness/gw.sh check`, `./harness/gw.sh sim --seeds=1-20 --ticks=600` |
 | see what the agent changed | `git log --oneline -10`, `git diff HEAD~1` |
 | undo the agent's last commit | "Revert the last commit and explain what it did." |
+| the setup itself seems broken (Godot, git, CI) | ask the agent first: "Something is wrong with the setup, run /commission and fix what you can." |
 
 ## Signs things are going wrong (and the fix)
 | Sign | Fix |

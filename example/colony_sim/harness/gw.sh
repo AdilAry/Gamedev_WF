@@ -20,6 +20,7 @@
 # On Windows point GODOT at the *_console.exe build, otherwise you get no output.
 # Limits: GW_TIMEOUT (default 900 s) kills any single Godot run that hangs;
 #         GW_TEST_TIMEOUT (default 60 s) fails a single test that waits forever.
+# `test all` stops after the first red tier (unit -> sim -> scene); GW_ALL_TIERS=1 runs all.
 
 set -uo pipefail
 
@@ -114,6 +115,7 @@ cmd_test() {
   [[ -n "$filter" ]] && extra+=("--filter=$filter")
   [[ -n "${GW_VERBOSE:-}" ]] && extra+=("--verbose")
   [[ -n "${GW_TEST_TIMEOUT:-}" ]] && extra+=("--timeout=$GW_TEST_TIMEOUT")
+  [[ -n "${GW_ALL_TIERS:-}" ]] && extra+=("--all-tiers")
   local hide=1
   [[ -n "${GW_VERBOSE:-}" ]] && hide=""
   HIDE_PASSING_ERRORS=$hide run_godot "$LOGS/test_$tier.log" --headless --path . -s res://harness/test_runner.gd -- "--tier=$tier" "${extra[@]}"
@@ -261,5 +263,5 @@ case "${1:-help}" in
   precommit) cmd_precommit ;;
   hooks)   cmd_hooks ;;
   version) echo "Gamedev-WF harness $HARNESS_VERSION"; "$GODOT_BIN" --version ;;
-  *) sed -n '2,23p' "$PROJECT_DIR/harness/gw.sh" ;;
+  *) sed -n '2,24p' "$PROJECT_DIR/harness/gw.sh" ;;
 esac

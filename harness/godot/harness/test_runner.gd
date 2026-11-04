@@ -6,12 +6,15 @@ extends SceneTree
 ##     godot --headless --path . -s res://harness/test_runner.gd -- --tier=all --filter=economy
 ##     ... -- --verbose            (also print PASS lines)
 ##     ... -- --timeout=120        (seconds per test, default 60)
+##     ... -- --all-tiers          (with --tier=all: keep going after a red tier)
 ##
 ## Tiers map to folders:  unit -> res://tests/unit
 ##                        sim  -> res://tests/sim
 ##                        scene-> res://tests/scene
 ## Output is deliberately terse (failures + one summary line) so an AI agent
 ## can read it without burning context. Exit code 0 = all green, 1 = failures.
+## --tier=all is fail-fast: if unit is red, sim and scene are skipped, since
+## their failures would mostly be echoes of the same bug and cost time/tokens.
 ##
 ## A test fails when an assertion fails, when it triggers a script error or
 ## push_error() it did not announce with expect_error() (Godot 4.5+), or when
@@ -54,9 +57,16 @@ func _run() -> void:
 				return
 			tiers.append(t)
 
+	var fail_fast := tier_arg == "all" and not args.has("all-tiers")
+	var ran: Array[String] = []
+	var skipped: Array[String] = []
 	_start_capture()
 	var started := Time.get_ticks_msec()
 	for tier in tiers:
+		if fail_fast and _failed > 0:
+			skipped.append(tier)
+			continue
+		ran.append(tier)
 		var files := _find_tests(TIER_DIRS[tier])
 		for path in files:
 			await _run_file(tier, path, filter)
@@ -64,7 +74,10 @@ func _run() -> void:
 	var ms := Time.get_ticks_msec() - started
 	_stop_capture()
 	var status := "FAILED" if _failed > 0 else "OK"
-	print("RESULT %s: %d passed, %d failed (%s) in %d ms" % [status, _passed, _failed, ",".join(PackedStringArray(tiers)), ms])
+	var scope := ",".join(PackedStringArray(ran))
+	if not skipped.is_empty():
+		scope += "; skipped %s - fix the faster tier first" % ",".join(PackedStringArray(skipped))
+	print("RESULT %s: %d passed, %d failed (%s) in %d ms" % [status, _passed, _failed, scope, ms])
 	if _passed + _failed == 0:
 		print("HARNESS: no tests found. Test files must be named test_*.gd inside tests/<tier>/")
 	quit(1 if _failed > 0 else 0)

@@ -39,7 +39,10 @@ not keep an unattended session (and your Pro usage) waiting until morning.
 ## The tiers
 
 Order matters: fast feedback first, so the agent doesn't burn time (and your
-Pro budget) on slow checks when a fast one already fails.
+Pro budget) on slow checks when a fast one already fails. `gw.sh test all`
+(and therefore `check`) is **fail-fast**: if the unit tier is red, sim and scene
+are skipped and the summary says so. Their failures would mostly be echoes of
+the same bug. `GW_ALL_TIERS=1` runs everything anyway.
 
 ### 1. unit - the rules (like host tests)
 Pure simulation code, no scene tree. Milliseconds. Proves formulas, edge cases

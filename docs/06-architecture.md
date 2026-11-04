@@ -69,6 +69,15 @@ peripherals. You test the logic on the host and keep the hardware layer thin.
   `sim/colony_rules.gd`), or `typeof()` checks and dictionary keys go wrong.
 - `:=` can't infer the type from a `Variant` (e.g. `dict.get()`); give an
   explicit type.
+- **Typing is your compiler.** The embedded video points out that compilers
+  don't tolerate hallucinations: an invented function simply doesn't compile.
+  GDScript is checked when a script loads, and only *typed* code gets the full
+  check: `var sim: ColonySim` + `sim.bild()` fails at load time, in every test
+  run, while an untyped `var sim` only fails when that exact line runs, maybe
+  in a branch no test reaches. So the template's CLAUDE.md tells the agent to
+  type everything. If you want it enforced, set Project Settings -> Debug ->
+  GDScript -> *Untyped Declaration* to *Error* in your game (expect some
+  extra typing work for the agent at first).
 - Hand-editing `.tscn` files: keep the root scene small, build UI in code,
   or have *you* lay out scenes in the editor and let the agent attach scripts.
 - Autoloads (singletons) are convenient but make tests order-dependent; keep

@@ -47,7 +47,10 @@ jobs:
           mkdir -p tests/unit
           printf 'extends "res://harness/gw_test.gd"\nfunc test_canary_must_fail() -> void:\n\tassert_eq(1, 2, "canary")\n' > tests/unit/test_zz_canary.gd
           if ./harness/gw.sh test unit canary; then echo "runner did NOT report the failure"; exit 1; fi
-          rm tests/unit/test_zz_canary.gd
+          # fail-fast: a red unit tier must skip the slower tiers
+          if ./harness/gw.sh test all > ff.out; then cat ff.out; echo "test all passed with a red canary"; exit 1; fi
+          grep -q 'skipped sim,scene' ff.out || { cat ff.out; echo "slower tiers were not skipped"; exit 1; }
+          rm tests/unit/test_zz_canary.gd ff.out
           echo "runner correctly failed on the canary"
 
       - name: Harness catches a script error (canary)
@@ -62,6 +65,16 @@ jobs:
           grep -q 'RESULT FAILED' crash.out || { cat crash.out; echo "summary line not FAILED"; exit 1; }
           rm tests/unit/test_zz_crash.gd crash.out
           echo "runner correctly failed on the script error"
+
+      - name: Typed code catches an invented method even if it never runs (canary)
+        env:
+          GODOT: /home/runner/godot/godot
+        run: |
+          printf 'extends "res://harness/gw_test.gd"\nfunc test_canary_typed() -> void:\n\tvar sim: ColonySim = null\n\tif randf() > 2.0:\n\t\tsim.bild_farm()\n' > tests/unit/test_zz_typed.gd
+          if ./harness/gw.sh test unit typed > typed.out; then cat typed.out; echo "invented method on a typed var was not caught"; exit 1; fi
+          cat typed.out
+          rm tests/unit/test_zz_typed.gd typed.out
+          echo "typed code: invented method rejected at load time"
 
       - name: Harness fails a test that waits forever (canary)
         env:

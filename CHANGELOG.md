@@ -26,6 +26,9 @@ A hanging test could also stall an unattended agent indefinitely.
   higher `GW_TEST_TIMEOUT`.
 - **Crash detection.** A test or sim run that ends without its summary line
   (Godot crashed) is a failure.
+- **Fail-fast tiers.** `gw.sh test all` / `check` stop after the first red tier
+  (unit -> sim -> scene) and say what was skipped; `GW_ALL_TIERS=1` runs all.
+  As the embedded video puts it: slow tests run only when the fast ones pass.
 - **Commit gate.** `gw.sh hooks` installs a git pre-commit hook that runs
   `gw.sh check` for commits touching code/data/tests; docs-only commits skip it.
   Once per clone.
@@ -35,6 +38,8 @@ A hanging test could also stall an unattended agent indefinitely.
 
 Kit (no action needed in games):
 - `scripts/update-harness.sh`.
+- `/define` offers to research known mechanics into `docs/ref/` before the interview.
+- Typing as the "compiler": CLAUDE.md template and docs/06 explain why and how.
 - Skills: `/harness` installs the hook and knows how to update a harness;
   `/commission` checks harness version, hanging-test timeout, digest
   determinism and the commit gate (12 checks); `/build` and `/wrap-up` respect

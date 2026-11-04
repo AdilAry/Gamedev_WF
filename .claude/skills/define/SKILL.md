@@ -10,6 +10,17 @@ missing) and `docs/GDD.md`, following the template in the Gamedev-WF kit
 (`$GAMEDEV_WF/harness/templates/GDD.md`; if `$GAMEDEV_WF` is unset try
 `~/Gamedev_WF`, then ask the user where the kit is).
 
+## 0. Investigate first (optional, offer it)
+The embedded workflow researches the hardware and protocols before writing
+the spec. The game equivalent: if the idea leans on a known mechanic, genre
+convention or real-world system (e.g. "supply lines like Hearts of Iron",
+"queueing at a harbour", "Lanchester combat", "logistic population growth"),
+offer to research it first and write a short `docs/ref/<topic>.md`: how it
+works, the formulas or rules, typical numbers, what players like and
+complain about, and sources. Keep each under ~100 lines. The interview and the
+GDD then build on facts, and `/build` can cite them. Skip this if the user
+wants to go straight to questions.
+
 ## Rules for the interview
 - **One question per message.** Offer 2-4 concrete options plus "you decide".
   Put your recommendation first and explain it in one line.
