@@ -48,7 +48,7 @@ In Git Bash:
 cd ~/Gamedev_WF/example/colony_sim && ./harness/gw.sh check
 ```
 
-You should see `RESULT OK: 15 passed`, `SMOKE OK`, `CHECK OK`. Then open
+You should see `RESULT OK: 16 passed`, `SMOKE OK`, `CHECK OK`. Then open
 the folder in the Godot editor (Import -> `project.godot`) and press F5 to
 play it. Try `./harness/gw.sh sim --seeds=1-10 --ticks=500` for the balance
 table, and `./harness/gw.sh shot` for screenshots in `reports/shots/`.

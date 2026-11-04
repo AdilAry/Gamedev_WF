@@ -7,6 +7,7 @@
 | ECO-003 | unit | tests/unit/test_economy.gd::test_unstaffed_farm_produces_nothing | green |
 | ECO-004 | unit | tests/unit/test_economy.gd::test_work_priority_staffs_farms_first | green |
 | ECO-005 | unit | tests/unit/test_economy.gd::test_build_spends_resources | green |
+| ECO-006 | unit | tests/unit/test_economy.gd::test_broken_rules_file_is_reported | green |
 | POP-001 | unit | tests/unit/test_economy.gd::test_growth_needs_food_and_housing | green |
 | POP-002 | unit | tests/unit/test_economy.gd::test_starvation_reduces_population_and_never_goes_negative | green |
 | SYS-001 | unit | tests/unit/test_economy.gd::test_same_seed_same_result | green |
@@ -27,3 +28,4 @@
 | 5 food per person | colony starves, nothing negative | SYS-003 | green |
 | farms produce 0 | colony starves, nothing negative | SYS-003 | green |
 | free houses + harvest every tick | invariants hold | SYS-003 | green |
+| rules file is not valid JSON | error reported, no rules returned | ECO-006 | green |

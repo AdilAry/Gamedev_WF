@@ -18,6 +18,11 @@ extends SceneTree
 ## Optional:
 ##     func check_invariants() -> Array         # list of violated rules (strings)
 ##
+## Output: a min/mean/max table of the final metrics, the cost per tick (is
+## GDScript fast enough?), a DIGEST line (same args + same code => same digest,
+## so determinism is checked by comparing one line), and a SAME ON EVERY SEED
+## line naming metrics that never vary (more seeds prove nothing about those).
+##
 ## Exit code 0 = ran fine, 1 = invariant violations, 2 = setup problem.
 
 const DEFAULT_HOOK := "res://sim/harness_hook.gd"
@@ -95,10 +100,15 @@ func _run() -> void:
 
 
 func _print_summary(finals: Array[Dictionary], ticks: int, ms: int) -> void:
-	print("SIM %d seeds x up to %d ticks in %d ms" % [finals.size(), ticks, ms])
+	var total_ticks := 0
+	for f in finals:
+		total_ticks += int(f.get("ticks_run", 0))
+	var per_tick := float(ms) / maxf(1.0, float(total_ticks))
+	print("SIM %d seeds x up to %d ticks in %d ms (%.3f ms/tick incl. bot + hook)" % [finals.size(), ticks, ms, per_tick])
 	if finals.is_empty():
 		return
 	var keys: Array = finals[0].keys()
+	var constant: Array[String] = []
 	print("%-22s %10s %10s %10s" % ["final metric", "min", "mean", "max"])
 	for key in keys:
 		if key == "seed":
@@ -116,12 +126,17 @@ func _print_summary(finals: Array[Dictionary], ticks: int, ms: int) -> void:
 				n += 1
 		if n > 0:
 			print("%-22s %10.2f %10.2f %10.2f" % [key, lo, total / n, hi])
+			if lo == hi and key != "tick" and key != "ticks_run":
+				constant.append(str(key))
 	var short: Array[String] = []
 	for f in finals:
 		if int(f["ticks_run"]) < ticks:
 			short.append("%d@%d" % [f["seed"], f["ticks_run"]])
 	if not short.is_empty():
 		print("ENDED EARLY (seed@tick): " + ", ".join(PackedStringArray(short)))
+	if finals.size() > 1 and not constant.is_empty():
+		print("SAME ON EVERY SEED: %s (randomness does not reach these)" % ", ".join(PackedStringArray(constant)))
+	print("DIGEST %s" % str(finals).md5_text().substr(0, 12))
 
 
 func _parse_seeds(spec: String) -> Array[int]:

@@ -26,6 +26,6 @@ It is deliberately small: use it to learn the loop and to try the skills
 Never weaken a test to pass it. Stop after 5 failed attempts on the same failure and log it.
 
 ## Current state
-- Phase 2 done (sim + playable UI). All 15 tests green on Godot 4.7.2 (CI).
+- Phase 2 done (sim + playable UI). All 16 tests green on Godot 4.7.2 (CI).
 - Known balance issue: wood piles up (~10 000 by tick 500) - nothing spends it. Try `/balance`.
 - Next step: CR-001 (winter) is a good exercise for `/change-request`.

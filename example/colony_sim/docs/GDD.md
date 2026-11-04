@@ -39,6 +39,7 @@ Numbers in `data/rules.json`.
 | ECO-003 | A building without enough free workers produces nothing | unit | test_economy.gd::test_unstaffed_farm_produces_nothing |
 | ECO-004 | Workers are assigned in `work_priority` order | unit | test_economy.gd::test_work_priority_staffs_farms_first |
 | ECO-005 | Building costs are paid up front; unaffordable builds change nothing | unit | test_economy.gd::test_build_spends_resources |
+| ECO-006 | A broken rules file is reported as an error and gives no rules (never half-loaded) | unit | test_economy.gd::test_broken_rules_file_is_reported |
 
 ### 6.2 Population
 | ID | Requirement | Tier | Proof |
@@ -85,3 +86,4 @@ See CLAUDE.md (sim/ pure, data/ numbers, scenes/ presentation).
 | Date | Change | CR |
 |---|---|---|
 | 2026-11-04 | Initial version | - |
+| 2026-11-04 | ECO-006 added (shows `expect_error()` in the harness) | - |

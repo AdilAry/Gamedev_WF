@@ -46,6 +46,21 @@ func test_work_priority_staffs_farms_first() -> void:
 	assert_eq(s["lumber_mill"], 0)
 
 
+func test_broken_rules_file_is_reported() -> void:
+	# ECO-006: a broken rules file is reported as an error and yields no rules
+	# (never half-loaded rules). expect_error() declares the error as intended;
+	# without it, the push_error in ColonyRules would fail this test.
+	expect_error("parse")
+	var path := "user://broken_rules.json"
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	assert_not_null(f, "can write a temp file")
+	if f == null:
+		return
+	f.store_string("{ this is not json")
+	f.close()
+	assert_null(ColonyRules.load_from(path), "broken file must give null")
+
+
 func test_build_spends_resources() -> void:
 	# ECO-005: building costs are paid up front; impossible builds change nothing
 	var sim := ColonySim.new(rules, 1)

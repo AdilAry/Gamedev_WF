@@ -12,12 +12,18 @@
 #   ./harness/gw.sh check             the gate: import + all tests + smoke  (run before every commit)
 #   ./harness/gw.sh doc               dump the Godot API reference of YOUR Godot version to docs/ref/
 #   ./harness/gw.sh export <preset> <out>  export a build (needs export templates + export_presets.cfg)
-#   ./harness/gw.sh version           print the Godot version in use
+#   ./harness/gw.sh hooks             install a git pre-commit hook that runs `precommit`
+#   ./harness/gw.sh precommit         the gate, skipped when only docs (*.md, docs/, ideas/) are staged
+#   ./harness/gw.sh version           print the harness and Godot versions
 #
 # Godot binary: $GODOT if set, else `godot`, else `godot4` on PATH.
 # On Windows point GODOT at the *_console.exe build, otherwise you get no output.
+# Limits: GW_TIMEOUT (default 900 s) kills any single Godot run that hangs;
+#         GW_TEST_TIMEOUT (default 60 s) fails a single test that waits forever.
 
 set -uo pipefail
+
+HARNESS_VERSION="1.1.0"
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_DIR" || exit 2
@@ -33,16 +39,37 @@ find_godot() {
   echo ""
 }
 GODOT_BIN="$(find_godot)"
-if [[ -z "$GODOT_BIN" ]]; then
+if [[ -z "$GODOT_BIN" && "${1:-}" != "precommit" && "${1:-}" != "hooks" && "${1:-}" != "help" ]]; then
   echo "HARNESS: Godot not found. Install Godot 4 and put it on PATH as 'godot', or set GODOT=/path/to/godot" >&2
   exit 2
 fi
 
+# Hard time limit per Godot run, so an endless loop cannot stall an unattended
+# agent for hours. Uses coreutils `timeout` (Linux, Git Bash); skipped if missing.
+GW_TIMEOUT="${GW_TIMEOUT:-900}"
+LIMIT=()
+if [[ "$GW_TIMEOUT" != "0" ]] && timeout --version >/dev/null 2>&1; then
+  LIMIT=(timeout --kill-after=10 "$GW_TIMEOUT")
+fi
+
+# Run the Godot binary under the time limit.
+godot_limited() {
+  "${LIMIT[@]}" "$GODOT_BIN" "$@"
+}
+
+# Print a hint if exit code $1 means the time limit stopped Godot.
+explain_timeout() {
+  if [[ ${#LIMIT[@]} -gt 0 && ( $1 -eq 124 || $1 -eq 137 ) ]]; then
+    echo "HARNESS: Godot was stopped after ${GW_TIMEOUT}s (endless loop? raise GW_TIMEOUT for long runs) -> FAIL"
+  fi
+}
+
 # Run Godot, keep a log, and fail on script/parse errors even if Godot exits 0.
 run_godot() {
   local log="$1"; shift
-  "$GODOT_BIN" "$@" >"$log" 2>&1
+  godot_limited "$@" >"$log" 2>&1
   local code=$?
+  explain_timeout $code
   # print the log, minus noisy engine banner lines
   grep -v -E '^(Godot Engine v|OpenGL API|Vulkan API|WARNING: Detected another project.godot)' "$log" || true
   if grep -q -E 'SCRIPT ERROR|Parse Error|Failed to load script|Invalid call|Invalid access' "$log"; then
@@ -54,8 +81,9 @@ run_godot() {
 
 cmd_import() {
   # --import imports resources and builds the global class cache, then quits.
-  "$GODOT_BIN" --headless --path . --import >"$LOGS/import.log" 2>&1
+  godot_limited --headless --path . --import >"$LOGS/import.log" 2>&1
   local code=$?
+  explain_timeout $code
   if grep -q -E 'SCRIPT ERROR|Parse Error' "$LOGS/import.log"; then
     grep -E 'SCRIPT ERROR|Parse Error|at: ' "$LOGS/import.log"
     echo "HARNESS: import found script errors (log: reports/logs/import.log)"
@@ -70,7 +98,14 @@ cmd_test() {
   local extra=()
   [[ -n "$filter" ]] && extra+=("--filter=$filter")
   [[ -n "${GW_VERBOSE:-}" ]] && extra+=("--verbose")
+  [[ -n "${GW_TEST_TIMEOUT:-}" ]] && extra+=("--timeout=$GW_TEST_TIMEOUT")
   run_godot "$LOGS/test_$tier.log" --headless --path . -s res://harness/test_runner.gd -- "--tier=$tier" "${extra[@]}"
+  local code=$?
+  if ! grep -q '^RESULT ' "$LOGS/test_$tier.log"; then
+    echo "HARNESS: the test run ended without a RESULT line (crash or hang) -> FAIL (log: reports/logs/test_$tier.log)"
+    [[ $code -eq 0 ]] && code=1
+  fi
+  return $code
 }
 
 cmd_smoke() {
@@ -89,6 +124,12 @@ cmd_smoke() {
 
 cmd_sim() {
   run_godot "$LOGS/sim.log" --headless --path . -s res://harness/sim_runner.gd -- "$@"
+  local code=$?
+  if ! grep -q '^SIM ' "$LOGS/sim.log"; then
+    echo "HARNESS: the sim run ended without a summary (crash or hang) -> FAIL (log: reports/logs/sim.log)"
+    [[ $code -eq 0 ]] && code=1
+  fi
+  return $code
 }
 
 cmd_shot() {
@@ -106,8 +147,9 @@ cmd_shot() {
       return 2
     fi
   fi
-  "${runner[@]}" "$GODOT_BIN" "${args[@]}" >"$LOGS/shot.log" 2>&1
+  "${runner[@]}" "${LIMIT[@]}" "$GODOT_BIN" "${args[@]}" >"$LOGS/shot.log" 2>&1
   local code=$?
+  explain_timeout $code
   local last
   last=$(ls -1 "$dir"/*.png 2>/dev/null | tail -n 1)
   if [[ -z "$last" ]]; then
@@ -129,6 +171,50 @@ cmd_check() {
   cmd_test all || return $?
   cmd_smoke 300 || return $?
   echo "CHECK OK"
+}
+
+# Called by the git pre-commit hook. Commits that only touch docs skip the
+# gate, so a quick /wrap-up or GDD edit stays fast.
+# Note: it checks the working tree, which is what the agent just tested.
+cmd_precommit() {
+  local staged
+  staged=$(git diff --cached --name-only --relative 2>/dev/null)
+  if [[ -z "$staged" ]] || ! grep -q -v -E '^(docs/|ideas/)|\.md$' <<<"$staged"; then
+    echo "PRECOMMIT: only docs staged here - gate skipped"
+    return 0
+  fi
+  if [[ -z "$GODOT_BIN" ]]; then
+    echo "PRECOMMIT: Godot not found (set GODOT) - cannot run the gate -> commit blocked"
+    return 2
+  fi
+  echo "PRECOMMIT: running the gate (gw.sh check)..."
+  if ! cmd_check; then
+    echo "PRECOMMIT: gate failed -> commit blocked. Fix it, or record it under Blocked in docs/LOG.md."
+    return 1
+  fi
+}
+
+# Install .git/hooks/pre-commit -> gw.sh precommit. Run once per clone
+# (git does not copy hooks), e.g. by /harness and /commission.
+cmd_hooks() {
+  local prefix hook
+  if ! prefix=$(git rev-parse --show-prefix 2>/dev/null); then
+    echo "HARNESS: not a git repository - run git init first"; return 2
+  fi
+  hook="$(git rev-parse --git-path hooks)/pre-commit"
+  if [[ -f "$hook" ]] && ! grep -q 'gw.sh precommit' "$hook"; then
+    echo "HARNESS: $hook exists and was not written by the harness. Add this line to it yourself:"
+    echo "  cd \"\$(git rev-parse --show-toplevel)/$prefix\" && ./harness/gw.sh precommit || exit 1"
+    return 1
+  fi
+  mkdir -p "$(dirname "$hook")"
+  {
+    echo '#!/usr/bin/env bash'
+    echo '# Installed by ./harness/gw.sh hooks - the harness gate before every commit.'
+    echo "cd \"\$(git rev-parse --show-toplevel)/$prefix\" && exec ./harness/gw.sh precommit"
+  } >"$hook"
+  chmod +x "$hook"
+  echo "HOOK installed ($hook): commits that change code, data or tests now run gw.sh check first"
 }
 
 cmd_doc() {
@@ -154,6 +240,8 @@ case "${1:-help}" in
   check)   shift; cmd_check "$@" ;;
   doc)     shift; cmd_doc "$@" ;;
   export)  shift; cmd_export "$@" ;;
-  version) "$GODOT_BIN" --version ;;
-  *) sed -n '2,20p' "$0" ;;
+  precommit) cmd_precommit ;;
+  hooks)   cmd_hooks ;;
+  version) echo "Gamedev-WF harness $HARNESS_VERSION"; "$GODOT_BIN" --version ;;
+  *) sed -n '2,23p' "$PROJECT_DIR/harness/gw.sh" ;;
 esac
