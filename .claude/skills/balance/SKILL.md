@@ -20,6 +20,14 @@ full session). Save the summary table. If the hook offers more metrics than
 needed, look at the CSV with `head`/`awk` - do not print whole CSVs.
 Look for: runaway resources, dead resources (never spent), stalls (metric
 flat for a long time), early deaths, and variance between seeds.
+Read the extra summary lines:
+- `SAME ON EVERY SEED: ...` - those metrics do not depend on the seed. More
+  seeds prove nothing about them; if the design wants variety there, the
+  randomness (events, map, bot choices) does not reach them yet. Say so.
+- `ms/tick` - cost of one simulated tick. Note it if it grows a lot between
+  experiments (performance budget, GDD section 10).
+- `DIGEST` - identical for identical inputs; quote it in the report so a
+  later run can confirm it reproduces the same numbers.
 
 ## 3. Experiments
 - Try changes with overrides first, without editing files:

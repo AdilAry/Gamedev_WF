@@ -27,7 +27,9 @@ and only the GDD sections you need (save context).
    `./harness/gw.sh test unit <filter>` -> `test sim` -> `test scene`.
    Only run slower tiers once the faster ones are green.
 4. Read failures carefully; add `print()` debugging in the sim or in a test if
-   the cause is unclear, then remove it.
+   the cause is unclear, then remove it. A script error or `push_error()`
+   fails the test that triggered it; if a test provokes an error on purpose
+   (bad input to a loader), declare it with `expect_error("fragment")`.
 5. Update the TESTPLAN status to `green`.
 
 ## 3. Visual work
@@ -39,6 +41,8 @@ are slow and cost context.
 ## 4. Gate and commit
 - `./harness/gw.sh check` must print `CHECK OK`.
 - Commit per finished requirement batch: `ECO-003, ECO-004: worker priority`.
+  The pre-commit hook runs the gate again; if it blocks the commit, fix the
+  cause. Never use `git commit --no-verify`.
 - Push if a remote exists (CI will run the same check).
 
 ## Stop rules (important)

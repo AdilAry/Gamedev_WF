@@ -22,6 +22,10 @@ continue".
 5. If the GDD has open questions answered during the session, move the
    answers into the GDD.
 6. `git add -A && git commit -m "Wrap-up: <summary>"` and `git push` if a
-   remote exists. Never commit `reports/`, `.godot/` or secrets.
+   remote exists. Never commit `reports/`, `.godot/` or secrets. The
+   pre-commit hook re-runs the gate when code changed (docs-only commits skip
+   it). If the gate is red and cannot be fixed now, do not bypass it: commit
+   the docs (LOG with the Blocked entry) on their own and leave the code
+   change uncommitted, or on a `wip/<topic>` branch, and say so.
 7. Tell the user in 3-5 lines: what is done, what is next, what they need to
    decide or test (e.g. "play 10 minutes and tell me if winter feels unfair").

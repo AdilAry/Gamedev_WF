@@ -11,6 +11,8 @@ are created in their own folders/repos with the `/harness` skill.
 - `harness/godot/harness/`: the canonical harness. **`example/colony_sim/harness/` must
   stay byte-identical** (CI diffs them). After editing the canonical copy:
   `cp harness/godot/harness/* example/colony_sim/harness/`.
+- When the harness changes: bump `HARNESS_VERSION` in `gw.sh` and add a
+  `CHANGELOG.md` entry that says what existing games must do.
 - `harness/templates/`: files the skills copy into projects.
 - `example/colony_sim/`: reference project; keep its tests green.
 

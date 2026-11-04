@@ -82,6 +82,8 @@ func assert_null(value: Variant, msg: String = "") -> void:
 ## a broken file calls push_error). Every error whose text contains `fragment`
 ## (case-insensitive) is then allowed, and at least one must happen.
 ## Errors that match no announced fragment still fail the test.
+## For push_error() and engine errors only: a SCRIPT ERROR is always a bug,
+## and gw.sh fails the run on it whatever the test declares.
 func expect_error(fragment: String) -> void:
 	_expected_errors.append(fragment)
 

@@ -21,7 +21,7 @@ is roughly one evening or half a day.
 Copy the example so you can mess with it freely:
 
 ```bash
-cp -r ~/Gamedev_WF/example/colony_sim ~/games/colony-practice && cd ~/games/colony-practice && git init && git add -A && git commit -m "start"
+cp -r ~/Gamedev_WF/example/colony_sim ~/games/colony-practice && cd ~/games/colony-practice && git init && ./harness/gw.sh hooks && git add -A && git commit -m "start"
 ```
 
 Then in `superclaude`:

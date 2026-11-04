@@ -47,6 +47,10 @@ and prove it with tests.
 ## Rules
 - Never weaken, skip or delete a test to make it pass. If a test or requirement
   looks wrong, stop and explain; propose a GDD change instead.
+- Never bypass the commit gate (`git commit --no-verify`). The pre-commit hook
+  (`./harness/gw.sh hooks`) runs `check` for commits that touch code.
+- A script error or `push_error()` fails the running test. If a test provokes
+  an error on purpose, declare it with `expect_error("fragment")`.
 - If the same failure survives 5 fix attempts, stop, write what you tried in
   `docs/LOG.md` under "Blocked", and ask the human.
 - Do not add plugins/addons or change project settings without saying why.
@@ -63,6 +67,8 @@ and prove it with tests.
 | Balance runs | `./harness/gw.sh sim --seeds=1-20 --ticks=800 [--param.key=value]` |
 | Screenshots | `./harness/gw.sh shot res://scenes/main.tscn 60` |
 | API reference | `./harness/gw.sh doc` |
+| Install commit gate (once per clone) | `./harness/gw.sh hooks` |
+| Harness + Godot version | `./harness/gw.sh version` |
 
 ## Current state
 (Updated by /wrap-up. Keep to ~10 lines.)

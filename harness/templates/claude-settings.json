@@ -22,6 +22,9 @@
     ],
     "deny": [
       "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git commit --no-verify:*)",
+      "Bash(git commit -n:*)",
       "Bash(git reset --hard:*)",
       "Bash(rm -rf /:*)",
       "Bash(rm -rf ~:*)",

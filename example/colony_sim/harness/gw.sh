@@ -64,17 +64,32 @@ explain_timeout() {
   fi
 }
 
-# Run Godot, keep a log, and fail on script/parse errors even if Godot exits 0.
+# Run Godot, keep a log, print it (minus engine banner lines) and fail on
+# script/parse errors even if Godot exits 0. With HIDE_PASSING_ERRORS set, a
+# passing run folds ERROR blocks into one line: in a passing test run every
+# error was declared with expect_error(), otherwise a test would have failed.
 run_godot() {
   local log="$1"; shift
   godot_limited "$@" >"$log" 2>&1
   local code=$?
-  explain_timeout $code
-  # print the log, minus noisy engine banner lines
-  grep -v -E '^(Godot Engine v|OpenGL API|Vulkan API|WARNING: Detected another project.godot)' "$log" || true
+  local script_err=0
   if grep -q -E 'SCRIPT ERROR|Parse Error|Failed to load script|Invalid call|Invalid access' "$log"; then
-    echo "HARNESS: script errors found in output -> FAIL (full log: ${log#$PROJECT_DIR/})"
+    script_err=1
     [[ $code -eq 0 ]] && code=1
+  fi
+  local shown
+  shown=$(grep -v -E '^(Godot Engine v|OpenGL API|Vulkan API|WARNING: Detected another project.godot)' "$log")
+  if [[ $code -eq 0 && -n "${HIDE_PASSING_ERRORS:-}" ]]; then
+    shown=$(awk -v logf="${log#"$PROJECT_DIR"/}" '
+      /^(USER )?ERROR: / { skip = 1; n++; next }
+      skip && /^[[:space:]]/ { next }
+      { skip = 0; print }
+      END { if (n > 0) printf "(%d expected error message(s) hidden, all declared with expect_error - log: %s)\n", n, logf }' <<<"$shown")
+  fi
+  [[ -n "$shown" ]] && echo "$shown"
+  explain_timeout $code
+  if [[ $script_err -eq 1 ]]; then
+    echo "HARNESS: script errors found in output -> FAIL (full log: ${log#"$PROJECT_DIR"/})"
   fi
   return $code
 }
@@ -99,7 +114,9 @@ cmd_test() {
   [[ -n "$filter" ]] && extra+=("--filter=$filter")
   [[ -n "${GW_VERBOSE:-}" ]] && extra+=("--verbose")
   [[ -n "${GW_TEST_TIMEOUT:-}" ]] && extra+=("--timeout=$GW_TEST_TIMEOUT")
-  run_godot "$LOGS/test_$tier.log" --headless --path . -s res://harness/test_runner.gd -- "--tier=$tier" "${extra[@]}"
+  local hide=1
+  [[ -n "${GW_VERBOSE:-}" ]] && hide=""
+  HIDE_PASSING_ERRORS=$hide run_godot "$LOGS/test_$tier.log" --headless --path . -s res://harness/test_runner.gd -- "--tier=$tier" "${extra[@]}"
   local code=$?
   if ! grep -q '^RESULT ' "$LOGS/test_$tier.log"; then
     echo "HARNESS: the test run ended without a RESULT line (crash or hang) -> FAIL (log: reports/logs/test_$tier.log)"

@@ -94,3 +94,6 @@ cd ~/games/my-game && git pull && "$GODOT" --path .
 ```
 
 (or open it in the editor). Then `/playtest` with your notes.
+
+The first time you clone a game on this laptop, also run
+`./harness/gw.sh hooks` in it, so your own commits go through the same gate.

@@ -24,11 +24,12 @@ main laptop and a Linux Mint agent box**.
 | [`GUIDE.md`](GUIDE.md) | the guide |
 | [`docs/`](docs/) | machines & roles, Windows setup, Mint agent-box setup, Claude Pro playbook, testing tiers, architecture, asset pipeline, first weekend |
 | [`.claude/skills/`](.claude/skills/) | 11 Claude Code skills: `/pitch` `/define` `/harness` `/commission` `/build` `/playtest` `/balance` `/change-request` `/style-guide` `/asset` `/wrap-up` |
-| [`harness/godot/harness/`](harness/godot/harness/) | the harness copied into every game: `gw.sh`, a dependency-free test runner, the headless sim runner |
+| [`harness/godot/harness/`](harness/godot/harness/) | the harness copied into every game: `gw.sh`, a dependency-free test runner that also catches script errors and hangs, the headless sim runner |
 | [`harness/templates/`](harness/templates/) | IDEA, GDD (with requirement IDs + proofs), TESTPLAN, CLAUDE.md, STYLE_GUIDE, ASSETS manifest, CR, PLAYTEST, LOG, safe permissions |
 | [`harness/ci/godot-ci.yml`](harness/ci/godot-ci.yml) | GitHub Actions workflow for game repos |
 | [`example/colony_sim/`](example/colony_sim/) | a small working tick-based colony economy built the harness way: 16 tests over 3 tiers, sim runner hook, bot, GDD, test plan |
-| [`scripts/`](scripts/) | `install.sh` / `install.ps1`: install the skills for Claude Code |
+| [`scripts/`](scripts/) | `install.sh` / `install.ps1`: install the skills for Claude Code; `update-harness.sh`: bring a game's `harness/` up to date |
+| [`CHANGELOG.md`](CHANGELOG.md) | what changed in the kit and harness, and what to do in existing games |
 
 ## Quick start
 
@@ -55,14 +56,18 @@ Then, in a new folder with Claude Code: `/pitch` -> `/define` -> `/harness`
 ./harness/gw.sh sim --seeds=1-30 --ticks=800 [--param.key=value]   # balance runs -> CSV
 ./harness/gw.sh shot [res://scene.tscn] [frames]   # real rendered frames -> PNG
 ./harness/gw.sh check                              # gate before every commit
+./harness/gw.sh hooks                              # make git run the gate on every code commit
 ./harness/gw.sh doc                                # Godot API of your version -> docs/ref/
+./harness/gw.sh version                            # harness + Godot version
 ```
 
 ## Verified
 The example project and harness run in CI on every push (Godot 4.7.2 on
-Ubuntu): all tiers, smoke run, sim runner, xvfb screenshots, plus two canary
-checks proving that a failed assertion **and** a runtime script error both
-fail the run.
+Ubuntu): shellcheck, all tiers, smoke run, sim runner (twice, digests must
+match), xvfb screenshots, plus canary checks proving that a failed
+assertion, a runtime script error (attributed to the right test), a test
+that waits forever and an endless loop all fail the run, and that the
+pre-commit gate blocks a red commit.
 
 ## Sources & credits
 - The embedded AI workflow videos (levels 0-10; the ESP32 workbench; the

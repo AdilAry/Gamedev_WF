@@ -12,7 +12,7 @@ human.
 ## 0. Find the kit
 Kit root = `$GAMEDEV_WF`, else `~/Gamedev_WF`, else
 `/c/Users/<user>/Gamedev_WF` on Windows, else ask the user. You need:
-- `<kit>/harness/godot/harness/` (gw.sh, test_runner.gd, sim_runner.gd, gw_test.gd)
+- `<kit>/harness/godot/harness/` (gw.sh, test_runner.gd, sim_runner.gd, gw_test.gd, gw_error_capture.gd)
 - `<kit>/harness/templates/` (CLAUDE.md, TESTPLAN.md, LOG.md, ASSETS.md, ...)
 - `<kit>/harness/ci/godot-ci.yml`
 - `<kit>/example/colony_sim/` - a working reference project. When unsure how
@@ -59,11 +59,22 @@ docs/GDD.md docs/TESTPLAN.md docs/LOG.md docs/changes/ docs/playtests/
   time model, data files) into it. Keep it under ~120 lines.
 
 ## 4. Git
-- `git init` if needed, first commit "Harness: project structure".
+- `git init` if needed, then `./harness/gw.sh hooks` (installs the pre-commit
+  gate: commits that touch code, data or tests run `gw.sh check` first;
+  docs-only commits skip it). Then the first commit "Harness: project structure".
+  Hooks are not cloned by git, so every new clone (other laptop) needs
+  `./harness/gw.sh hooks` once - `/commission` checks this.
 - If the project has no GitHub remote, tell the user the exact steps (create
   an empty repo on github.com, then `git remote add origin ...` and
   `git push -u origin main`), or use `gh repo create` if `gh` is installed and
   authenticated. Never push to a remote the user did not confirm.
+
+## Updating the harness of an existing project
+When the kit has a newer harness (`./harness/gw.sh version` vs
+`grep HARNESS_VERSION <kit>/harness/godot/harness/gw.sh`), run
+`<kit>/scripts/update-harness.sh .`, then `./harness/gw.sh check`, read
+`<kit>/CHANGELOG.md` for anything the project must adapt, and commit
+"Harness <version>". Never hand-edit files in `harness/`; improve the kit instead.
 
 ## 5. Finish
 Run `./harness/gw.sh check`. Expected: import OK, the seeded tests run (red is

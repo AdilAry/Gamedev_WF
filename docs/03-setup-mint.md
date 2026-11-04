@@ -135,6 +135,9 @@ ssh agent@mint-dev.local
 tmux new -A -s game
 ```
 
+When you clone a game repo onto this box for the first time, run
+`./harness/gw.sh hooks` in it once (git does not clone hooks).
+
 Inside tmux: `cd ~/games/<project> && superclaude`, give it a task (e.g.
 `/build phase 2`), then detach with `Ctrl-b d`. Close the laptop lid, go to
 work, come back, `tmux attach -t game` to read the summary.
@@ -173,3 +176,5 @@ and can conflict with the agent's.
   occasionally: `rm -rf ~/games/*/reports`.
 - Update Claude Code from time to time (it usually updates itself) and
   `git -C ~/Gamedev_WF pull && ~/Gamedev_WF/scripts/install.sh` for kit updates.
+  Then bring each game's harness up to date with
+  `~/Gamedev_WF/scripts/update-harness.sh ~/games/<project>` (see CHANGELOG.md).
