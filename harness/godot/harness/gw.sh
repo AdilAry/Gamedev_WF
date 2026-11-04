@@ -134,7 +134,8 @@ cmd_sim() {
 
 cmd_shot() {
   local scene="${1:-}" frames="${2:-60}"
-  local dir="$REPORTS/shots/$(date +%Y%m%d_%H%M%S)"
+  local dir
+  dir="$REPORTS/shots/$(date +%Y%m%d_%H%M%S)"
   mkdir -p "$dir"
   local args=(--path . --rendering-method gl_compatibility --fixed-fps 30 --quit-after "$frames" --write-movie "$dir/frame.png")
   [[ -n "$scene" ]] && args+=("$scene")

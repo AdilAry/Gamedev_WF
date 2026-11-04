@@ -25,7 +25,7 @@ jobs:
 
       - name: Shell scripts pass shellcheck
         working-directory: .
-        run: shellcheck -S warning harness/godot/harness/gw.sh scripts/install.sh
+        run: shellcheck -S warning harness/godot/harness/gw.sh scripts/install.sh scripts/update-harness.sh
 
       - name: Download Godot
         run: |
@@ -119,7 +119,7 @@ jobs:
 
       - name: Upload reports
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: colony-sim-reports
           path: example/colony_sim/reports/
