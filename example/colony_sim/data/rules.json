@@ -1,0 +1,18 @@
+{
+  "start": {
+    "resources": { "food": 30, "wood": 20 },
+    "population": 6,
+    "buildings": { "house": 2, "farm": 1, "lumber_mill": 1 }
+  },
+  "food_per_person": 1,
+  "growth_ticks": 10,
+  "starvation_loss": 1,
+  "event_chance": 0.02,
+  "good_harvest_food": 5,
+  "work_priority": ["farm", "lumber_mill"],
+  "buildings": {
+    "farm":        { "cost": { "wood": 10 }, "workers": 2, "housing": 0, "produces": { "food": 4 } },
+    "lumber_mill": { "cost": { "wood": 5 },  "workers": 2, "housing": 0, "produces": { "wood": 3 } },
+    "house":       { "cost": { "wood": 15 }, "workers": 0, "housing": 5, "produces": {} }
+  }
+}

@@ -1,0 +1,21 @@
+; Engine configuration file.
+; Gamedev-WF example project: a tiny tick-based colony economy.
+
+config_version=5
+
+[application]
+
+config/name="Colony Sim (Gamedev-WF example)"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[display]
+
+window/size/viewport_width=960
+window/size/viewport_height=540
+window/stretch/mode="canvas_items"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

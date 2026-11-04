@@ -1,0 +1,53 @@
+# Gamedev-WF CI for a Godot project. Copy to .github/workflows/godot-ci.yml
+# Runs the same gate as `./harness/gw.sh check` on every push and pull request,
+# so a broken commit is visible on GitHub even if nobody ran the tests locally.
+name: godot-ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: "4.7.2"   # keep in sync with the version you use locally (./harness/gw.sh version)
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Godot
+        id: cache-godot
+        uses: actions/cache@v4
+        with:
+          path: ~/godot
+          key: godot-${{ env.GODOT_VERSION }}
+
+      - name: Download Godot
+        if: steps.cache-godot.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot
+          curl -sSL -o /tmp/godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d ~/godot
+          mv ~/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64 ~/godot/godot
+
+      - name: Harness check (import + unit/sim/scene tests + smoke)
+        env:
+          GODOT: /home/runner/godot/godot
+        run: ./harness/gw.sh check
+
+      - name: Balance snapshot
+        if: always()
+        env:
+          GODOT: /home/runner/godot/godot
+        run: ./harness/gw.sh sim --seeds=1-10 --ticks=500 || true
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: reports/
+          if-no-files-found: ignore

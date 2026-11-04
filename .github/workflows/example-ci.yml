@@ -1,0 +1,76 @@
+# Proves the harness in this kit actually works, by running it on the example project.
+name: example-ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  GODOT_VERSION: "4.7.2"
+
+jobs:
+  colony-sim:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: example/colony_sim
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Harness copy in example is identical to the kit
+        working-directory: .
+        run: diff -r harness/godot/harness example/colony_sim/harness
+
+      - name: Download Godot
+        run: |
+          mkdir -p ~/godot
+          curl -sSL -o /tmp/godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d ~/godot
+          mv ~/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64 ~/godot/godot
+
+      - name: Check (import + tests + smoke)
+        env:
+          GODOT: /home/runner/godot/godot
+          GW_VERBOSE: "1"
+        run: ./harness/gw.sh check
+
+      - name: Harness catches a failing test (canary)
+        env:
+          GODOT: /home/runner/godot/godot
+        run: |
+          mkdir -p tests/unit
+          printf 'extends "res://harness/gw_test.gd"\nfunc test_canary_must_fail() -> void:\n\tassert_eq(1, 2, "canary")\n' > tests/unit/test_zz_canary.gd
+          if ./harness/gw.sh test unit canary; then echo "runner did NOT report the failure"; exit 1; fi
+          rm tests/unit/test_zz_canary.gd
+          echo "runner correctly failed on the canary"
+
+      - name: Harness catches a script error (canary)
+        env:
+          GODOT: /home/runner/godot/godot
+        run: |
+          printf 'extends "res://harness/gw_test.gd"\nfunc test_canary_crash() -> void:\n\tvar d := {}\n\tvar x: int = d["missing"].size()\n' > tests/unit/test_zz_crash.gd
+          if ./harness/gw.sh test unit crash; then echo "runner did NOT catch the script error"; exit 1; fi
+          rm tests/unit/test_zz_crash.gd
+          echo "runner correctly failed on the script error"
+
+      - name: Sim runner
+        env:
+          GODOT: /home/runner/godot/godot
+        run: ./harness/gw.sh sim --seeds=1-10 --ticks=500
+
+      - name: Screenshot (xvfb)
+        env:
+          GODOT: /home/runner/godot/godot
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb mesa-utils libgl1-mesa-dri > /dev/null
+          ./harness/gw.sh shot "" 45 || echo "screenshot step failed (non-fatal on CI)"
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: colony-sim-reports
+          path: example/colony_sim/reports/
+          if-no-files-found: ignore
