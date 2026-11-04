@@ -16,10 +16,11 @@ and prove it with tests.
 - Exact API of the installed version: `docs/ref/godot-api/` (create with
   `./harness/gw.sh doc`). Grep it instead of guessing method names.
 - **Type everything** (`var farm: Building`, `var n := 3`, typed parameters,
-  return types, `Array[Unit]`). GDScript has no separate compile step, but with
-  types a wrong or invented method/property is an error as soon as the script
-  loads, so every test run catches it. Untyped code only fails if that exact
-  line runs. Typing is our compiler; don't skip it.
+  return types, `Array[Unit]`): type mismatches are then rejected as soon as
+  the script loads. But GDScript has no real compiler: a call to a method that
+  doesn't exist only fails when that line runs (verified on Godot 4.7). Check
+  the API in `docs/ref/godot-api/` instead of guessing, and make sure a test
+  runs every branch you write.
 - Renderer: Compatibility (must run on integrated graphics).
 - Prefer building UI in code or small scenes. Do not hand-write large `.tscn`
   files; if you must edit one, keep the format=3 header and resource ids valid.

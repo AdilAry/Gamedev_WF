@@ -39,7 +39,9 @@ A hanging test could also stall an unattended agent indefinitely.
 Kit (no action needed in games):
 - `scripts/update-harness.sh`.
 - `/define` offers to research known mechanics into `docs/ref/` before the interview.
-- Typing as the "compiler": CLAUDE.md template and docs/06 explain why and how.
+- docs/06 + CLAUDE.md template: GDScript has no compiler to catch invented
+  methods (CI proves an unreached `sim.bild_farm()` passes), so tests must
+  reach every branch; types still catch mismatches at load (CI proves that too).
 - Skills: `/harness` installs the hook and knows how to update a harness;
   `/commission` checks harness version, hanging-test timeout, digest
   determinism and the commit gate (12 checks); `/build` and `/wrap-up` respect
