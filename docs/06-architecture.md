@@ -2,7 +2,7 @@
 
 The Gambo pipeline turned into spaghetti within days. Better prompts don't
 fix that; **structure plus tests** do. The agent follows structure well if
-it is written down (CLAUDE.md) and enforced (tests). This is the structure
+it is written down (AGENTS.md) and enforced (tests). This is the structure
 `/harness` sets up, and the example project uses it.
 
 ## The split: simulation core vs presentation
@@ -35,7 +35,7 @@ peripherals. You test the logic on the host and keep the hardware layer thin.
 - **Small files with one job** fit in the agent's context. Big tangled files
   cause the "corrupted main file" disasters the video mentions.
 
-## Time models (pick in /define)
+## Time models (state it in your design, or pick in /define)
 
 | Model | Fits | Note |
 |---|---|---|
@@ -61,7 +61,7 @@ peripherals. You test the logic on the host and keep the hardware layer thin.
   sim for rules and pathfinding (`AStarGrid2D` works without a scene tree).
 - **Save = serialise the state**: `state.to_dict()` -> JSON. Test round trips.
 
-## Godot specifics the agent gets wrong (they're in CLAUDE.md)
+## Godot specifics the agent gets wrong (they are in AGENTS.md)
 
 - Godot 3 vs 4 syntax. Keep `docs/ref/godot-api/` (from `gw.sh doc`) and tell it
   to grep there.

@@ -4,6 +4,73 @@ What changed in the kit, and what to do in games that already use it.
 Harness version = `HARNESS_VERSION` in `harness/godot/harness/gw.sh`
 (`./harness/gw.sh version` in a game shows its copy).
 
+## Kit 1.2.0 / Harness 1.2.0 - 2026-11-11
+
+**Update existing games:** `~/Gamedev_WF/scripts/update-harness.sh <game folder>`,
+then in the game: `./harness/gw.sh check`, commit "Harness 1.2.0". Optional but
+recommended: rename the game's `CLAUDE.md` to `AGENTS.md` and create a new
+`CLAUDE.md` containing the single line `@AGENTS.md`; copy
+`harness/templates/QUESTIONS.md` to `docs/` and `harness/templates/cases.json`
+to `tests/cases/balance.json` (then edit the cases to your game).
+
+Why: the kit assumed one agent (Claude Code), a design written by the agent
+in an interview, and long unattended builds. The owner designs in detail
+first, wants to stay in the loop on a small budget, wants the agent to act as
+playtester, and also uses pi.
+
+Harness:
+- **`gw.sh cases`**: named balance situations from `tests/cases/balance.json`
+  in one table against their targets (`[low, high]` on every seed, or
+  `{"mean": [low, high]}` for win rates). `--only`, `--param.x=y` on all
+  cases, `--strict`. Also written as a Markdown file. A showcase, not a gate:
+  an open balance problem stays visible as `OFF` without blocking commits.
+- **`gw.sh trace`**: one seed as a timeline, a line per window of ticks with
+  the events and the state. Needs the optional hook method `events()`.
+- **No more "Could not find type" after adding a class.** `gw.sh` re-imports
+  the project by itself when the set of `class_name` scripts changed.
+- The pre-commit gate treats `design/` like `docs/` (no test run for commits
+  that only touch documents).
+- Sim runner output of the plain seeds mode is unchanged.
+
+Skills:
+- **New `/spec`**: turns the human's own design documents (`design/`,
+  read-only for the agent) into `docs/spec/<system>.md`: requirement rows with
+  sources, worked examples as test vectors, data, glossary. Gaps,
+  contradictions and superseded rules go to `docs/QUESTIONS.md` with options
+  and a recommendation; nothing is invented. A cheap map step first, then one
+  system at a time.
+- **`/build` is a short loop now**: one slice (1-3 requirements), checkpoint
+  A (the planned tests with expected values, wait for "go"), build, gate,
+  commit, checkpoint B (report with a "see it yourself" command), stop.
+  `/build batch` is the long loop, on request, and refuses unless there are
+  no open questions, expected values exist and the pattern was approved once.
+  Ambiguity is no longer resolved by "the simplest reading"; it is a question.
+- **New `/qa`**: the agent as playtester. Fuzzing with a random bot, fault
+  injection, the balance cases, traces, a report in `docs/playtests/`. Finds
+  and shows; fixes nothing unasked.
+- `/balance` proposes options with before/after evidence and waits for the
+  human's pick before touching `data/`.
+- `/define` points to `/spec` when design documents exist. `/harness`,
+  `/commission` (13 checks), `/wrap-up`, `/change-request`, `/playtest` follow.
+
+Agents:
+- **`AGENTS.md`** is the project instruction file (pi and others read it);
+  `CLAUDE.md` is a one-line import of it for Claude Code.
+- **pi**: `package.json` makes the kit a pi package (`pi install <kit>`, done
+  by `scripts/install.sh` when pi is present): the skills plus a guard
+  extension that asks before `design/` or `harness/` are edited and blocks
+  `git commit --no-verify` and forced pushes. Rules tested with `npm test`.
+  Not yet run inside pi itself: see the check list in docs/10-pi.md.
+- `claude-settings.json` template: `ask` rules for `design/` and `harness/`.
+
+Docs: new [docs/09-loops.md](docs/09-loops.md) (short vs long loops, who
+decides what) and [docs/10-pi.md](docs/10-pi.md) (cost with Claude Pro,
+install, mapping, guard); GUIDE, README, 01, 04, 05, 08 reworked to match.
+
+Example: random bot + SYS-004 (17 tests), hook `bot` param and `events()`,
+`tests/cases/balance.json`; `*.uid` ignored in the example so running it
+leaves the kit clean (in your own games, commit the `.uid` files).
+
 ## Harness 1.1.0 - 2026-11-04
 
 **Update existing games:** `~/Gamedev_WF/scripts/update-harness.sh <game folder>`,

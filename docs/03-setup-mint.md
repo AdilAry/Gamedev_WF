@@ -92,6 +92,11 @@ echo "alias superclaude='claude --dangerously-skip-permissions'" >> ~/.bashrc &&
 
 Only ever add this alias in the `agent` account on this box.
 
+### pi (optional, same account)
+Install pi with the command from [10-pi.md](10-pi.md) and sign in with
+`/login`. pi needs no "skip permissions" alias: it never asks. Read the cost
+section of that page before signing in with your Claude subscription.
+
 ## 5. Git + GitHub for the agent
 Still as `agent`:
 
@@ -138,9 +143,13 @@ tmux new -A -s game
 When you clone a game repo onto this box for the first time, run
 `./harness/gw.sh hooks` in it once (git does not clone hooks).
 
-Inside tmux: `cd ~/games/<project> && superclaude`, give it a task (e.g.
-`/build phase 2`), then detach with `Ctrl-b d`. Close the laptop lid, go to
-work, come back, `tmux attach -t game` to read the summary.
+Inside tmux: `cd ~/games/<project> && superclaude` (or `pi`), then work in
+short slices: `/build STA-004`, read the planned tests, "go", read the
+report, "next". tmux keeps the session alive if the SSH connection drops;
+detach with `Ctrl-b d` and `tmux attach -t game` later.
+
+For a prepared batch (see [09-loops.md](09-loops.md)) you can start
+`/build batch ...`, detach, close the lid and read the summary after work.
 
 Several projects in parallel = several tmux windows (`Ctrl-b c`), one per
 project folder. Keep it to two or three: the limit is your Pro usage, not

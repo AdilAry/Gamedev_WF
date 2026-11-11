@@ -37,9 +37,11 @@ cd ~ && git clone https://github.com/AdilAry/Gamedev_WF.git
 powershell -ExecutionPolicy Bypass -File ~/Gamedev_WF/scripts/install.ps1
 ```
 
-This copies the skills to `%USERPROFILE%\.claude\skills\` (so `/define`,
+This copies the skills to `%USERPROFILE%\.claude\skills\` (so `/spec`,
 `/build` etc. work in **every** project) and sets `GAMEDEV_WF`. Restart Claude
-Desktop afterwards.
+Desktop afterwards. If pi is installed it also registers the kit with pi; but
+read [10-pi.md](10-pi.md) first: pi runs without permission prompts, so the
+Mint box is the better home for it.
 
 ## 3. Try the example project
 In Git Bash:
@@ -48,7 +50,7 @@ In Git Bash:
 cd ~/Gamedev_WF/example/colony_sim && ./harness/gw.sh check
 ```
 
-You should see `RESULT OK: 16 passed`, `SMOKE OK`, `CHECK OK`. Then open
+You should see `RESULT OK: 17 passed`, `SMOKE OK`, `CHECK OK`. Then open
 the folder in the Godot editor (Import -> `project.godot`) and press F5 to
 play it. Try `./harness/gw.sh sim --seeds=1-10 --ticks=500` for the balance
 table, and `./harness/gw.sh shot` for screenshots in `reports/shots/`.
@@ -74,7 +76,7 @@ Use normal chats / **Projects** for thinking, not coding:
   project knowledge, and use it for brainstorming mechanics, naming, lore,
   and reviewing your GDD before `/build`.
 - Skills can also be added to Claude Desktop/claude.ai (Settings ->
-  Capabilities/Skills, upload a skill folder as a zip). `/pitch`, `/define`
+  Capabilities/Skills, upload a skill folder as a zip). `/pitch`, `/spec`, `/define`
   and `/style-guide` are useful there too. Check the current UI, it moves.
 
 ## 6. SSH into the Mint box (after doc 03)

@@ -21,11 +21,26 @@ jobs:
 
       - name: Harness copy in example is identical to the kit
         working-directory: .
-        run: diff -r harness/godot/harness example/colony_sim/harness
+        run: diff -r -x '*.uid' harness/godot/harness example/colony_sim/harness
 
       - name: Shell scripts pass shellcheck
         working-directory: .
         run: shellcheck -S warning harness/godot/harness/gw.sh scripts/install.sh scripts/update-harness.sh
+
+      - name: JSON files are valid
+        working-directory: .
+        run: |
+          for f in package.json harness/templates/cases.json harness/templates/claude-settings.json example/colony_sim/tests/cases/balance.json example/colony_sim/data/rules.json; do
+            python3 -m json.tool "$f" > /dev/null || { echo "invalid JSON: $f"; exit 1; }
+          done
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: pi guard rules (node --test)
+        working-directory: .
+        run: npm test
 
       - name: Download Godot
         run: |
@@ -121,6 +136,44 @@ jobs:
           a=$(grep '^DIGEST' sim1.out); b=$(grep '^DIGEST' sim2.out)
           [[ -n "$a" && "$a" == "$b" ]] || { echo "digests differ or missing: '$a' vs '$b'"; exit 1; }
           echo "deterministic: $a"
+
+      - name: Balance cases (table, targets, strict mode)
+        env:
+          GODOT: /home/runner/godot/godot
+        run: |
+          set -o pipefail
+          ./harness/gw.sh cases | tee cases.out
+          grep -q '^CASES 5 cases' cases.out || { echo "no CASES summary"; exit 1; }
+          grep -q 'greedy-500 .*OFF high' cases.out || { echo "the open BAL-003 case should be OFF"; exit 1; }
+          ls reports/cases/*.md > /dev/null || { echo "no Markdown report"; exit 1; }
+          # a showcase by default, a gate with --strict
+          if ./harness/gw.sh cases --strict > /dev/null; then echo "--strict passed with an off target"; exit 1; fi
+          ./harness/gw.sh cases --strict --only=idle > /dev/null || { echo "--strict failed on a case that is on target"; exit 1; }
+          # a what-if override reaches every case
+          ./harness/gw.sh cases --param.growth_ticks=20 --only=greedy-300 | grep -q 'greedy-300 .*population .* 20 ' || { echo "override did not change the result"; exit 1; }
+          rm cases.out
+
+      - name: Trace (one run as a timeline)
+        env:
+          GODOT: /home/runner/godot/godot
+        run: |
+          ./harness/gw.sh trace --seed=3 --ticks=120 > trace.out || { cat trace.out; exit 1; }
+          grep -q '^TRACE seed=3, 120 of 120 ticks' trace.out || { cat trace.out; echo "no TRACE header"; exit 1; }
+          grep -q 'build farm' trace.out || { cat trace.out; echo "no events in the trace"; exit 1; }
+          grep -q '^END ran all 120 ticks' trace.out || { cat trace.out; echo "no END line"; exit 1; }
+          rm trace.out
+
+      - name: A new class_name works without a manual import
+        env:
+          GODOT: /home/runner/godot/godot
+        run: |
+          printf 'class_name ZzCanaryClass\nextends RefCounted\n\nstatic func answer() -> int:\n\treturn 42\n' > sim/zz_canary_class.gd
+          printf 'extends "res://harness/gw_test.gd"\nfunc test_canary_newclass() -> void:\n\tassert_eq(ZzCanaryClass.answer(), 42)\n' > tests/unit/test_zz_newclass.gd
+          ./harness/gw.sh test unit newclass > newclass.out || { cat newclass.out; echo "new class was not picked up"; exit 1; }
+          grep -q 'RESULT OK: 1 passed' newclass.out || { cat newclass.out; exit 1; }
+          rm sim/zz_canary_class.gd tests/unit/test_zz_newclass.gd newclass.out
+          rm -f sim/zz_canary_class.gd.uid tests/unit/test_zz_newclass.gd.uid
+          echo "new class_name picked up automatically"
 
       - name: Screenshot (xvfb)
         env:

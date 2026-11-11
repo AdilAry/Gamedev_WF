@@ -72,6 +72,15 @@ Cheap on purpose: do NOT read every file in full.
    would build. Then stop: the human reads the spec and answers the questions
    in their editor, which costs no usage.
 
+## "Questions answered" (the human filled in docs/QUESTIONS.md)
+For each row with an answer: apply it to the spec (fill the value, rewrite or
+unblock the requirement rows, add the worked example if the answer contains
+one), move the row to "Answered" with today's date and the IDs it changed,
+and set unblocked requirements back to `todo`. An answer that changes
+behaviour which is already built becomes a `/change-request`, not a silent
+edit. If an answer is itself unclear, ask about that one row, in chat. Report
+which requirements are now buildable.
+
 ## Rules
 - Never write to `design/`. If a design file has an obvious typo that changes
   meaning, that is a question too.
