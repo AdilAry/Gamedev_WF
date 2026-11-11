@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-# Install the Gamedev-WF skills for Claude Code (Linux / macOS / Git Bash).
-# - copies .claude/skills/* to ~/.claude/skills/ (available in every project)
+# Install the Gamedev-WF skills (Linux / macOS / Git Bash).
+# - Claude Code: copies .claude/skills/* to ~/.claude/skills/ (available in every project)
+# - pi: registers this folder as a pi package (skills + the guard extension).
+#   pi loads it from here without copying, so `git pull` is the update.
 # - sets GAMEDEV_WF in ~/.bashrc so the skills can find this kit
-# Re-run after `git pull` to update the skills.
+# Re-run after `git pull` to update the Claude Code copy.
 set -euo pipefail
 KIT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEST="$HOME/.claude/skills"
@@ -18,4 +20,14 @@ if ! grep -q "GAMEDEV_WF=" "$HOME/.bashrc" 2>/dev/null; then
   echo "added GAMEDEV_WF=$KIT to ~/.bashrc (open a new terminal)"
 fi
 chmod +x "$KIT/harness/godot/harness/gw.sh" "$KIT/example/colony_sim/harness/gw.sh" 2>/dev/null || true
-echo "done. In Claude Code type / to see: pitch, define, harness, commission, build, playtest, balance, change-request, style-guide, asset, wrap-up"
+if command -v pi >/dev/null 2>&1; then
+  if pi install "$KIT"; then
+    echo "registered the kit as a pi package (pi list shows it; skills are /skill:<name> in pi)"
+  else
+    echo "could not register the kit with pi - run this yourself: pi install \"$KIT\""
+  fi
+else
+  echo "pi not found - skipped. After installing pi, run: pi install \"$KIT\""
+fi
+echo "done. Skills: pitch, spec, define, harness, commission, build, qa, balance, playtest, change-request, style-guide, asset, wrap-up"
+echo "      Claude Code: type /build ...      pi: type /skill:build ..."

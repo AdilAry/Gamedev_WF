@@ -5,6 +5,13 @@ description: Interview the user one question at a time and turn a game idea into
 
 # /define - idea to testable Game Design Document
 
+**First check which situation this is.** If the user already has design
+documents (a `design/` folder, a pile of notes or drafts they point to), this
+is the wrong skill: their documents are the design, and an interview would
+make them repeat it. Put the files in `design/` and use `/spec` instead.
+`/define` is for the other case: there is only an idea, and the user wants to
+be asked the right questions.
+
 This is the "functional specification" step. Output: `docs/IDEA.md` (if
 missing) and `docs/GDD.md`, following the template in the Gamedev-WF kit
 (`$GAMEDEV_WF/harness/templates/GDD.md`; if `$GAMEDEV_WF` is unset try
@@ -47,8 +54,8 @@ wants to go straight to questions.
 14. Platforms and input (default: Windows + Linux, mouse + keyboard).
 
 ## Writing the GDD
-- Fill every section of the template. Unknowns go to "Open questions", not
-  into invented detail.
+- Fill every section of the template. Unknowns go to `docs/QUESTIONS.md`
+  (kit template `harness/templates/QUESTIONS.md`), not into invented detail.
 - Every requirement row: `ID | requirement | tier | proof`. Use prefixes per
   system (ECO, POP, MAP, AI, UI, SYS, BAL, SAV ...). Choose the **fastest tier
   that can prove it**:
@@ -61,7 +68,8 @@ wants to go straight to questions.
 - Always include the system requirements SYS-001 (determinism: same seed +
   commands = same result) and SYS-002 (invariants: no negative resources, no
   NaN, no unit outside the map...), plus at least one fault-injection case.
-- Add balance targets (BAL-*) as numbers so `/balance` can measure them.
+- Add balance targets (BAL-*) as numbers so `/balance` and `/qa` can measure
+  them; each becomes a case in `tests/cases/balance.json`.
 - Split work into phases. Phase 1 is always: simulation core + unit/sim tests,
   no graphics beyond debug labels.
 

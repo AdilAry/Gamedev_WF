@@ -40,6 +40,9 @@ repo, plug in hardware).
 8. **Sim runner**: `./harness/gw.sh sim --seeds=1-3 --ticks=100` -> summary
    table and a CSV path. Open the CSV head to confirm columns.
 9. **Determinism**: run the same sim command twice; the `DIGEST` lines must match.
+   **Cases and trace**: `./harness/gw.sh cases` prints the table and a `CASES`
+   line (N/A if `tests/cases/balance.json` does not exist yet);
+   `./harness/gw.sh trace --seed=1 --ticks=50` prints a timeline with events.
 10. **Visual**: `./harness/gw.sh shot "" 60` -> PNG paths. Open the last PNG
    and describe what you see in one sentence. (On a headless Linux box this
    needs `xvfb`; if it cannot work on this machine, mark it N/A and say which
@@ -50,10 +53,15 @@ repo, plug in hardware).
     works (if a remote exists).
 12. **CI**: if GitHub is set up, push and check the `godot-ci` workflow result
     (ask the user to look at the Actions tab if you cannot see it).
+13. **Agent setup**: `AGENTS.md` exists and `CLAUDE.md` is the one-line import
+    of it. Say which agent you are. On pi: the startup header lists
+    `AGENTS.md`, the Gamedev-WF skills and the guard extension; if the skills
+    are missing, the kit is not installed (`pi install <kit>`). On Claude
+    Code: `.claude/settings.json` exists.
 
 ## Record
 Write `docs/COMMISSIONING.md`: date, machine, Godot and harness versions, a
-table of the 12 checks with PASS / FAIL / N/A and a note, and anything the
+table of the 13 checks with PASS / FAIL / N/A and a note, and anything the
 human must do.
 Commit it ("Commissioning: <machine> <date>").
 

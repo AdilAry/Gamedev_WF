@@ -1,6 +1,6 @@
 ---
 name: harness
-description: Strap a Godot 4 project into the Gamedev-WF harness - create the folder structure (sim/data/scenes/tests), copy the headless test and simulation runners, CLAUDE.md, TESTPLAN.md, CI workflow and git setup, based on docs/GDD.md. Use once per project after /define, or to retrofit the harness into an existing Godot project.
+description: Strap a Godot 4 project into the Gamedev-WF harness - create the folder structure (sim/data/scenes/tests), copy the headless test and simulation runners, AGENTS.md (plus a CLAUDE.md that imports it), TESTPLAN.md, balance cases, CI workflow and git setup, based on docs/GDD.md and docs/spec/. Use once per project after /spec or /define, or to retrofit the harness into an existing Godot project.
 ---
 
 # /harness - couple the agent to the project
@@ -13,13 +13,15 @@ human.
 Kit root = `$GAMEDEV_WF`, else `~/Gamedev_WF`, else
 `/c/Users/<user>/Gamedev_WF` on Windows, else ask the user. You need:
 - `<kit>/harness/godot/harness/` (gw.sh, test_runner.gd, sim_runner.gd, gw_test.gd, gw_error_capture.gd)
-- `<kit>/harness/templates/` (CLAUDE.md, TESTPLAN.md, LOG.md, ASSETS.md, ...)
+- `<kit>/harness/templates/` (AGENTS.md, CLAUDE.md, TESTPLAN.md, QUESTIONS.md, cases.json, LOG.md, ...)
 - `<kit>/harness/ci/godot-ci.yml`
 - `<kit>/example/colony_sim/` - a working reference project. When unsure how
   something should look, copy its pattern.
 
 ## 1. Preconditions
-- `docs/GDD.md` exists. If not, stop and suggest `/define`.
+- `docs/GDD.md` exists (written by `/spec` from the human's `design/` files,
+  or by `/define`). If not, stop and suggest `/spec` when there are design
+  documents, `/define` when there is only an idea.
 - Godot is reachable: run `godot --version` (or `$GODOT --version`). On
   Windows it must be the `*_console.exe` build. If missing, explain how to set
   `GODOT` (see the kit's docs/02-setup-windows.md / docs/03-setup-mint.md).
@@ -27,8 +29,10 @@ Kit root = `$GAMEDEV_WF`, else `~/Gamedev_WF`, else
 ## 2. Create the structure (do not overwrite existing files without asking)
 ```
 project.godot            # Compatibility renderer, main scene set
-CLAUDE.md                # from template, filled with the game's facts
-.gitignore               # .godot/ reports/ docs/ref/ export/
+AGENTS.md                # from template, filled with the game's facts (read by pi and others)
+CLAUDE.md                # the one-line template: imports AGENTS.md for Claude Code
+.gitignore               # .godot/ reports/ docs/ref/ export/  (NOT *.uid - Godot wants those committed)
+design/                  # the human's design documents - never create or edit files in it
 .claude/settings.json    # from templates/claude-settings.json (safe allow-list)
 .github/workflows/godot-ci.yml
 harness/                 # copied verbatim from the kit - never edit per project
@@ -38,8 +42,11 @@ sim/harness_hook.gd      # setup/step/metrics/is_finished/check_invariants
 sim/ai/                  # simple bots used by sim tests and balance runs
 scenes/  ui/             # presentation only
 assets/ASSETS.md         # asset manifest
+sim/ai/                  # ... including a seeded random bot for fuzzing (see the example)
 tests/unit/ tests/sim/ tests/scene/
-docs/GDD.md docs/TESTPLAN.md docs/LOG.md docs/changes/ docs/playtests/
+tests/cases/balance.json # the human's balance cases, from templates/cases.json
+docs/GDD.md docs/spec/ docs/QUESTIONS.md docs/TESTPLAN.md docs/LOG.md
+docs/changes/ docs/playtests/
 ```
 - `project.godot` must contain `config_version=5`, `run/main_scene`,
   `config/features=PackedStringArray("<major.minor>", "GL Compatibility")` and
@@ -50,13 +57,20 @@ docs/GDD.md docs/TESTPLAN.md docs/LOG.md docs/changes/ docs/playtests/
 
 ## 3. Seed the code
 - A minimal main scene (`scenes/main.tscn` + `main.gd`) that builds its UI in code.
-- Skeleton sim classes for the systems in GDD Phase 1 (state, rules, sim with
-  `step()`), plus `sim/harness_hook.gd` implementing the runner contract.
+- Skeleton sim classes for the first system in build order (state, rules, sim
+  with `step()`), plus `sim/harness_hook.gd` implementing the runner contract:
+  `setup/step/metrics/is_finished`, `check_invariants()`, `events()` (for
+  `gw.sh trace`) and a `bot` param (`greedy`/`idle`/`random`, for cases and
+  fuzzing). Copy the example's hook and bots as the pattern.
+- `tests/cases/balance.json`: one case per BAL-* target that already has
+  numbers, using metric names the hook really reports. Leave targets the
+  design does not state out; do not invent them.
 - One real unit test per Phase-1 requirement ID, marked as failing/red is fine.
 - Fill `docs/TESTPLAN.md` from the GDD: every requirement -> tier, test path,
   status `todo`.
-- Fill `CLAUDE.md` "Current state" and copy the game-specific facts (genre,
-  time model, data files) into it. Keep it under ~120 lines.
+- Fill `AGENTS.md` "Current state" and copy the game-specific facts (genre,
+  time model, data files) into it. Keep it under ~130 lines. `CLAUDE.md`
+  stays the single line `@AGENTS.md`.
 
 ## 4. Git
 - `git init` if needed, then `./harness/gw.sh hooks` (installs the pre-commit
@@ -80,3 +94,8 @@ When the kit has a newer harness (`./harness/gw.sh version` vs
 Run `./harness/gw.sh check`. Expected: import OK, the seeded tests run (red is
 fine at this stage, but there must be no SCRIPT ERROR), smoke OK. Report the
 result and suggest `/commission`.
+
+If the user runs pi: the kit's guard extension (asks before `design/` or
+`harness/` are edited, blocks `--no-verify` and force pushes) loads once the
+kit is installed as a pi package (`pi install <kit>`, done by
+`scripts/install.sh`). Claude Code gets the same from `.claude/settings.json`.

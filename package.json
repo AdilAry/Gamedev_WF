@@ -1,0 +1,17 @@
+{
+  "name": "gamedev-wf",
+  "version": "1.2.0",
+  "private": true,
+  "description": "Gamedev-WF: a Godot harness, skills and a pi guard extension for design-first, human-in-the-loop game development",
+  "type": "module",
+  "pi": {
+    "skills": ["./.claude/skills"],
+    "extensions": ["./pi/extensions/gamedev-wf-guard/index.ts"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
+  },
+  "scripts": {
+    "test": "node --test pi/extensions/gamedev-wf-guard/rules.test.ts"
+  }
+}

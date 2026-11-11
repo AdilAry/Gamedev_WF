@@ -5,6 +5,9 @@ description: Turn the user's raw playtest notes or voice transcript into a struc
 
 # /playtest - the field tier
 
+(This skill sorts the notes of a **human** who played. For the agent playing
+the game itself with bots and reporting bugs and balance, use `/qa`.)
+
 Only a human can judge fun, clarity and feel. This skill makes their notes
 actionable without losing anything.
 
@@ -19,7 +22,8 @@ actionable without losing anything.
      repro steps. If it can be reproduced in a test, write that test now (it
      should fail) and reference it. Do not fix yet unless the user asks.
    - **Balance** - numbers feel wrong ("wood is useless after minute 5").
-     Turn it into a hypothesis plus a measurable experiment for `/balance`.
+     Turn it into a hypothesis plus a measurable experiment for `/balance`,
+     and propose a case for `tests/cases/balance.json` that would have shown it.
    - **Feel / clarity / fun** - needs a design change. Draft a change request
      line; create `docs/changes/CR-<NNN>.md` only for the ones the user wants.
    - **Keep** - what worked. These protect good things from later changes.

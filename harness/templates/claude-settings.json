@@ -30,6 +30,12 @@
       "Bash(rm -rf ~:*)",
       "Read(./.env)",
       "Read(~/.ssh/**)"
+    ],
+    "ask": [
+      "Edit(/design/**)",
+      "Write(/design/**)",
+      "Edit(/harness/**)",
+      "Write(/harness/**)"
     ]
   }
 }
