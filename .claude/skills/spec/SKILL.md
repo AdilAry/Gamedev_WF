@@ -24,7 +24,9 @@ Work in two steps. Do only the step that was asked for, then stop.
 ## Step 1 - the system map (`/spec` with no system named)
 Cheap on purpose: do NOT read every file in full.
 1. List `design/` with sizes and dates (`ls -R`, `wc -c`). Read headings and
-   first lines only (`grep -n '^#' ...`, `head -5`). Open a whole file only
+   first lines only (`grep -n '^#' ...`, `head -5`; notes without headings are
+   normal, the file name and opening lines usually say enough). Images are
+   listed, not opened, at this step. Open a whole file only
    when its name and headings do not tell you what it covers.
 2. Write (or update) the systems table in `docs/GDD.md`:
    `system | prefix (3 letters) | design files | depends on | status`.
@@ -42,7 +44,8 @@ Cheap on purpose: do NOT read every file in full.
 2. Write `docs/spec/<system>.md` from the template:
    - **Rules as requirement rows**: `ID | requirement | source | tier | proof`.
      One checkable statement per row. `source` is `file#heading` so the human
-     can jump back. Keep their terms; do not rename things. IDs are never
+     can jump back; if the file has no headings (many notes do not), give the
+     file and the first words of the paragraph. Keep their terms; do not rename things. IDs are never
      reused. Choose the fastest tier that can prove the row (unit / sim /
      scene / visual / playtest).
    - **Worked examples**: every calculation the documents walk through
