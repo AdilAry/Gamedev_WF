@@ -1,5 +1,14 @@
 # Development log
 
+## 2026-11-11 - Harness 1.2.0: cases, trace, random bot
+- **Done:** SYS-004 (random play keeps invariants). `sim/ai/random_bot.gd`, hook param `bot` (greedy / idle / random), `events()` for traces, `tests/cases/balance.json`.
+- **State of tests:** `gw.sh check` -> 17 passed (unit 9, sim 5, scene 3), smoke OK, Godot 4.7.2.
+- **Findings from `gw.sh cases`** (nothing changed; these are for the human to decide):
+  - `greedy-500 wood 9772, target <= 500: OFF high` - the known BAL-003.
+  - `hungry` (what-if, food_per_person = 2): the greedy bot's colony collapses to 4-5 people. `gw.sh trace --seed=3 --ticks=300 --param.food_per_person=2` shows births and starvation alternating from the first window on. Either the start cannot survive that rule, or the bot is too slow to build farms.
+  - `idle`: the colony does not die, it settles at 4-5 people (`gw.sh trace --seed=3 --ticks=300 --param.bot=idle`). BAL-002 says doing nothing "shrinks" the colony, which holds, but if idling should lose the game the rule needs a change request.
+- **Next step:** unchanged - `/balance` for BAL-003, then CR-001 (winter).
+
 ## 2026-11-04 - Harness 1.1.0
 - **Done:** ECO-006 (broken rules file is reported; shows `expect_error()`). Harness updated to 1.1.0.
 - **State of tests:** `gw.sh check` -> 16 passed (unit 9, sim 4, scene 3), smoke OK, on Godot 4.7.2 in GitHub Actions.

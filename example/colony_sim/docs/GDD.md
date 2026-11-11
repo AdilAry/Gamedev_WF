@@ -53,8 +53,11 @@ Numbers in `data/rules.json`.
 | SYS-001 | Same seed + same commands = same state checksum | unit | test_economy.gd::test_same_seed_same_result |
 | SYS-002 | Invariants: no negative resources/population; population never above housing once grown | sim | test_long_runs.gd::test_invariants_hold_for_many_seeds |
 | SYS-003 | Extreme rule values (fault injection) keep invariants | sim | test_long_runs.gd::test_extreme_rules_do_not_break_invariants |
+| SYS-004 | Random play (a bot pressing random build buttons, including one that does not exist) keeps invariants on 20 seeds | sim | test_long_runs.gd::test_random_play_keeps_invariants |
 
 ## 7. Balance targets
+The same targets are cases in `tests/cases/balance.json`; `./harness/gw.sh cases`
+shows them side by side (BAL-003 is shown as OFF until wood has a use).
 | ID | Target | How measured |
 |---|---|---|
 | BAL-001 | GreedyBot reaches >= 20 population by tick 300 on seeds 1-5 | test_long_runs.gd::test_bot_colony_grows |
@@ -87,3 +90,4 @@ See CLAUDE.md (sim/ pure, data/ numbers, scenes/ presentation).
 |---|---|---|
 | 2026-11-04 | Initial version | - |
 | 2026-11-04 | ECO-006 added (shows `expect_error()` in the harness) | - |
+| 2026-11-11 | SYS-004 added (fuzzing with a random bot); balance cases file | - |

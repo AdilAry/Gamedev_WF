@@ -13,6 +13,7 @@
 | SYS-001 | unit | tests/unit/test_economy.gd::test_same_seed_same_result | green |
 | SYS-002 | sim | tests/sim/test_long_runs.gd::test_invariants_hold_for_many_seeds | green |
 | SYS-003 | sim | tests/sim/test_long_runs.gd::test_extreme_rules_do_not_break_invariants | green |
+| SYS-004 | sim | tests/sim/test_long_runs.gd::test_random_play_keeps_invariants | green |
 | BAL-001 | sim | tests/sim/test_long_runs.gd::test_bot_colony_grows | green |
 | BAL-002 | sim | tests/sim/test_long_runs.gd::test_idle_colony_starves | green |
 | BAL-003 | sim | - | todo |
@@ -29,3 +30,13 @@
 | farms produce 0 | colony starves, nothing negative | SYS-003 | green |
 | free houses + harvest every tick | invariants hold | SYS-003 | green |
 | rules file is not valid JSON | error reported, no rules returned | ECO-006 | green |
+| random build presses, unknown building id | build refused, invariants hold | SYS-004 | green |
+
+## Balance cases (`./harness/gw.sh cases`, file `tests/cases/balance.json`)
+| Case | Target | Now |
+|---|---|---|
+| greedy-300 | BAL-001 population >= 20 at tick 300 | ok (35) |
+| greedy-500 | BAL-003 wood <= 500 at tick 500 | OFF high (9772) - open |
+| idle | BAL-002 population <= 5 at tick 200 | ok (4-5) |
+| monkey | no target (fuzzing) | population 10-56 |
+| hungry | no target (what-if: food_per_person 2) | population 4-5 |
