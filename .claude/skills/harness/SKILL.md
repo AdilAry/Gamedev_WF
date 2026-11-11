@@ -39,10 +39,9 @@ harness/                 # copied verbatim from the kit - never edit per project
 data/                    # JSON with every tunable number
 sim/                     # pure rules (RefCounted, class_name, deterministic)
 sim/harness_hook.gd      # setup/step/metrics/is_finished/check_invariants
-sim/ai/                  # simple bots used by sim tests and balance runs
+sim/ai/                  # simple bots for sim tests and balance runs, plus a seeded random bot for fuzzing
 scenes/  ui/             # presentation only
 assets/ASSETS.md         # asset manifest
-sim/ai/                  # ... including a seeded random bot for fuzzing (see the example)
 tests/unit/ tests/sim/ tests/scene/
 tests/cases/balance.json # the human's balance cases, from templates/cases.json
 docs/GDD.md docs/spec/ docs/QUESTIONS.md docs/TESTPLAN.md docs/LOG.md
