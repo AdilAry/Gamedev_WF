@@ -58,3 +58,17 @@ func test_extreme_rules_do_not_break_invariants() -> void:
 			if not broken.is_empty():
 				fail("%s tick %d: %s" % [params, t, broken])
 				break
+
+
+func test_random_play_keeps_invariants() -> void:
+	# SYS-004 (fuzzing): a bot that presses random build buttons, including one
+	# that does not exist, must never get the colony into an impossible state
+	for seed_value in range(1, 21):
+		var hook = hook_script.new()
+		hook.setup(seed_value, {"bot": "random"})
+		for t in TICKS:
+			hook.step()
+			var broken: Array = hook.check_invariants()
+			if not broken.is_empty():
+				fail("seed %d tick %d: %s" % [seed_value, t, broken])
+				break

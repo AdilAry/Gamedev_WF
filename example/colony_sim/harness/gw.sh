@@ -8,12 +8,15 @@
 #   ./harness/gw.sh test [tier] [f]   run tests: tier = unit|sim|scene|all, f = name filter
 #   ./harness/gw.sh smoke [frames]    boot the main scene headless for N frames, fail on script errors
 #   ./harness/gw.sh sim [args...]     headless balance runs, e.g. --seeds=1-20 --ticks=800
+#   ./harness/gw.sh cases [file] [args]  named balance cases side by side vs their targets
+#                                     (default tests/cases/balance.json; --only=name --strict --param.x=y)
+#   ./harness/gw.sh trace [args...]   one run as a readable timeline, e.g. --seed=7 --ticks=200
 #   ./harness/gw.sh shot [scene] [frames]  render real frames to reports/shots/ (needs a display or xvfb)
 #   ./harness/gw.sh check             the gate: import + all tests + smoke  (run before every commit)
 #   ./harness/gw.sh doc               dump the Godot API reference of YOUR Godot version to docs/ref/
 #   ./harness/gw.sh export <preset> <out>  export a build (needs export templates + export_presets.cfg)
 #   ./harness/gw.sh hooks             install a git pre-commit hook that runs `precommit`
-#   ./harness/gw.sh precommit         the gate, skipped when only docs (*.md, docs/, ideas/) are staged
+#   ./harness/gw.sh precommit         the gate, skipped when only docs (*.md, docs/, design/, ideas/) are staged
 #   ./harness/gw.sh version           print the harness and Godot versions
 #
 # Godot binary: $GODOT if set, else `godot`, else `godot4` on PATH.
@@ -24,7 +27,7 @@
 
 set -uo pipefail
 
-HARNESS_VERSION="1.1.0"
+HARNESS_VERSION="1.2.0"
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_DIR" || exit 2
@@ -109,8 +112,21 @@ cmd_import() {
   return $code
 }
 
+# Godot only learns about a new `class_name` when the project is imported.
+# Without this, the first run after adding (or renaming) a class fails with
+# "Could not find type". Re-import only when the list of classes changed
+# (a 5 ms check), so the edit -> test loop stays fast.
+ensure_classes() {
+  local stamp="$PROJECT_DIR/.godot/gw_classes.stamp" now
+  now=$(grep -rs '^class_name ' --include='*.gd' --exclude-dir=.godot . | sort | cksum)
+  if [[ -f "$stamp" && "$(cat "$stamp")" == "$now" ]]; then return 0; fi
+  cmd_import || return $?
+  mkdir -p "$PROJECT_DIR/.godot" && echo "$now" >"$stamp"
+}
+
 cmd_test() {
   local tier="${1:-all}" filter="${2:-}"
+  ensure_classes || return $?
   local extra=()
   [[ -n "$filter" ]] && extra+=("--filter=$filter")
   [[ -n "${GW_VERBOSE:-}" ]] && extra+=("--verbose")
@@ -129,6 +145,7 @@ cmd_test() {
 
 cmd_smoke() {
   local frames="${1:-300}"
+  ensure_classes || return $?
   run_godot "$LOGS/smoke.log" --headless --path . --quit-after "$frames"
   local code=$?
   local errs
@@ -142,10 +159,38 @@ cmd_smoke() {
 }
 
 cmd_sim() {
+  ensure_classes || return $?
   run_godot "$LOGS/sim.log" --headless --path . -s res://harness/sim_runner.gd -- "$@"
   local code=$?
   if ! grep -q '^SIM ' "$LOGS/sim.log"; then
     echo "HARNESS: the sim run ended without a summary (crash or hang) -> FAIL (log: reports/logs/sim.log)"
+    [[ $code -eq 0 ]] && code=1
+  fi
+  return $code
+}
+
+# Named scenarios from a cases file, one table: case | metric | min mean max | target | verdict.
+# First argument may be the file; everything else goes to the sim runner.
+cmd_cases() {
+  local file=""
+  if [[ $# -gt 0 && "$1" != --* ]]; then file="$1"; shift; fi
+  ensure_classes || return $?
+  run_godot "$LOGS/cases.log" --headless --path . -s res://harness/sim_runner.gd -- "--cases=$file" "$@"
+  local code=$?
+  if [[ $code -ne 2 ]] && ! grep -q '^CASES ' "$LOGS/cases.log"; then
+    echo "HARNESS: the cases run ended without a summary (crash or hang) -> FAIL (log: reports/logs/cases.log)"
+    [[ $code -eq 0 ]] && code=1
+  fi
+  return $code
+}
+
+# One seed as a timeline: what happened in each window of ticks, and the state after it.
+cmd_trace() {
+  ensure_classes || return $?
+  run_godot "$LOGS/trace.log" --headless --path . -s res://harness/sim_runner.gd -- --trace "$@"
+  local code=$?
+  if ! grep -q '^TRACE ' "$LOGS/trace.log"; then
+    echo "HARNESS: the trace run ended without output (crash or hang) -> FAIL (log: reports/logs/trace.log)"
     [[ $code -eq 0 ]] && code=1
   fi
   return $code
@@ -187,7 +232,7 @@ cmd_shot() {
 }
 
 cmd_check() {
-  cmd_import || return $?
+  rm -f "$PROJECT_DIR/.godot/gw_classes.stamp"   # the gate always imports from scratch
   cmd_test all || return $?
   cmd_smoke 300 || return $?
   echo "CHECK OK"
@@ -199,7 +244,7 @@ cmd_check() {
 cmd_precommit() {
   local staged
   staged=$(git diff --cached --name-only --relative 2>/dev/null)
-  if [[ -z "$staged" ]] || ! grep -q -v -E '^(docs/|ideas/)|\.md$' <<<"$staged"; then
+  if [[ -z "$staged" ]] || ! grep -q -v -E '^(docs/|ideas/|design/)|\.md$' <<<"$staged"; then
     echo "PRECOMMIT: only docs staged here - gate skipped"
     return 0
   fi
@@ -256,6 +301,8 @@ case "${1:-help}" in
   test)    shift; cmd_test "$@" ;;
   smoke)   shift; cmd_smoke "$@" ;;
   sim)     shift; cmd_sim "$@" ;;
+  cases)   shift; cmd_cases "$@" ;;
+  trace)   shift; cmd_trace "$@" ;;
   shot)    shift; cmd_shot "$@" ;;
   check)   shift; cmd_check "$@" ;;
   doc)     shift; cmd_doc "$@" ;;
@@ -263,5 +310,5 @@ case "${1:-help}" in
   precommit) cmd_precommit ;;
   hooks)   cmd_hooks ;;
   version) echo "Gamedev-WF harness $HARNESS_VERSION"; "$GODOT_BIN" --version ;;
-  *) sed -n '2,24p' "$PROJECT_DIR/harness/gw.sh" ;;
+  *) sed -n '2,27p' "$PROJECT_DIR/harness/gw.sh" ;;
 esac

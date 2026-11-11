@@ -3,3 +3,6 @@ reports/
 docs/ref/
 *.tmp
 export/
+# Kit example only: Godot writes a .uid file next to every script. Ignored here so
+# running the example leaves the kit clean. In your own game, COMMIT the .uid files.
+*.uid
