@@ -1,6 +1,6 @@
 ---
 name: change-request
-description: Create and apply a change request for a harnessed game project - write docs/changes/CR-NNN.md, update docs/GDD.md requirement IDs and docs/TESTPLAN.md, then implement it through the /build loop. Use when the user wants to change, add or remove a feature or rule after the GDD exists, or says "CR", "change request", "I want X to work differently".
+description: Change a rule or feature after the spec exists - write docs/changes/CR-NNN.md, update the spec and test plan, then implement through build. Use when the user wants something to work differently, or says CR or change request.
 ---
 
 # /change-request - change the spec first, then the code
@@ -30,4 +30,4 @@ not edit `design/`), and the CR records which file changed.
 7. Set the CR status to `implemented` and note the commit.
 
 Small wishes (a typo, a colour, one number in `data/`) do not need a CR file -
-just make the change, run `check` and mention it in the log.
+just make the change, run `check` and mention it in the commit message.

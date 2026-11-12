@@ -6,6 +6,8 @@ $ErrorActionPreference = "Stop"
 $Kit  = Split-Path -Parent $PSScriptRoot
 $Dest = Join-Path $env:USERPROFILE ".claude\skills"
 New-Item -ItemType Directory -Force -Path $Dest | Out-Null
+$old = Join-Path $Dest "wrap-up"   # renamed to wrap in kit 1.3
+if (Test-Path $old) { Remove-Item -Recurse -Force $old }
 Get-ChildItem -Directory (Join-Path $Kit ".claude\skills") | ForEach-Object {
     $target = Join-Path $Dest $_.Name
     if (Test-Path $target) { Remove-Item -Recurse -Force $target }

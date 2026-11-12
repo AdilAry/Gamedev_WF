@@ -219,7 +219,7 @@ your observations ends up as a test, an experiment or a change request.
 `./harness/gw.sh hooks` installs a git pre-commit hook that runs
 `gw.sh check` before every commit that touches code, data or tests.
 Commits that only change documents (`docs/`, `design/`, `ideas/`, `*.md`)
-skip it, so a `/wrap-up` or your own design commit stays quick. This turns "run check before committing" from an
+skip it, so a `/wrap` or your own design commit stays quick. This turns "run check before committing" from an
 instruction the agent may forget into a rule it can't skip by accident.
 
 - Git doesn't copy hooks when you clone, so run `./harness/gw.sh hooks` once

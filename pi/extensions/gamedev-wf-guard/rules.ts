@@ -98,7 +98,7 @@ export function judgeBash(command: string): Verdict {
 			const sub = at === -1 ? "" : rest[at];
 			const flags = at === -1 ? [] : rest.slice(at + 1).filter((w) => w.startsWith("-"));
 			if (sub === "commit" && flags.some((f) => f === "--no-verify" || /^-[a-zA-Z]*n[a-zA-Z]*$/.test(f))) {
-				return { action: "block", reason: "git commit --no-verify skips the harness gate. Fix what the gate reports, or record it under Blocked in docs/LOG.md." };
+				return { action: "block", reason: "git commit --no-verify skips the harness gate. Fix what the gate reports, or record it under Broken in PROGRESS.md." };
 			}
 			if (sub === "push" && flags.some((f) => f.startsWith("--force") || /^-[a-zA-Z]*f[a-zA-Z]*$/.test(f))) {
 				return { action: "block", reason: "Forced pushes rewrite history the human may already have pulled. Ask the human to do it if it is really needed." };

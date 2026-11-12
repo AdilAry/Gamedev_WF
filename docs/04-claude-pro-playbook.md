@@ -38,7 +38,7 @@ Worth knowing before the habits, because it changes where you spend your time:
 ## Token-saving habits (they really matter on Pro)
 
 1. **One session = a few slices of one system.** Start the session, run
-   `/build <IDs>`, say "next" two or three times, `/wrap-up`, then `/clear`
+   `/build <IDs>`, say "next" two or three times, `/wrap`, then `/clear`
    (pi: `/new`). Long sessions re-read an ever-growing history on every turn.
    Staying inside one system means one spec file is read once.
 2. **Keep `AGENTS.md` short** (~100-150 lines). It is loaded every session. The
@@ -54,9 +54,12 @@ Worth knowing before the habits, because it changes where you spend your time:
    has to stop and ask, or (worse) builds a guess. "Given this, the result is
    that" in your own document is the cheapest prompt you can write, and it
    becomes a test for free.
-7. **Use `/compact`** when a session must continue but has grown long, and
-   `/resume` (or `claude --continue`) to pick up the last session instead of
-   re-explaining.
+7. **Rewind instead of correcting.** When the agent went the wrong way, go
+   back to before the attempt (Claude Code: Esc Esc; pi: `/tree`) and
+   re-prompt with what you learned. "No, try B" leaves the failed attempt in
+   the context, where it is paid for on every turn and keeps steering.
+   Watch the context (`/context`; pi's footer): around 40% full, finish the
+   step and `/wrap`. Use `/compact` only when a session really must continue.
 8. **Model choice:** use the default model for the build loop. Switch to the
    strongest model your plan offers (`/model`) for design-heavy or tricky
    architecture sessions, if it's included, and switch back after.
@@ -70,10 +73,10 @@ Worth knowing before the habits, because it changes where you spend your time:
     [09-loops.md](09-loops.md) has the conditions.
 
 ## When the limit hits mid-task
-That's why `/wrap-up` exists. If you see a usage warning, say
+That's why `/wrap` exists. If you see a usage warning, say
 "wrap up now". The log and commit let the next window continue cleanly.
 If the agent stops mid-edit, the next session runs `gw.sh check` first and
-reads the log; git shows exactly what changed (`git diff`).
+reads `PROGRESS.md`; git shows exactly what changed (`git diff`).
 
 ## Prompts that work (talk to it like an employee, as the video says)
 
@@ -92,4 +95,4 @@ reads the log; git shows exactly what changed (`git diff`).
   would not understand."
 - "Prepare a change request: winter every 60 ticks halves farm output.
   Show me the CR before implementing."
-- "Update documentation and push." (= `/wrap-up`)
+- "Update documentation and push." (= `/wrap`)

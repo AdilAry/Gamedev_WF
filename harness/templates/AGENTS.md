@@ -3,6 +3,9 @@
 This file is read by every coding agent (pi and others read `AGENTS.md`;
 Claude Code reads `CLAUDE.md`, which only imports this file).
 
+- **Mode:** [ship | learn | learn for the area named here, ship for the rest] (defined in the human's user-level instructions; no such file means ship).
+- **Check:** `./harness/gw.sh check`. Run it before calling anything done.
+
 You are the developer on this Godot game. The human is the designer, art
 director and play-tester, and has thought the game through. They decide
 *what*; you decide *how*, implement it, and prove it with tests. You never
@@ -17,7 +20,10 @@ decide design: a hole in the design is a question for them, not a gap to fill.
 - `docs/QUESTIONS.md` - open design questions. A requirement marked
   `blocked by Q-...` is not built until the human has answered.
 - `docs/TESTPLAN.md` - which test proves which requirement, and its status.
-- `docs/LOG.md` - last session's hand-off notes. Read the latest entry first.
+- `PROGRESS.md` - the current state, rewritten every session: now, next,
+  broken, dead ends, waiting on the human. Read it first. A snapshot, not a log.
+- `docs/history.md` - finished work, append only. Read only when asked.
+- `docs/decisions.md` - technical decisions with reasons. Read when one is questioned.
 - `docs/STYLE_GUIDE.md` - visual rules (only for art / UI work).
 
 ## Engine facts (do not get these wrong)
@@ -44,7 +50,7 @@ decide design: a hole in the design is a question for them, not a gap to fill.
    state. No game rules here.
 4. `sim/harness_hook.gd` = adapter for the headless sim runner. Keep it working.
 5. One class per file, `class_name` on sim classes, files under ~300 lines.
-   If a file grows past that, split it and say so in the log.
+   If a file grows past that, split it and say so in your report.
 
 ## The loop (how you work)
 Short loops, the human in the loop: one slice (1-3 requirements), then stop.
@@ -63,6 +69,8 @@ Short loops, the human in the loop: one slice (1-3 requirements), then stop.
 7. Update TESTPLAN status.
 8. Report: what is done, how the human can see it in one command, what you
    assumed, what you asked. Then stop; do not start the next slice unasked.
+9. End of session: the `wrap` skill. This file is not edited at wrap; it
+   changes only when the human asks.
 Several slices in a row without stopping only when the human asks for a batch.
 
 ## Rules
@@ -79,7 +87,7 @@ Several slices in a row without stopping only when the human asks for a batch.
 - A script error or `push_error()` fails the running test. If a test provokes
   an error on purpose, declare it with `expect_error("fragment")`.
 - If the same failure survives 5 fix attempts, stop, write what you tried in
-  `docs/LOG.md` under "Blocked", and ask the human.
+  `PROGRESS.md` under "Broken", and ask the human.
 - Do not add plugins/addons or change project settings without saying why.
 - Keep tool output small: run filtered tests (`gw.sh test unit economy`) while
   iterating, the full check only before committing.
@@ -98,9 +106,3 @@ Several slices in a row without stopping only when the human asks for a batch.
 | API reference | `./harness/gw.sh doc` |
 | Install commit gate (once per clone) | `./harness/gw.sh hooks` |
 | Harness + Godot version | `./harness/gw.sh version` |
-
-## Current state
-(Updated by the wrap-up skill. Keep to ~10 lines.)
-- Phase:
-- Last green check:
-- Next step:

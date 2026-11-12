@@ -27,7 +27,7 @@
 
 set -uo pipefail
 
-HARNESS_VERSION="1.2.0"
+HARNESS_VERSION="1.2.1"
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_DIR" || exit 2
@@ -239,7 +239,7 @@ cmd_check() {
 }
 
 # Called by the git pre-commit hook. Commits that only touch docs skip the
-# gate, so a quick /wrap-up or GDD edit stays fast.
+# gate, so a quick wrap or design edit stays fast.
 # Note: it checks the working tree, which is what the agent just tested.
 cmd_precommit() {
   local staged
@@ -254,7 +254,7 @@ cmd_precommit() {
   fi
   echo "PRECOMMIT: running the gate (gw.sh check)..."
   if ! cmd_check; then
-    echo "PRECOMMIT: gate failed -> commit blocked. Fix it, or record it under Blocked in docs/LOG.md."
+    echo "PRECOMMIT: gate failed -> commit blocked. Fix it, or record it under Broken in PROGRESS.md."
     return 1
   fi
 }

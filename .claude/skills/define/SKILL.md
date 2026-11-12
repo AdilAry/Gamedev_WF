@@ -1,6 +1,6 @@
 ---
 name: define
-description: Interview the user one question at a time and turn a game idea into a Game Design Document (docs/GDD.md) whose every requirement has an ID and says how it will be proven (unit, sim, scene, visual or playtest). Use when starting a new game project, when the user says "define", "spec", "GDD", or wants to turn an idea or pitch into a specification.
+description: Interview the user one question at a time and turn a game idea into a Game Design Document with requirement IDs and proofs. Use only when there are no design documents yet and the user says define, GDD, or wants an idea specified.
 ---
 
 # /define - idea to testable Game Design Document

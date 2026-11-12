@@ -1,6 +1,6 @@
 ---
 name: asset
-description: Produce a game asset consistent with docs/STYLE_GUIDE.md - either draw it directly as SVG/procedural placeholder, or write a prompt for an external image generator (Gemini, ChatGPT, local Stable Diffusion) - then import it into Godot with correct settings and record it in assets/ASSETS.md. Use when the user needs an icon, tile, sprite, UI element, portrait, sound or placeholder art.
+description: Produce one game asset consistent with docs/STYLE_GUIDE.md (SVG, procedural, or a prompt for an image tool), import it into Godot and record it in assets/ASSETS.md. Use when the user needs an icon, tile, sprite, UI element or sound.
 ---
 
 # /asset - consistent assets with provenance

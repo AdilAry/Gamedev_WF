@@ -47,7 +47,7 @@ Then, with the agent in that folder:
    farms produce half."* Read the CR, say "go", read the planned tests, say
    "go" again, read the report.
 4. Pull it on the Legion and play it. Run *"/playtest"* with your raw notes.
-5. *"/wrap-up"*.
+5. *"/wrap"*.
 
 You've now used the whole loop once on something small, and you know what the
 two checkpoints feel like.
@@ -72,7 +72,8 @@ You design in documents already, so start from them.
    is a normal evening.
 7. When a system is done: *"/qa <system>"*, and add the situations you care
    about to `tests/cases/balance.json`.
-8. *"/wrap-up"* at the end of every session.
+8. *"/wrap"* at the end of every session. After a finished system, in a new
+   session: *"/review"*.
 
 Only an idea, no documents? `/pitch`, then `/define` instead of steps 2-4.
 
@@ -97,7 +98,10 @@ Only an idea, no documents? `/pitch`, then `/define` instead of steps 2-4.
 | report a play session | `/playtest` + notes |
 | art direction | put refs in `docs/style_refs/`, `/style-guide` |
 | an icon/sprite | `/asset food icon, 32 px` |
-| stop for today | `/wrap-up` |
+| work on something that is not a requirement (a bug, a refactor, tooling) | `/start <task>` |
+| stop for today | `/wrap` |
+| a second look at finished work | new session, `/review` |
+| see where the project stands, without an agent | open `PROGRESS.md` |
 | check things myself | `./harness/gw.sh check` |
 | see what the agent changed | `git log --oneline -10`, `git diff HEAD~1` |
 | make sure nobody touched my design | `git log --oneline -- design/` |

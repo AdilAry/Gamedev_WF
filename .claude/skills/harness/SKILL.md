@@ -1,6 +1,6 @@
 ---
 name: harness
-description: Strap a Godot 4 project into the Gamedev-WF harness - create the folder structure (sim/data/scenes/tests), copy the headless test and simulation runners, AGENTS.md (plus a CLAUDE.md that imports it), TESTPLAN.md, balance cases, CI workflow and git setup, based on docs/GDD.md and docs/spec/. Use once per project after /spec or /define, or to retrofit the harness into an existing Godot project.
+description: Strap a Godot 4 project into the Gamedev-WF harness once - folder structure, headless test and simulation runners, AGENTS.md, PROGRESS.md, balance cases, CI and git hook. Use after spec or define, or to retrofit or update the harness.
 ---
 
 # /harness - couple the agent to the project
@@ -13,7 +13,9 @@ human.
 Kit root = `$GAMEDEV_WF`, else `~/Gamedev_WF`, else
 `/c/Users/<user>/Gamedev_WF` on Windows, else ask the user. You need:
 - `<kit>/harness/godot/harness/` (gw.sh, test_runner.gd, sim_runner.gd, gw_test.gd, gw_error_capture.gd)
-- `<kit>/harness/templates/` (AGENTS.md, CLAUDE.md, TESTPLAN.md, QUESTIONS.md, cases.json, LOG.md, ...)
+- `<kit>/harness/templates/` (AGENTS.md, CLAUDE.md, TESTPLAN.md, QUESTIONS.md, cases.json, ...)
+- `<kit>/workflow/templates/project/` (PROGRESS.md, docs/history.md, docs/decisions.md:
+  the session files of the general short-loop workflow, same in every project)
 - `<kit>/harness/ci/godot-ci.yml`
 - `<kit>/example/colony_sim/` - a working reference project. When unsure how
   something should look, copy its pattern.
@@ -31,6 +33,7 @@ Kit root = `$GAMEDEV_WF`, else `~/Gamedev_WF`, else
 project.godot            # Compatibility renderer, main scene set
 AGENTS.md                # from template, filled with the game's facts (read by pi and others)
 CLAUDE.md                # the one-line template: imports AGENTS.md for Claude Code
+PROGRESS.md              # current state only (now / next / broken / dead ends / waiting on me)
 .gitignore               # .godot/ reports/ docs/ref/ export/  (NOT *.uid - Godot wants those committed)
 design/                  # the human's design documents - never create or edit files in it
 .claude/settings.json    # from templates/claude-settings.json (safe allow-list)
@@ -44,7 +47,8 @@ scenes/  ui/             # presentation only
 assets/ASSETS.md         # asset manifest
 tests/unit/ tests/sim/ tests/scene/
 tests/cases/balance.json # the human's balance cases, from templates/cases.json
-docs/GDD.md docs/spec/ docs/QUESTIONS.md docs/TESTPLAN.md docs/LOG.md
+docs/GDD.md docs/spec/ docs/QUESTIONS.md docs/TESTPLAN.md
+docs/history.md docs/decisions.md
 docs/changes/ docs/playtests/
 ```
 - `project.godot` must contain `config_version=5`, `run/main_scene`,
@@ -67,9 +71,11 @@ docs/changes/ docs/playtests/
 - One real unit test per Phase-1 requirement ID, marked as failing/red is fine.
 - Fill `docs/TESTPLAN.md` from the GDD: every requirement -> tier, test path,
   status `todo`.
-- Fill `AGENTS.md` "Current state" and copy the game-specific facts (genre,
-  time model, data files) into it. Keep it under ~130 lines. `CLAUDE.md`
-  stays the single line `@AGENTS.md`.
+- Fill `AGENTS.md` with the game-specific facts (genre, time model, data
+  files) and ask the human for the Mode. Keep it under ~120 lines; it is not a
+  place for state. `CLAUDE.md` stays the single line `@AGENTS.md`.
+- Fill `PROGRESS.md`: "Now" = harness created, "Next" = `/commission`, then
+  the first slice in build order.
 
 ## 4. Git
 - `git init` if needed, then `./harness/gw.sh hooks` (installs the pre-commit

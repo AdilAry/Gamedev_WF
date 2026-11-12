@@ -1,6 +1,6 @@
 ---
 name: playtest
-description: Turn the user's raw playtest notes or voice transcript into a structured playtest report in docs/playtests/ - bugs become failing tests, balance observations become /balance experiments, feel/clarity issues become change requests. Use after the user has played a build and shares impressions, complaints or ideas.
+description: Sort the human's raw playtest notes into bugs (failing tests), balance observations (experiments) and feel issues (change requests) in docs/playtests/. Use after the user played a build and shares impressions.
 ---
 
 # /playtest - the field tier

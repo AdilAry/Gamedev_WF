@@ -4,6 +4,43 @@ What changed in the kit, and what to do in games that already use it.
 Harness version = `HARNESS_VERSION` in `harness/godot/harness/gw.sh`
 (`./harness/gw.sh version` in a game shows its copy).
 
+## Kit 1.3.0 / Harness 1.2.1 - 2026-11-12
+
+The owner's general short-loop workflow is now the session layer of the kit.
+
+**Update existing games** (only needed if a game was set up with 1.2.0 or
+earlier): run `scripts/install.sh` again (it removes the old `wrap-up`
+skill), `scripts/update-harness.sh <game>`, then in the game: copy
+`workflow/templates/project/PROGRESS.md` to the repo root and fill it from
+the newest `docs/LOG.md` entry and the "Current state" section of AGENTS.md;
+rename `docs/LOG.md` to `docs/history.md`; delete "Current state" from
+AGENTS.md and add the Mode and Check lines from `harness/templates/AGENTS.md`.
+
+- **`PROGRESS.md` replaces `docs/LOG.md` and the "Current state" section of
+  AGENTS.md.** A snapshot (now, next, broken, dead ends, waiting on me) under
+  ~60 lines, rewritten at every wrap. The log grew with every session and was
+  read at every start; state lived in two places. Finished work goes to
+  `docs/history.md` (append only, read when asked), technical decisions to
+  `docs/decisions.md`. AGENTS.md is no longer edited at wrap.
+- **`/wrap-up` is now `/wrap`**, and general: it reads the Check command from
+  AGENTS.md, so the same skill ends a session in any project. Only the
+  snapshot and the commit happen every time; history, decisions and status
+  columns only when something changed.
+- **New `/start`**: the two-checkpoint opener for any task (plan of at most
+  5 bullets with the checks, wait for OK). In a game, `/build` stays the
+  opener for requirement slices; `/start` covers bugs, refactors and tooling.
+- **New `/review`**: fresh-session review of finished work (weakened tests,
+  untested paths, structure drift, invented things), ranked by value per
+  hour, fixes nothing. **New `/judge`** for deadline projects. Both are
+  explicit-only, so their descriptions cost nothing in normal sessions.
+- **Mode: ship | learn** per project, honoured by `/start` and `/build`.
+- **`workflow/`**: the general workflow's guide, a user-level template, the
+  project core templates and a hackathon profile. `/harness` takes
+  PROGRESS.md, history.md and decisions.md from there.
+- All skill descriptions shortened (they are loaded in every session):
+  803 words for 13 skills before, 584 for the 14 that load now.
+- Harness 1.2.1: two messages now point to PROGRESS.md. No behaviour change.
+
 ## Kit 1.2.0 / Harness 1.2.0 - 2026-11-11
 
 **Update existing games:** `~/Gamedev_WF/scripts/update-harness.sh <game folder>`,

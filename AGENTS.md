@@ -15,6 +15,13 @@ are created in their own folders/repos with the `/harness` skill.
   gets a copy in `~/.claude/skills` from `scripts/install.*`; pi loads them
   from here through the `pi` manifest in `package.json`. Keep them
   agent-neutral: say "AGENTS.md", never rely on a tool only one agent has.
+- `workflow/`: the general short-loop workflow (guide, user-level and project
+  templates, profiles). The skills `start`, `wrap`, `review`, `judge` belong
+  to it and must stay free of game or Godot assumptions. `/harness` copies
+  `workflow/templates/project/{PROGRESS.md,docs/history.md,docs/decisions.md}`
+  into games, so there is one copy of those templates.
+- Skill descriptions are loaded in every session of every project: keep each
+  under ~45 words, and valid YAML (no `: ` inside the text).
 - `pi/extensions/gamedev-wf-guard/`: pi extension. Decisions live in
   `rules.ts` (no pi imports) and are tested with `npm test`.
 - `harness/godot/harness/`: the canonical harness. **`example/colony_sim/harness/` must

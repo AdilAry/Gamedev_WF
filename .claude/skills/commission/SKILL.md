@@ -1,6 +1,6 @@
 ---
 name: commission
-description: Verify the development setup itself before real work starts - Godot version, import, test runner catches failures and script errors, smoke run, sim runner, screenshots, CI and git push - and record the result in docs/COMMISSIONING.md. Use after /harness, after changing machines or Godot versions, or when failures look like setup problems rather than game bugs.
+description: Verify the development setup itself (Godot, test runner catching failures, sim runner, screenshots, commit gate, CI, agent setup) and record it in docs/COMMISSIONING.md. Use after harness, on a new machine or Godot version, or when failures look like setup problems.
 ---
 
 # /commission - prove the test bench before trusting it
@@ -54,7 +54,7 @@ repo, plug in hardware).
 12. **CI**: if GitHub is set up, push and check the `godot-ci` workflow result
     (ask the user to look at the Actions tab if you cannot see it).
 13. **Agent setup**: `AGENTS.md` exists and `CLAUDE.md` is the one-line import
-    of it. Say which agent you are. On pi: the startup header lists
+    of it; `PROGRESS.md` exists and is under ~60 lines. Say which agent you are. On pi: the startup header lists
     `AGENTS.md`, the Gamedev-WF skills and the guard extension; if the skills
     are missing, the kit is not installed (`pi install <kit>`). On Claude
     Code: `.claude/settings.json` exists.

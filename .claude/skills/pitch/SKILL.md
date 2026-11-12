@@ -1,6 +1,6 @@
 ---
 name: pitch
-description: Turn a rough game idea (a rambling note, voice transcript or one-liner) into a one-page pitch with the smallest playable prototype and an honest scope estimate, and file it in the ideas inbox. Use when the user has a new game idea, wants to park an idea, or wants to compare/triage several ideas.
+description: Turn a rough game idea into a one-page pitch with the smallest playable prototype and an honest scope estimate, filed in the ideas inbox. Use when the user has a new idea to park, compare or triage.
 ---
 
 # /pitch - capture and triage a game idea

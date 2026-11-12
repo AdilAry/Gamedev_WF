@@ -54,7 +54,7 @@ The embedded videos fix this with three things, and they all carry over:
 | Datasheets in the project folder | **Godot API dump** of *your* version + design references in `docs/` |
 | Pi testbench = the AI's hands and eyes | `harness/gw.sh` + Godot's `--headless`, `--write-movie` screenshots |
 | VM / container with YOLO permissions | **The Mint laptop** as the agent box |
-| /define /harness /commission /build | the same skills, plus /spec /qa /pitch /balance /playtest /style-guide /asset /change-request /wrap-up |
+| /define /harness /commission /build | the same skills, plus /spec /qa /pitch /balance /playtest /style-guide /asset /change-request, and the general session skills /start /wrap /review |
 
 Strategy and sim games fit this approach **better than platformers**: their
 core is numbers and rules, which can be tested headless, while "game feel"
@@ -111,7 +111,7 @@ command in a terminal (Mint). Same account, same usage limits. See
 ### Level 4 - Git + GitHub
 Non-negotiable once an agent edits files. Every working state is one
 `git checkout` away, and GitHub becomes the bridge between your two laptops.
-You never need to learn git syntax: say "commit and push" or run `/wrap-up`.
+You never need to learn git syntax: say "commit and push" or run `/wrap`.
 Make game repos **private** if you like; GitHub Actions minutes for private
 repos are limited but plenty for headless tests.
 
@@ -140,10 +140,11 @@ resume**:
 - `/pitch` turns any idea into a one-page pitch with a score, filed in an
   `ideas/` inbox (or your Obsidian vault).
 - Each game is its own folder + repo with its own `AGENTS.md` (the agent's
-  standing instructions) and `docs/LOG.md` (what happened last time).
-- `/wrap-up` ends every session by updating the log, committing and pushing,
+  standing instructions) and `PROGRESS.md` (the current state: now, next,
+  broken, dead ends, waiting on you; a snapshot of under 60 lines, not a log).
+- `/wrap` ends every session by rewriting that snapshot, committing and pushing,
   so the next session (on either laptop, or from your phone) starts with
-  "read the log and continue".
+  `/build` or `/start`, which read PROGRESS.md and nothing else.
 - Run the agent in `tmux` on the Mint box, so a dropped SSH connection does
   not end the session. A prepared batch (`/build batch ...`, see
   [docs/09-loops.md](docs/09-loops.md)) can run there while you are at work.
@@ -219,7 +220,7 @@ the rewrite can be checked against the old one.
         |
    YOU play it --> /playtest sorts your notes into the same three buckets
         |
-     /wrap-up  log, state, push: the next session starts in one minute, in any agent
+     /wrap  PROGRESS.md rewritten, commit, push: the next session starts in one minute, in any agent
 ```
 
 1. **/pitch** - park a new idea in 5 minutes. Pick the best one later.
@@ -242,7 +243,16 @@ the rewrite can be checked against the old one.
    then it changes only JSON numbers and shows before/after.
 8. **/playtest** - you play, ramble your notes, the agent sorts them.
 9. **/change-request** - change the design and spec first, then the code.
-10. **/wrap-up** - always, at the end of each session.
+10. **/wrap** - always, at the end of each session.
+11. **/start <task>** - the same two checkpoints for work that is not a
+    requirement slice: a bug you saw, a refactor, tooling.
+12. **/review** - in a fresh session, after a system is finished: structure,
+    weakened tests, invented things. `/qa` checks what the game does;
+    `/review` checks what the code has become.
+
+`/start`, `/wrap` and `/review` are not game-specific. They are your
+short-loop workflow, kept in [workflow/README.md](workflow/README.md) with
+templates for non-game projects.
 
 In pi the same skills are `/skill:spec`, `/skill:build` and so on.
 
@@ -302,3 +312,4 @@ prompts for image tools, with a provenance manifest). See
 8. [docs/08-first-weekend.md](docs/08-first-weekend.md) - a step-by-step plan and prompt cheat sheet
 9. [docs/09-loops.md](docs/09-loops.md) - short loops, long loops, and who decides what
 10. [docs/10-pi.md](docs/10-pi.md) - using pi: cost, install, the guard extension
+11. [workflow/README.md](workflow/README.md) - the short-loop workflow for any software project (the session files and skills this kit is built on)

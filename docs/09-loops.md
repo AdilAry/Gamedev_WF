@@ -67,7 +67,7 @@ Two more arguments for it, both about your situation:
   evening before (questions answered, examples in the spec) turns that idle
   window into progress. This is the one real advantage of the unattended run,
   and it only exists if the batch needs nothing from you.
-- **Fixed overhead.** Every session reads AGENTS.md, the log and the spec
+- **Fixed overhead.** Every session reads AGENTS.md, PROGRESS.md and the spec
   once. Five slices in one session pay that once; five sessions pay it five times.
 
 So the honest recommendation is a ladder, not a side:
@@ -101,6 +101,16 @@ into the conversation. You can also run these yourself, with no agent at all:
 ./harness/gw.sh trace --seed=7 --ticks=300
 ```
 
+## The same loop outside games
+
+`/build` is the game-shaped version of a general routine: `/start <task>`
+(plan and checks, wait for OK), work one slice, `/wrap` (snapshot, commit,
+what to check). That routine, its session files (`PROGRESS.md`,
+`docs/history.md`, `docs/decisions.md`) and the fresh-session `/review` come
+from your own short-loop workflow and work in any software project:
+[workflow/README.md](../workflow/README.md). In a game, use `/build` for
+requirement slices and `/start` for everything else.
+
 ## Who decides what
 
 | Thing | Owner | The agent may |
@@ -111,6 +121,8 @@ into the conversation. You can also run these yourself, with no agent at all:
 | `tests/cases/balance.json` (which situations matter, the targets) | you | propose cases and targets |
 | `data/*.json` (the numbers) | you | propose with evidence; write after you pick |
 | `tests/` | agent | write from approved examples; never weaken |
+| `PROGRESS.md` | agent rewrites it at wrap; you read it | keep it a snapshot under ~60 lines |
+| `AGENTS.md` | you | change it only when you ask |
 | `sim/`, `scenes/`, `ui/` (the code) | agent | everything, inside the architecture rules |
 | `harness/` | the kit | nothing; improve the kit instead |
 
@@ -119,7 +131,7 @@ into the conversation. You can also run these yourself, with no agent at all:
 - **Any time, no AI:** write design in `design/`, answer `docs/QUESTIONS.md`,
   edit `tests/cases/balance.json`, run `gw.sh cases` and play the build.
 - **An evening (30-60 min of usage):** `/spec <system>` once, or two to four
-  `/build` slices, or one `/qa` + one `/balance`. End with `/wrap-up`.
+  `/build` slices, or one `/qa` + one `/balance`. End with `/wrap`.
 - **A workday you are away:** if rung 3 applies, start `/build batch ...` on
   the agent box in tmux before you leave. If it does not apply, don't; let
   the window go and answer questions on your phone instead.

@@ -1,6 +1,6 @@
 ---
 name: build
-description: Implement one small slice of a harnessed Godot project in a short, human-checked loop - agree the tests (inputs and expected results) with the human first, then test, code, run the fastest tier, fix until green, commit with requirement IDs, report and stop. Batch mode (several slices unattended) only when the user asks for it. Use when the user says build, implement, next, continue, or names requirement IDs, a system or a phase.
+description: Implement one requirement slice of a harnessed Godot game in a short, human-checked loop - agree the tests first, then test, code, run tiers until green, commit, report and stop. Batch mode only on request. Use when the user says build, implement, next, or names requirement IDs or a system.
 ---
 
 # /build - the loop, one slice at a time
@@ -10,8 +10,8 @@ expensive mistake is building the wrong thing well. The default is therefore a
 **short loop with two checkpoints**. A longer unattended run exists (batch
 mode, at the end) but the human has to ask for it.
 
-Read first, and nothing more: `AGENTS.md` ("Current state"), the newest entry
-of `docs/LOG.md`, the rows you need from `docs/TESTPLAN.md`, the spec of the
+Start with `git pull` if there is a remote. Read first, and nothing more:
+`PROGRESS.md`, the rows you need from `docs/TESTPLAN.md`, the spec of the
 system you touch (`docs/spec/<system>.md`, or its section of `docs/GDD.md`),
 and `docs/QUESTIONS.md` for open questions on those requirements.
 
@@ -81,7 +81,9 @@ Next slice I would take: STA-006 overload damage - needs Q-014 answered first
 - "See it yourself" is one command or a 30-second thing to try in the game.
   If the human can not check a slice, it was not a good slice.
 - **Then stop.** Do not start the next slice. The human says "next", answers a
-  question, or changes direction. If the session is ending, run `/wrap-up`.
+  question, or changes direction. If the session is ending, use the `wrap` skill.
+- In learn mode (AGENTS.md "Mode"): the plan marks which part the human
+  writes; you write tests and scaffolding and leave that part as `TODO(human)`.
 
 ## Stop rules (always, both modes)
 - Never weaken, skip, delete or rewrite a test to make it pass, and never
@@ -90,8 +92,9 @@ Next slice I would take: STA-006 overload damage - needs Q-014 answered first
 - A design decision appears mid-slice (a case the spec does not cover): finish
   what is unambiguous, file the question in `docs/QUESTIONS.md`, leave the
   affected requirement `red`, and report. Do not pick "the simplest reading".
-- Same failure after 5 honest fix attempts -> stop. Write a "Blocked" entry in
-  `docs/LOG.md` (what fails, what you tried, best hypothesis) and ask.
+- Same failure after 5 honest fix attempts -> stop. Record it under "Broken"
+  in `PROGRESS.md` (what fails, how to reproduce) and the approaches that did
+  not work under "Dead ends", then ask.
 - A file passing ~300 lines or a function ~50 lines -> say so in the report
   and offer a refactor slice (tests green before and after, its own commit).
 - No addons, Godot version changes or project-wide settings without asking.
@@ -108,6 +111,6 @@ Before starting, check all three, and refuse with the reason if one fails:
 
 Then: one slice after the other, each with its own tests, gate and commit; no
 checkpoint A; the stop rules still apply, and a blocked slice is skipped and
-logged rather than guessed. Keep a running list in `docs/LOG.md` so an
-interrupted batch (usage limit) can resume. End with one report in the
+recorded rather than guessed. Keep the batch's remaining slices under "Next"
+in `PROGRESS.md` so an interrupted batch (usage limit) can resume. End with one report in the
 checkpoint-B format, a row per slice, plus everything that was skipped and why.

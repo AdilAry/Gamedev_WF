@@ -26,6 +26,7 @@ laptop and a Linux Mint agent box**.
 2. **[docs/08-first-weekend.md](docs/08-first-weekend.md)**: a step-by-step first weekend plus a cheat sheet.
 3. **[docs/09-loops.md](docs/09-loops.md)**: short loops vs long loops, and who decides what.
 4. **[docs/10-pi.md](docs/10-pi.md)**: using pi (cost with Claude Pro, install, the guard extension).
+5. **[workflow/README.md](workflow/README.md)**: the short-loop workflow for any software project, not only games.
 
 ## What's in the box
 
@@ -33,9 +34,10 @@ laptop and a Linux Mint agent box**.
 |---|---|
 | [`GUIDE.md`](GUIDE.md) | the guide |
 | [`docs/`](docs/) | machines & roles, Windows setup, Mint agent-box setup, Claude Pro playbook, testing tiers, architecture, asset pipeline, first weekend, loops, pi |
-| [`.claude/skills/`](.claude/skills/) | 13 skills in the Agent Skills format (Claude Code and pi): `/pitch` `/spec` `/define` `/harness` `/commission` `/build` `/qa` `/balance` `/playtest` `/change-request` `/style-guide` `/asset` `/wrap-up` |
+| [`.claude/skills/`](.claude/skills/) | 16 skills in the Agent Skills format (Claude Code and pi). Game: `/pitch` `/spec` `/define` `/harness` `/commission` `/build` `/qa` `/balance` `/playtest` `/change-request` `/style-guide` `/asset`. Any project: `/start` `/wrap` `/review` `/judge` |
+| [`workflow/`](workflow/) | the general short-loop workflow: guide, user-level and project templates (AGENTS.md, PROGRESS.md, plan, history, decisions), a hackathon profile |
 | [`harness/godot/harness/`](harness/godot/harness/) | the harness copied into every game: `gw.sh`, a dependency-free test runner that also catches script errors and hangs, the headless sim runner (seeds, balance cases, traces) |
-| [`harness/templates/`](harness/templates/) | AGENTS.md (+ CLAUDE.md import), SPEC per system, QUESTIONS (decision queue), GDD index, TESTPLAN, balance cases, QA report, IDEA, STYLE_GUIDE, ASSETS manifest, CR, PLAYTEST, LOG, safe permissions |
+| [`harness/templates/`](harness/templates/) | the game-specific files: AGENTS.md (+ CLAUDE.md import), SPEC per system, QUESTIONS (decision queue), GDD index, TESTPLAN, balance cases, QA report, IDEA, STYLE_GUIDE, ASSETS manifest, CR, PLAYTEST, safe permissions |
 | [`pi/extensions/`](pi/extensions/) + [`package.json`](package.json) | pi package: the skills plus a guard extension (asks before `design/` or `harness/` are edited, blocks `--no-verify` and forced pushes) |
 | [`harness/ci/godot-ci.yml`](harness/ci/godot-ci.yml) | GitHub Actions workflow for game repos |
 | [`example/colony_sim/`](example/colony_sim/) | a small working tick-based colony economy built the harness way: 17 tests over 3 tiers, sim runner hook, three bots, balance cases, GDD, test plan |

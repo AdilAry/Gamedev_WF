@@ -122,7 +122,7 @@ jobs:
           git add tests/unit/test_zz_red.gd
           if git commit -m "red canary"; then echo "hook let a red commit through"; exit 1; fi
           git rm -q --cached tests/unit/test_zz_red.gd && rm tests/unit/test_zz_red.gd
-          echo "docs only" >> docs/LOG.md && git add docs/LOG.md
+          echo "docs only" >> docs/history.md && git add docs/history.md
           git commit -q -m "docs canary" || { echo "hook blocked a docs-only commit"; exit 1; }
           echo "hook blocks red commits and lets docs-only commits through"
 

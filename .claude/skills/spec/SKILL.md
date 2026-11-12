@@ -1,6 +1,6 @@
 ---
 name: spec
-description: Turn the human's own design documents (the design/ folder - many files, any structure) into numbered, testable requirements without rewriting or extending the design - a system map first, then one system at a time into docs/spec/<system>.md with sources, worked examples and proofs, and every contradiction, gap or superseded rule put to the human in docs/QUESTIONS.md. Use when the user already has design notes or drafts, says "spec", "ingest my design", "here are my docs", names a system to specify, or changed a design file.
+description: Turn the human's own design documents (design/) into numbered, testable requirements in docs/spec/ without adding to the design; gaps and contradictions go to docs/QUESTIONS.md. Use when the user has design notes, says spec, names a system to specify, changed a design file, or answered questions.
 ---
 
 # /spec - from your design documents to a contract the agent can build

@@ -1,6 +1,6 @@
 ---
 name: qa
-description: Act as the game's playtester with headless runs - run the test tiers, the human's balance cases, fuzzing bots and fault injection, replay the interesting seeds, and write a report (docs/playtests/QA-NNN.md) with reproducible bugs, a balance showcase table and the things only a human can judge. Finds and shows; does not fix or retune unless asked. Use when the user says qa, playtest it yourself, test run, find bugs, show me the balance, or after a system is built.
+description: Act as the game's playtester with headless runs - test tiers, balance cases, fuzzing bots, fault injection, traces; write a report with reproducible bugs and a balance table. Finds and shows, fixes nothing unasked. Use when the user says qa, find bugs, show me the balance, or after a system is built.
 ---
 
 # /qa - the agent as playtester
@@ -75,4 +75,5 @@ it can be repeated), then
 At most 10 lines in chat: counts, the top three findings, the file. Then ask
 what to do with them: fix a bug (`/build`, the red test is already there), tune
 (`/balance`), change the design (`/change-request`), or play it yourself
-(`/playtest`). Do not continue on your own.
+(`/playtest`). Do not continue on your own. Structure and code quality are
+not this skill's job: that is `review`, in a fresh session.

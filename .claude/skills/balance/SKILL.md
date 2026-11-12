@@ -1,6 +1,6 @@
 ---
 name: balance
-description: Tune a strategy or simulation game with headless simulation runs - run many seeds through the sim runner, compare results to the balance targets (BAL-*) in docs/GDD.md, change only data/*.json, re-run, and report the before/after evidence. Use when the user says balance, tune, too easy/hard, economy feels off, or after a playtest raises balance issues.
+description: Tune a strategy or simulation game with evidence - run the balance cases and seeds, propose options with before/after numbers, change data/*.json only after the human picks. Use when the user says balance, tune, too easy or hard, or the economy feels off.
 ---
 
 # /balance - measure, propose, let the human pick, measure again

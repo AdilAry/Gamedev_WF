@@ -1,4 +1,5 @@
-# Development log
+# History: Colony Sim
+Finished work. Append only; read only when asked. (Newest first in this file for historical reasons; new entries go at the end.)
 
 ## 2026-11-11 - Harness 1.2.0: cases, trace, random bot
 - **Done:** SYS-004 (random play keeps invariants). `sim/ai/random_bot.gd`, hook param `bot` (greedy / idle / random), `events()` for traces, `tests/cases/balance.json`.

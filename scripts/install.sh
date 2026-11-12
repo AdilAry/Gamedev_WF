@@ -9,6 +9,7 @@ set -euo pipefail
 KIT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEST="$HOME/.claude/skills"
 mkdir -p "$DEST"
+rm -rf "${DEST:?}/wrap-up"   # renamed to wrap in kit 1.3
 for d in "$KIT"/.claude/skills/*/; do
   name="$(basename "$d")"
   rm -rf "${DEST:?}/$name"
@@ -29,5 +30,6 @@ if command -v pi >/dev/null 2>&1; then
 else
   echo "pi not found - skipped. After installing pi, run: pi install \"$KIT\""
 fi
-echo "done. Skills: pitch, spec, define, harness, commission, build, qa, balance, playtest, change-request, style-guide, asset, wrap-up"
+echo "done. Game skills: pitch, spec, define, harness, commission, build, qa, balance, playtest, change-request, style-guide, asset"
+echo "      Any project: start, wrap, review, judge (see workflow/README.md)"
 echo "      Claude Code: type /build ...      pi: type /skill:build ..."
