@@ -8,7 +8,6 @@
 |---|---|
 | Design sources | `design/...`, `design/...` |
 | Depends on | other systems |
-| Status | specified / building / done |
 | Open questions | Q-..., Q-... (see docs/QUESTIONS.md) |
 
 ## 1. Summary
@@ -19,12 +18,14 @@ One checkable statement per row. Tier = the fastest way to prove it:
 `unit` (a rule/formula), `sim` (many ticks/seeds/bots), `scene` (real nodes
 and input), `visual` (screenshot), `playtest` (only a human can judge).
 
-| ID | Requirement | Source | Tier | Proof (test) | Status |
-|---|---|---|---|---|---|
-| XXX-001 | ... | `File.md#heading` | unit | tests/unit/test_xxx.gd::test_... | todo |
-| XXX-002 | ... (blocked by Q-003) | `File.md#heading` | unit | | blocked |
+| ID | Requirement | Source | Tier | Blocked by |
+|---|---|---|---|---|
+| XXX-001 | ... | `File.md#heading` | unit | |
+| XXX-002 | ... | `File.md#heading` | unit | Q-003 |
 
-Status: `todo`, `blocked`, `red`, `green`, `dropped` (IDs are never reused).
+Which test proves a requirement, and whether it passes, is kept in one place:
+`docs/TESTPLAN.md`. A requirement that is dropped keeps its row, marked
+`dropped` in the requirement text; IDs are never reused.
 
 ## 3. Worked examples (the test vectors)
 Every calculation your documents walk through, as inputs and expected

@@ -1,9 +1,10 @@
 ---
-name: asset
 description: Produce one game asset consistent with docs/STYLE_GUIDE.md (SVG, procedural, or a prompt for an image tool), import it into Godot and record it in assets/ASSETS.md. Use when the user needs an icon, tile, sprite, UI element or sound.
+argument-hint: what it is, where it appears, pixel size
 ---
-
 # /asset - consistent assets with provenance
+
+Request: $ARGUMENTS
 
 ## 1. Clarify (one message)
 What is it, where does it appear, at what pixel size, how many variants

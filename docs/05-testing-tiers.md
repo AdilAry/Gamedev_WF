@@ -249,8 +249,8 @@ shows which harness a game has; [CHANGELOG.md](../CHANGELOG.md) says what change
 ## Writing tests the agent can't cheat
 - Tests cite requirement IDs; requirements come from your design, and the
   expected values come from the worked examples in the spec. You see the
-  planned tests before they are written (checkpoint A of `/build`).
-- `AGENTS.md` and `/build` forbid weakening tests; changes to expectations
-  go through `/change-request`.
+  planned tests before they are written (Gate 1 of `/start`).
+- The game's `AGENTS.md` forbids weakening tests; changes to expectations
+  go through `/change-request`, and `/judge` looks for both.
 - Skim the diff of `tests/` in each commit (`git log -p -- tests/`). If an
   expected number changed, there should be a CR or a balance note explaining why.

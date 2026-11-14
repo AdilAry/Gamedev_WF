@@ -118,7 +118,7 @@ only push to the repos you allow. The convenient way is your account's SSH keys.
 Optionally install the GitHub CLI `gh` so the agent can create repos and
 read CI results (`gh auth login`).
 
-## 6. The kit and its skills (as `agent`)
+## 6. The kit and its commands (as `agent`)
 
 ```bash
 git clone https://github.com/AdilAry/Gamedev_WF.git ~/Gamedev_WF && ~/Gamedev_WF/scripts/install.sh && source ~/.bashrc
@@ -129,6 +129,12 @@ cd ~/Gamedev_WF/example/colony_sim && ./harness/gw.sh check && ./harness/gw.sh s
 ```
 
 You want `CHECK OK` and three PNG paths. That's your first commissioning.
+
+The installer links `/start`, `/wrap`, `/judge` and the game commands into
+`~/.claude/commands/` and `~/.pi/agent/prompts/`, so a later
+`git -C ~/Gamedev_WF pull` updates them with nothing to re-run. It also
+creates the user-level "How I work" file for each agent if there is none:
+open it once and fill its one bracket.
 
 ## 7. Working on it from the Legion
 
@@ -143,13 +149,10 @@ tmux new -A -s game
 When you clone a game repo onto this box for the first time, run
 `./harness/gw.sh hooks` in it once (git does not clone hooks).
 
-Inside tmux: `cd ~/games/<project> && superclaude` (or `pi`), then work in
-short slices: `/build STA-004`, read the planned tests, "go", read the
-report, "next". tmux keeps the session alive if the SSH connection drops;
-detach with `Ctrl-b d` and `tmux attach -t game` later.
-
-For a prepared batch (see [09-loops.md](09-loops.md)) you can start
-`/build batch ...`, detach, close the lid and read the summary after work.
+Inside tmux: `cd ~/games/<project> && superclaude` (or `pi`), then one task
+per session: `/start STA-004`, read the plan, OK it, `/wrap` when it reports,
+do the check it names, clear. tmux keeps the session alive if the SSH
+connection drops; detach with `Ctrl-b d` and `tmux attach -t game` later.
 
 Several projects in parallel = several tmux windows (`Ctrl-b c`), one per
 project folder. Keep it to two or three: the limit is your Pro usage, not

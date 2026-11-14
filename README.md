@@ -7,11 +7,16 @@ with you in it**:
 1. **You design.** Your own documents in `design/`, as detailed as you like.
    The agent turns them into numbered, testable requirements and asks you
    about every gap instead of filling it (`/spec`).
-2. **The agent implements, one small slice at a time.** You approve the tests
-   (inputs and expected results) before code is written; it builds, proves it
-   headless, reports and stops (`/build`).
+2. **The agent implements, one small task per session.** You OK the plan
+   (the tests with inputs and expected results, and the command that proves
+   it) before code is written; it works until that command passes; finished
+   is your call (`/start`, `/wrap`).
 3. **The agent playtests.** Bots, fuzzing and your balance cases: bugs come
-   back with a seed and a failing test, balance comes back as one table (`/qa`).
+   back with a seed and a reproducing test, balance comes back as one table (`/qa`).
+
+The session routine is your own **short-loop workflow**
+([workflow/WORKFLOW.md](workflow/WORKFLOW.md)), included unchanged; the game
+kit plugs into it through each game's AGENTS.md.
 
 It follows the ideas of the "10 levels of AI-assisted embedded development"
 and "Embedded AI Harness" videos (spec-driven development, agents, a
@@ -26,7 +31,7 @@ laptop and a Linux Mint agent box**.
 2. **[docs/08-first-weekend.md](docs/08-first-weekend.md)**: a step-by-step first weekend plus a cheat sheet.
 3. **[docs/09-loops.md](docs/09-loops.md)**: short loops vs long loops, and who decides what.
 4. **[docs/10-pi.md](docs/10-pi.md)**: using pi (cost with Claude Pro, install, the guard extension).
-5. **[workflow/README.md](workflow/README.md)**: the short-loop workflow for any software project, not only games.
+5. **[workflow/WORKFLOW.md](workflow/WORKFLOW.md)**: the short-loop workflow for any software project, not only games.
 
 ## What's in the box
 
@@ -34,14 +39,14 @@ laptop and a Linux Mint agent box**.
 |---|---|
 | [`GUIDE.md`](GUIDE.md) | the guide |
 | [`docs/`](docs/) | machines & roles, Windows setup, Mint agent-box setup, Claude Pro playbook, testing tiers, architecture, asset pipeline, first weekend, loops, pi |
-| [`.claude/skills/`](.claude/skills/) | 16 skills in the Agent Skills format (Claude Code and pi). Game: `/pitch` `/spec` `/define` `/harness` `/commission` `/build` `/qa` `/balance` `/playtest` `/change-request` `/style-guide` `/asset`. Any project: `/start` `/wrap` `/review` `/judge` |
-| [`workflow/`](workflow/) | the general short-loop workflow: guide, user-level and project templates (AGENTS.md, PROGRESS.md, plan, history, decisions), a hackathon profile |
+| [`workflow/`](workflow/) | your short-loop workflow, unchanged: the guide, `/start` `/wrap` `/judge`, its installer, `new-project.sh`, the user-level and project templates. Usable for any software project |
+| [`commands/`](commands/) | the 11 game commands, in the same format: `/pitch` `/spec` `/define` `/harness` `/commission` `/qa` `/balance` `/playtest` `/change-request` `/style-guide` `/asset` |
 | [`harness/godot/harness/`](harness/godot/harness/) | the harness copied into every game: `gw.sh`, a dependency-free test runner that also catches script errors and hangs, the headless sim runner (seeds, balance cases, traces) |
 | [`harness/templates/`](harness/templates/) | the game-specific files: AGENTS.md (+ CLAUDE.md import), SPEC per system, QUESTIONS (decision queue), GDD index, TESTPLAN, balance cases, QA report, IDEA, STYLE_GUIDE, ASSETS manifest, CR, PLAYTEST, safe permissions |
-| [`pi/extensions/`](pi/extensions/) + [`package.json`](package.json) | pi package: the skills plus a guard extension (asks before `design/` or `harness/` are edited, blocks `--no-verify` and forced pushes) |
+| [`pi/extensions/`](pi/extensions/) + [`package.json`](package.json) | pi package: a guard extension (asks before `design/` or `harness/` are edited, blocks `--no-verify` and forced pushes) |
 | [`harness/ci/godot-ci.yml`](harness/ci/godot-ci.yml) | GitHub Actions workflow for game repos |
 | [`example/colony_sim/`](example/colony_sim/) | a small working tick-based colony economy built the harness way: 17 tests over 3 tiers, sim runner hook, three bots, balance cases, GDD, test plan |
-| [`scripts/`](scripts/) | `install.sh` / `install.ps1`: install the skills for Claude Code and pi; `update-harness.sh`: bring a game's `harness/` up to date |
+| [`scripts/`](scripts/) | `install.sh` / `install.ps1`: run the workflow's installer with the game commands added (Claude Code and pi); `update-harness.sh`: bring a game's `harness/` up to date |
 | [`CHANGELOG.md`](CHANGELOG.md) | what changed in the kit and harness, and what to do in existing games |
 
 ## Quick start
@@ -59,9 +64,11 @@ You need Godot 4.7.x on your PATH as `godot`, or set `GODOT` to it (on Windows
 use the `*_console.exe` and Git Bash; see [docs/02-setup-windows.md](docs/02-setup-windows.md)).
 
 Then, in a new game folder: put your design documents in `design/`, and
-`/spec` -> `/harness` -> `/commission` -> `/build` (one slice at a time) ->
-`/qa`. With only an idea: `/pitch` -> `/define` instead of `/spec`. In pi the
-skills are `/skill:spec`, `/skill:build`, ...
+`/spec` -> `/harness` -> `/commission`, then `/start` ... `/wrap` for each
+task, and `/qa` when a system is built. With only an idea: `/pitch` ->
+`/define` instead of `/spec`. The commands are the same in Claude Code and pi.
+Create games outside this folder (e.g. `~/games/<name>`): an agent started
+inside the kit also loads the kit's own AGENTS.md.
 
 ## The harness commands
 
@@ -82,7 +89,8 @@ skills are `/skill:spec`, `/skill:build`, ...
 The example project and harness run in CI on every push (Godot 4.7.2 on
 Ubuntu): shellcheck, all tiers, smoke run, sim runner (twice, digests must
 match), balance cases and trace, a new `class_name` picked up without a manual
-import, the pi guard's rules (`npm test`), xvfb screenshots, plus canary checks proving that a failed
+import, the pi guard's rules (`npm test`), the installer into an empty home
+(every command linked for both agents), xvfb screenshots, plus canary checks proving that a failed
 assertion, a runtime script error (attributed to the right test), a test
 that waits forever and an endless loop all fail the run, and that the
 pre-commit gate blocks a red commit.

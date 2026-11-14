@@ -1,13 +1,14 @@
 ---
-name: define
 description: Interview the user one question at a time and turn a game idea into a Game Design Document with requirement IDs and proofs. Use only when there are no design documents yet and the user says define, GDD, or wants an idea specified.
+argument-hint: the idea, or empty to be asked
 ---
-
 # /define - idea to testable Game Design Document
+
+Request: $ARGUMENTS
 
 **First check which situation this is.** If the user already has design
 documents (a `design/` folder, a pile of notes or drafts they point to), this
-is the wrong skill: their documents are the design, and an interview would
+is the wrong command: their documents are the design, and an interview would
 make them repeat it. Put the files in `design/` and use `/spec` instead.
 `/define` is for the other case: there is only an idea, and the user wants to
 be asked the right questions.
@@ -25,7 +26,7 @@ convention or real-world system (e.g. "supply lines like Hearts of Iron",
 offer to research it first and write a short `docs/ref/<topic>.md`: how it
 works, the formulas or rules, typical numbers, what players like and
 complain about, and sources. Keep each under ~100 lines. The interview and the
-GDD then build on facts, and `/build` can cite them. Skip this if the user
+GDD then build on facts, and later tasks can cite them. Skip this if the user
 wants to go straight to questions.
 
 ## Rules for the interview
@@ -78,4 +79,4 @@ wants to go straight to questions.
    requirements per tier, open questions.
 2. Ask them to read `docs/GDD.md` (it is the contract) and to answer the open
    questions or say "go".
-3. Suggest the next step: `/harness` (new project) or `/build` (harness exists).
+3. Suggest the next step: `/harness` (new project) or `/start <IDs>` (harness exists).

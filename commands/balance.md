@@ -1,9 +1,10 @@
 ---
-name: balance
 description: Tune a strategy or simulation game with evidence - run the balance cases and seeds, propose options with before/after numbers, change data/*.json only after the human picks. Use when the user says balance, tune, too easy or hard, or the economy feels off.
+argument-hint: what feels wrong, and the target if you have one
 ---
-
 # /balance - measure, propose, let the human pick, measure again
+
+Request: $ARGUMENTS
 
 Balance is an experiment, not a guess. The headless sim runner plays the game
 with bots across many seeds in seconds, and those runs cost CPU, not usage.

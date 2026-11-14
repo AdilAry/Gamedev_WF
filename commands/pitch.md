@@ -1,9 +1,10 @@
 ---
-name: pitch
 description: Turn a rough game idea into a one-page pitch with the smallest playable prototype and an honest scope estimate, filed in the ideas inbox. Use when the user has a new idea to park, compare or triage.
+argument-hint: the idea, however rough
 ---
-
 # /pitch - capture and triage a game idea
+
+Request: $ARGUMENTS
 
 The user has more ideas than time. Your job is to make each idea cheap to
 store, easy to compare, and honest about size. Do NOT start designing in depth

@@ -1,13 +1,14 @@
 ---
-name: qa
 description: Act as the game's playtester with headless runs - test tiers, balance cases, fuzzing bots, fault injection, traces; write a report with reproducible bugs and a balance table. Finds and shows, fixes nothing unasked. Use when the user says qa, find bugs, show me the balance, or after a system is built.
+argument-hint: a system name, or empty for the whole game
 ---
-
 # /qa - the agent as playtester
+
+Request: $ARGUMENTS
 
 Two jobs: **catch bugs** and **show balance cases**. You report what the game
 does; the human decides what it should do. Do not fix bugs or change numbers
-in this skill unless the user asked for that in the same message.
+in this command unless the user asked for that in the same message.
 
 Runs cost CPU, not usage: prefer long runs with many seeds and read only the
 summaries. Never print CSVs or logs into the conversation.
@@ -24,7 +25,7 @@ The whole game, or the system the user named. Note the commit
    `./harness/gw.sh sim --seeds=1-200 --ticks=<a long game> --param.bot=random`.
    Every `INVARIANT seed=S tick=T` line is a bug with a built-in repro. If the
    project has no random bot yet, say so and offer to add one (`sim/ai/`, seeded,
-   also tries commands that should be refused) as a separate small slice.
+   also tries commands that should be refused) as a separate task.
 3. **Fault injection**: absurd rules through overrides, one at a time: zero
    costs, zero income, 10x consumption, every random event every tick, the
    smallest and largest counts the design allows.
@@ -34,8 +35,10 @@ The whole game, or the system the user named. Note the commit
    it. List the missing ones; do not write them all unasked.
 5. For each failure, **replay it**: `./harness/gw.sh trace --seed=S --ticks=T`
    (add the same `--param`s). The timeline usually shows the cause. Then write
-   one failing test that reproduces it (tier unit if possible), cite the seed,
-   and leave it red. A bug without a test comes back.
+   one test that reproduces it (tier unit if possible, citing the seed) **into
+   the report**, as a code block with the file it belongs in. Do not add it to
+   `tests/`: a red test in the tree blocks every commit. The task that fixes
+   the bug adds it first and sees it fail. A bug without a test comes back.
 
 ## 3. Balance showcase
 1. `./harness/gw.sh cases` - the human's cases (`tests/cases/balance.json`)
@@ -63,7 +66,7 @@ The whole game, or the system the user named. Note the commit
 `docs/playtests/QA-<NNN>-<date>.md` from the kit template
 (`<kit>/harness/templates/QA_REPORT.md`): commit, what was run (commands, so
 it can be repeated), then
-- **Bugs** - what happens, repro (seed, tick, params), the red test, severity.
+- **Bugs** - what happens, repro (seed, tick, params), the reproducing test, severity.
 - **Balance showcase** - the cases table (copy it from the `MD` file the run
   printed), your reading, the traces.
 - **Test gaps** - rules without a test at their limits.
@@ -73,7 +76,7 @@ it can be repeated), then
 
 ## 5. Report and stop
 At most 10 lines in chat: counts, the top three findings, the file. Then ask
-what to do with them: fix a bug (`/build`, the red test is already there), tune
+what to do with them: fix a bug (`/start <the red test>`, in a fresh session), tune
 (`/balance`), change the design (`/change-request`), or play it yourself
 (`/playtest`). Do not continue on your own. Structure and code quality are
-not this skill's job: that is `review`, in a fresh session.
+not this command's job: that is `/judge`, in a fresh session.

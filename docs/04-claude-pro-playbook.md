@@ -31,16 +31,16 @@ Worth knowing before the habits, because it changes where you spend your time:
 | Brainstorming, pitches, lore, naming, reviewing a GDD | **Claude Desktop chat / Project** with the GDD attached | no tool overhead; you're thinking, not building |
 | `/spec` (your design -> requirements) | Claude Code / Code tab, strongest model you have, **one system per session** | the reading is the expensive part; the map step reads headings only |
 | `/define` interview (idea only) | Claude Code (writes the files directly), or a chat Project and paste the result | it's a conversation either way |
-| Building, testing, balancing | **Code tab on the Legion** (supervised, allow-list) or **the agent on the Mint box** in tmux (Claude Code or pi, no permission prompts) | closed loop; short slices either way |
+| Building, testing, balancing | **Code tab on the Legion** (supervised, allow-list) or **the agent on the Mint box** in tmux (Claude Code or pi, no permission prompts) | closed loop; one task per session either way |
 | Small supervised edits, reading code with you | **Code tab in Claude Desktop** on Windows | you watch each step |
 | Quick checks while at your job | Claude app on your phone: a chat about the design, or Claude Code on the web / Remote Control for a project on GitHub | check the current docs for what your plan includes |
 
 ## Token-saving habits (they really matter on Pro)
 
-1. **One session = a few slices of one system.** Start the session, run
-   `/build <IDs>`, say "next" two or three times, `/wrap`, then `/clear`
-   (pi: `/new`). Long sessions re-read an ever-growing history on every turn.
-   Staying inside one system means one spec file is read once.
+1. **One session = one task.** `/start <IDs>`, OK the plan, `/wrap`, check,
+   then `/clear` (pi: `/new`). Long sessions re-read an ever-growing history
+   on every turn. `/start` reads only the task's rows of the spec, so a fresh
+   session costs little.
 2. **Keep `AGENTS.md` short** (~100-150 lines). It is loaded every session. The
    template already is; resist adding essays.
 3. **Point, don't paste.** "Read docs/spec/status.md" beats pasting the
@@ -63,32 +63,30 @@ Worth knowing before the habits, because it changes where you spend your time:
 8. **Model choice:** use the default model for the build loop. Switch to the
    strongest model your plan offers (`/model`) for design-heavy or tricky
    architecture sessions, if it's included, and switch back after.
-9. **Plan before big work:** for a new phase, ask for a plan first (plan
-   mode, Shift+Tab in Claude Code), check it, then let it run. A bad plan
-   found in 2 minutes saves an hour of bad code.
-10. **Use the gaps.** While a slice builds (a few minutes), answer the next
-    question in `docs/QUESTIONS.md` or play the previous build. When a batch
-    is truly ready (no open questions, examples in the spec, a pattern you
-    already approved), let it run on the Mint box while you are away:
-    [09-loops.md](09-loops.md) has the conditions.
+9. **The plan is built in.** Every `/start` shows a plan and waits (Gate 1).
+   A bad plan found in a minute saves an hour of bad code. If the plan keeps
+   being wrong, the spec rows are too vague: fix them, not the chat.
+10. **Use the gaps.** While a task builds (a few minutes), answer the next
+    question in `docs/QUESTIONS.md`, do a check that is "awaiting my check",
+    or play the previous build.
 
 ## When the limit hits mid-task
-That's why `/wrap` exists. If you see a usage warning, say
-"wrap up now". The log and commit let the next window continue cleanly.
+That's why `/wrap` exists. If you see a usage warning, type `/wrap` with a
+note on where things stand. PROGRESS.md and the commit let the next window
+continue cleanly.
 If the agent stops mid-edit, the next session runs `gw.sh check` first and
 reads `PROGRESS.md`; git shows exactly what changed (`git diff`).
 
 ## Prompts that work (talk to it like an employee, as the video says)
 
 - "/spec" (first time: the map of my design documents, nothing else).
-- "/spec status effects" then, after reading it: "questions answered".
-- "/build STA-004 STA-005" -> read the planned tests -> "go" -> "next".
-- "/build STA-006 go" (I trust the spec's examples; skip the test preview).
-- "/build batch UNI-010..UNI-025" (the remaining units; same pattern as the
-  two I reviewed).
+- "/spec status effects" then, after answering in the file: "/spec questions answered".
+- "/start STA-004 STA-005" -> read the plan -> "OK" -> "/wrap" -> check -> clear.
+- "/start" (nothing else: it takes "Next" from PROGRESS.md).
+- "/start UNI-010 to UNI-014, same pattern as UNI-008. Run limit 50 for this task."
 - "/qa status effects" - "show me the worst seed as a trace".
-- "The farm test fails on seed 7 only. Add debug prints in the sim, find out
-  why, explain it to me before fixing."
+- "/start the farm test fails on seed 7 only: find out why and explain it
+  to me; the fix is a separate task."
 - "/balance: wood piles up after tick 200. Target: wood stock below 500 at
   tick 500 with the greedy bot. Show me options; I pick."
 - "Take the screenshot of the main scene and tell me what a new player

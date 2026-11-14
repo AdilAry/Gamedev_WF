@@ -1,9 +1,9 @@
 ---
-name: style-guide
 description: Create docs/STYLE_GUIDE.md from reference images the user picked - shapes, palette, lighting, UI readability, what the style is not, plus a prompt preamble for image generators. Use when the user starts art direction or shares references.
 ---
-
 # /style-guide - art direction the agent can follow
+
+Request: $ARGUMENTS
 
 Based on the reference-first approach: the user generates or collects a batch
 of images, keeps the ones they like, and you extract the shared visual rules

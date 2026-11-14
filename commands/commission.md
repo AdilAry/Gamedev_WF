@@ -1,9 +1,9 @@
 ---
-name: commission
 description: Verify the development setup itself (Godot, test runner catching failures, sim runner, screenshots, commit gate, CI, agent setup) and record it in docs/COMMISSIONING.md. Use after harness, on a new machine or Godot version, or when failures look like setup problems.
 ---
-
 # /commission - prove the test bench before trusting it
+
+Request: $ARGUMENTS
 
 Goal: once commissioning passes, any later failure points at the game code or
 the requirement - not at a broken toolchain. Run every step, even if earlier
@@ -53,11 +53,16 @@ repo, plug in hardware).
     works (if a remote exists).
 12. **CI**: if GitHub is set up, push and check the `godot-ci` workflow result
     (ask the user to look at the Actions tab if you cannot see it).
-13. **Agent setup**: `AGENTS.md` exists and `CLAUDE.md` is the one-line import
-    of it; `PROGRESS.md` exists and is under ~60 lines. Say which agent you are. On pi: the startup header lists
-    `AGENTS.md`, the Gamedev-WF skills and the guard extension; if the skills
-    are missing, the kit is not installed (`pi install <kit>`). On Claude
-    Code: `.claude/settings.json` exists.
+13. **Workflow setup**: `AGENTS.md` exists with Check, Done gate, Run limit
+    and Push filled in and no bracket left (`grep -n '\[' AGENTS.md` finds
+    nothing); `CLAUDE.md` is the one-line import of it; `PROGRESS.md` exists
+    and is under ~60 lines; no parent folder has an AGENTS.md or CLAUDE.md of
+    its own (it would be loaded into every session here). Say which agent you
+    are. Ask the human to type `/` and confirm that `/start`, `/wrap`,
+    `/judge` and the game commands are offered; if not, the kit is not
+    installed on this machine (`<kit>/scripts/install.sh`). On pi the startup
+    header also lists the guard extension; on Claude Code
+    `.claude/settings.json` exists.
 
 ## Record
 Write `docs/COMMISSIONING.md`: date, machine, Godot and harness versions, a
@@ -67,4 +72,4 @@ Commit it ("Commissioning: <machine> <date>").
 
 ## Finish
 Summarise in 5 lines. If everything critical (1-9, 11) passes, say the project
-is ready for `/build`.
+is ready for `/start`.

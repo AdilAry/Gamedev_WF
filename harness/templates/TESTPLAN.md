@@ -19,7 +19,8 @@ Rule: put each check in the **fastest tier that can prove it**.
 |---|---|---|---|---|
 | ECO-001 | | unit | | todo |
 
-Status values: `todo`, `red` (test written, failing), `green`, `manual` (playtest only), `dropped`.
+Status values: `todo`, `red` (test written, failing), `green`, `awaiting my check` (its test passes, the part only the human can judge is open), `manual` (playtest only), `dropped`.
+This is the only place a requirement's test and status are kept: `/start` reads a task's rows here, and a finished task is ticked here.
 
 ## Fault injection / negative tests
 List the nasty cases on purpose: empty resources, huge numbers, zero costs,

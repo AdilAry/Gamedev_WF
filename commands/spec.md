@@ -1,9 +1,10 @@
 ---
-name: spec
 description: Turn the human's own design documents (design/) into numbered, testable requirements in docs/spec/ without adding to the design; gaps and contradictions go to docs/QUESTIONS.md. Use when the user has design notes, says spec, names a system to specify, changed a design file, or answered questions.
+argument-hint: a system name | empty for the map of design/ | "questions answered"
 ---
-
 # /spec - from your design documents to a contract the agent can build
+
+Request: $ARGUMENTS
 
 The human is the designer and has already thought the game through. Your job
 here is a **translator and a proof-reader, never a co-designer**: restate what
@@ -42,12 +43,14 @@ Cheap on purpose: do NOT read every file in full.
 ## Step 2 - one system (`/spec <system>`)
 1. Read every design file mapped to that system, in full, oldest first.
 2. Write `docs/spec/<system>.md` from the template:
-   - **Rules as requirement rows**: `ID | requirement | source | tier | proof`.
+   - **Rules as requirement rows**: `ID | requirement | source | tier | blocked by`.
      One checkable statement per row. `source` is `file#heading` so the human
      can jump back; if the file has no headings (many notes do not), give the
      file and the first words of the paragraph. Keep their terms; do not rename things. IDs are never
      reused. Choose the fastest tier that can prove the row (unit / sim /
-     scene / visual / playtest).
+     scene / visual / playtest). Which test proves a row, and whether it is
+     green, is kept in `docs/TESTPLAN.md` only (add a `todo` row there for
+     every new requirement, if the file exists).
    - **Worked examples**: every calculation the documents walk through
      ("level 40, two modifiers -> 170 -> 510") becomes a row of inputs and
      expected outputs, quoted with its source. These are the future test
@@ -68,18 +71,18 @@ Cheap on purpose: do NOT read every file in full.
    - a worked example that does not match the rules
    Each question: what blocks on it (IDs), 2-3 concrete options, your
    recommendation and why, in one line each. Mark requirements that depend on
-   an open question as `blocked by Q-012` in the spec.
+   an open question in their "blocked by" column (`Q-012`).
 4. Set the system's status in the GDD table to `specified`.
 5. Report, in at most 12 lines: requirements per tier, worked examples found,
-   questions filed (the 3 that block the most first), and the first slice you
-   would build. Then stop: the human reads the spec and answers the questions
+   questions filed (the 3 that block the most first), and the first task you
+   would start (its requirement IDs). Then stop: the human reads the spec and answers the questions
    in their editor, which costs no usage.
 
 ## "Questions answered" (the human filled in docs/QUESTIONS.md)
 For each row with an answer: apply it to the spec (fill the value, rewrite or
 unblock the requirement rows, add the worked example if the answer contains
 one), move the row to "Answered" with today's date and the IDs it changed,
-and set unblocked requirements back to `todo`. An answer that changes
+and clear the "blocked by" column of the requirements it unblocks. An answer that changes
 behaviour which is already built becomes a `/change-request`, not a silent
 edit. If an answer is itself unclear, ask about that one row, in chat. Report
 which requirements are now buildable.

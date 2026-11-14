@@ -7,7 +7,7 @@
 | Runs | the commands, so this can be repeated |
 
 ## Bugs
-| # | What happens | Repro (seed, tick, params) | Red test | Severity |
+| # | What happens | Repro (seed, tick, params) | Reproducing test (below) | Severity |
 |---|---|---|---|---|
 
 ## Balance showcase

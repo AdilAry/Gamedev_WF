@@ -33,4 +33,4 @@ Numbers always show units and +/- rate. Icons always have a tooltip.
 -
 
 ## Prompt preamble
-A short paragraph the /asset skill puts at the start of every image prompt.
+A short paragraph the /asset command puts at the start of every image prompt.

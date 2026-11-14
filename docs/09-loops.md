@@ -1,85 +1,94 @@
 # 09 - Short loops, long loops, and who decides what
 
-You asked for the human in the loop and said you mostly run short loops
-because of your budget. The kit now works that way by default. This page says
-why, and makes the case for the long loop where it earns its place.
+The loop this kit runs is your own short-loop workflow
+([workflow/WORKFLOW.md](../workflow/WORKFLOW.md)), unchanged. This page shows
+what it looks like in a game, what the kit adds through the game's AGENTS.md,
+and where a longer loop still has a place.
 
-## The default: one slice, two checkpoints
+## One task, two gates
 
 ```
-you: /build STA-004
+you: /start STA-004 STA-005
         |
-  A. agent shows the tests it will write: inputs -> expected results   (1 minute of your time)
-        |  "go"
-  agent: tests red -> code -> green -> gate -> commit
+  Gate 1. the plan, at most 5 bullets:
+          tests as input -> expected result (from the spec's worked examples)
+          done when: ./harness/gw.sh test unit status  passes
+          what only you can check by hand
+        |  "OK"
+  the agent loops on its own: test red -> code -> run -> fix -> run ...
+  it stops and reports when: "done when" passes | it must leave the plan |
+  the same failure survived 3 different fixes | the Run limit (20 harness runs) |
+  something needs your hands or the spec is ambiguous
         |
-  B. agent reports: done, how to see it in one command, questions filed. STOPS.
+you: /wrap
+  Check + "done when", PROGRESS.md rewritten, TESTPLAN ticked, commit
         |
-you: "next" / answer a question / change direction
+  Gate 2. you check what it tells you to check, then clear the session.
+          A part only you can judge stays "awaiting my check" until the
+          next /start asks you about it.
 ```
 
-- **Checkpoint A is the important one.** You are not asked to read code. You
-  read five lines like "6 buffs + 1 more -> the rightmost moves to Temporary"
-  and say whether that is your game. A misunderstanding caught here costs one
-  message. Caught after three more slices were built on it, it costs an evening.
-- **Checkpoint B keeps you in the picture.** Every slice ends with something
-  you can check yourself in under a minute.
-- **Questions go to a queue, not into guesses.** When your design is silent or
-  contradicts itself, the agent writes a row in `docs/QUESTIONS.md` with
-  options and a recommendation and works on something else. You answer in
-  Obsidian. Answering costs no usage at all.
+`/start` with nothing takes "Next" item 1 from PROGRESS.md. Free text works
+for anything that is not a requirement: `/start the farm test fails on seed 7`.
+
+## What the game adds to the workflow
+
+`/start`, `/wrap` and `/judge` know nothing about games. They read the game's
+AGENTS.md, and that is where the kit plugs in:
+
+| The workflow asks AGENTS.md for | A game answers |
+|---|---|
+| Check | `./harness/gw.sh check` |
+| Done gate | the tests the plan names pass, then Check |
+| Run limit | 20 harness runs (every `gw.sh` call that starts Godot) |
+| where the plan lives | `docs/spec/<system>.md` (what) and `docs/TESTPLAN.md` (test and status) |
+| what "tick it" means | the task's rows go `green` in `docs/TESTPLAN.md` |
+| "At /wrap also" | TESTPLAN matches reality; questions are filed in `docs/QUESTIONS.md` |
+| "Judged on" (for `/judge`) | green means proven, no weakened tests, architecture rules hold, nothing invented |
+
+Three rules in the game's AGENTS.md make the plan at Gate 1 worth reading:
+- every test is listed as input -> expected result, taken from the spec's
+  worked examples, so you approve numbers from your own design, not code;
+- a value the spec does not give is a question to you, never the agent's pick;
+- a requirement blocked by an open question cannot be started.
 
 ## Why short loops are the cheap ones on a small budget
 
-It looks backwards: more stops, more messages. But count what a session pays for.
-
 | Cost | Short loop | Long loop |
 |---|---|---|
-| Re-reading context every turn | small: one slice, one spec file | grows with every step; a long session re-sends its whole history each turn |
-| A wrong assumption | found at checkpoint A, before code | built on for the rest of the run |
-| A usage limit hitting mid-run | at worst one slice is half done | a half-finished batch to untangle next time |
-| Your time | a minute per slice | none during the run, more at review |
+| Re-reading context every turn | small: one task, a few spec rows | grows with every step; a long session re-sends its whole history each turn |
+| A wrong assumption | found at Gate 1, before code | built on for the rest of the run |
+| A usage limit hitting mid-run | at worst one task is half done, and `/wrap` records where | a half-finished batch to untangle next time |
+| Your time | a minute per gate | none during the run, more at review |
 
-With a large budget, wasted work is an annoyance. With a small one it is the
-whole evening. The scarce thing is usage, and the cheapest way to spend less
-of it is to never build the wrong thing.
+With a small budget, the expensive mistake is building the wrong thing well.
 
-## The case for the long loop
+## Where a longer loop still fits
 
-A long loop is the right tool when **your judgement would add nothing per
-step**. That is true more often than "never", and less often than the videos
-suggest for a game you have designed in detail. It pays when all three hold:
+The workflow has no batch mode, on purpose: a session has a countable end
+(the Run limit) and two gates. What you can vary is **how much one task
+holds**. A bigger task is reasonable when all three are true:
 
-1. **No open questions** touch the work.
-2. **The expected results already exist** (worked examples in the spec), so
-   the agent does not have to make up what "correct" means.
-3. **It is the nth of a kind.** You reviewed the first two units; units 3 to
-   20 follow the same pattern from the same table.
+1. No open question touches it.
+2. The expected results already exist as worked examples in the spec.
+3. It is the nth of a kind: you already checked the first one or two.
 
-Typical long-loop work: content rollout from a data table, tests for rules
-that already work, a refactor that must keep every test green, fault-injection
-sweeps, moving a system to a new data format.
+Then one task can carry several requirements of the same pattern:
 
-Two more arguments for it, both about your situation:
+```text
+/start UNI-010 to UNI-014, same pattern as UNI-008. Run limit 50 for this task.
+```
 
-- **Pro usage is use-it-or-lose-it.** The allowance comes in windows. A window
-  that passes while you are at work is gone. A batch that was prepared the
-  evening before (questions answered, examples in the spec) turns that idle
-  window into progress. This is the one real advantage of the unattended run,
-  and it only exists if the batch needs nothing from you.
-- **Fixed overhead.** Every session reads AGENTS.md, PROGRESS.md and the spec
-  once. Five slices in one session pay that once; five sessions pay it five times.
+Gate 1 still shows you every test, and Gate 2 is still yours. Two honest limits:
+- The real ceiling is the context, not the run count. Past about 40% the
+  session gets worse; if `/start` proposes a split, take it.
+- There is no unattended multi-session run. Every session needs its two
+  gates, so a workday you are away is not a workday the agent builds. What
+  you can do from a phone on such a day is the part that costs no usage:
+  answer `docs/QUESTIONS.md`, so the evening's tasks are not blocked.
 
-So the honest recommendation is a ladder, not a side:
-
-| Rung | What | Loop |
-|---|---|---|
-| 1 | First slice of a system, anything touching a design decision | short, both checkpoints |
-| 2 | More slices of the same system, same session | short, but say "go" in the request (`/build STA-006 go`) to skip checkpoint A when the spec's examples leave nothing to agree on |
-| 3 | The nth of a kind, examples in the spec, no open questions | `/build batch <IDs>` - the agent checks the three conditions and refuses if one fails |
-
-`/build batch` still commits per slice, still obeys every stop rule, skips
-(and logs) a slice that turns out to need a decision, and ends with one report.
+If healthy sessions keep hitting the Run limit, raise the number in the game's
+AGENTS.md rather than repeating it in every `/start`.
 
 ## Long loops for the machine cost nothing
 
@@ -101,16 +110,6 @@ into the conversation. You can also run these yourself, with no agent at all:
 ./harness/gw.sh trace --seed=7 --ticks=300
 ```
 
-## The same loop outside games
-
-`/build` is the game-shaped version of a general routine: `/start <task>`
-(plan and checks, wait for OK), work one slice, `/wrap` (snapshot, commit,
-what to check). That routine, its session files (`PROGRESS.md`,
-`docs/history.md`, `docs/decisions.md`) and the fresh-session `/review` come
-from your own short-loop workflow and work in any software project:
-[workflow/README.md](../workflow/README.md). In a game, use `/build` for
-requirement slices and `/start` for everything else.
-
 ## Who decides what
 
 | Thing | Owner | The agent may |
@@ -120,18 +119,20 @@ requirement slices and `/start` for everything else.
 | `docs/QUESTIONS.md` | agent asks, you answer | recommend; never decide |
 | `tests/cases/balance.json` (which situations matter, the targets) | you | propose cases and targets |
 | `data/*.json` (the numbers) | you | propose with evidence; write after you pick |
-| `tests/` | agent | write from approved examples; never weaken |
-| `PROGRESS.md` | agent rewrites it at wrap; you read it | keep it a snapshot under ~60 lines |
-| `AGENTS.md` | you | change it only when you ask |
+| `tests/` | agent | write from the plan you OK'd; never weaken |
 | `sim/`, `scenes/`, `ui/` (the code) | agent | everything, inside the architecture rules |
-| `harness/` | the kit | nothing; improve the kit instead |
+| `docs/TESTPLAN.md` | agent | tick what is finished; "awaiting my check" until you confirm |
+| `PROGRESS.md` | agent rewrites it at `/wrap`; you read it | keep it a snapshot under ~60 lines |
+| `AGENTS.md` | you | change it only when you ask |
+| `harness/`, the commands | the kit | nothing; improve the kit instead |
+| "finished" | you | say "done when" passed; finished is your call |
 
 ## What a week can look like
 
 - **Any time, no AI:** write design in `design/`, answer `docs/QUESTIONS.md`,
-  edit `tests/cases/balance.json`, run `gw.sh cases` and play the build.
+  edit `tests/cases/balance.json`, run `gw.sh cases`, play the build, and do
+  the checks that are "awaiting my check".
 - **An evening (30-60 min of usage):** `/spec <system>` once, or two to four
-  `/build` slices, or one `/qa` + one `/balance`. End with `/wrap`.
-- **A workday you are away:** if rung 3 applies, start `/build batch ...` on
-  the agent box in tmux before you leave. If it does not apply, don't; let
-  the window go and answer questions on your phone instead.
+  tasks (`/start`, OK, `/wrap`, check, clear, again), or one `/qa` and one
+  `/balance`.
+- **After a system is finished:** a new session, `/judge`.

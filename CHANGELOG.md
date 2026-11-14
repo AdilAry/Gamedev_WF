@@ -4,7 +4,62 @@ What changed in the kit, and what to do in games that already use it.
 Harness version = `HARNESS_VERSION` in `harness/godot/harness/gw.sh`
 (`./harness/gw.sh version` in a game shows its copy).
 
+## Kit 1.4.0 / Harness 1.2.1 - 2026-11-14
+
+Version 4 of the owner's short-loop workflow replaces the kit's own session
+layer. The workflow is vendored unchanged in `workflow/`; the kit plugs into
+the hooks it offers instead of carrying its own copies.
+
+**On every machine:** run `scripts/install.sh` again (Windows:
+`scripts\install.ps1`). It runs the workflow's installer with the game
+commands added, and moves the skills that earlier kit versions copied to
+`~/.claude/skills` into `~/.claude/skills-replaced-by-gamedev-wf/` (a skill
+with the same name would shadow the new command).
+
+**In a game set up with 1.3.0 or earlier:** replace its AGENTS.md with a
+filled-in `harness/templates/AGENTS.md` (it now carries Check, Done gate, Run
+limit, Push, "The plan", "At /wrap also", "Judged on"); bring PROGRESS.md to
+the workflow's format (`workflow/templates/project/PROGRESS.md`); if the game
+has `docs/spec/` files, move their Proof and Status columns into
+`docs/TESTPLAN.md`.
+
+- **Skills became commands.** `commands/*.md` in the workflow's command
+  format, linked into `~/.claude/commands` and `~/.pi/agent/prompts` by the
+  workflow's own installer. Same names in both agents (`/spec`, not
+  `/skill:spec`), and `git pull` in the kit is the update on Linux.
+- **`/build` is gone; `/start <IDs>` is the build loop.** The workflow's
+  `/start` already does what `/build` did (plan, wait, loop until "done
+  when", stop rules). What is specific to games moved into the game's
+  AGENTS.md: where the plan lives, tests listed as input -> expected result
+  from the spec's worked examples, blocked requirements cannot be started.
+  `/build batch` is gone with it: the workflow has a Run limit per session
+  instead. docs/09 says where a bigger task still fits.
+- **`/start`, `/wrap`, `/judge` are the owner's**, replacing the kit's
+  1.3.0 skills of the same names. `/review` is gone: its checks (weakened
+  tests, unproven green, structure drift, invented things) are now the game's
+  "Judged on" line, which `/judge` reads.
+- **Finished means checked.** UI, visual and playtest requirements stay
+  "awaiting my check" in TESTPLAN and PROGRESS.md until the human confirms.
+- **One place for a requirement's test and status:** `docs/TESTPLAN.md`.
+  Spec rows keep ID, requirement, source, tier and "blocked by".
+- **`/qa` and `/playtest` no longer leave red tests in the tree** (they
+  blocked every commit). The reproducing test goes into the report; the fix
+  task adds it first.
+- `/change-request` updates design and spec and queues the code change as
+  `/start CR-NNN` instead of implementing in the same session.
+- `/commission` check 13 covers the workflow setup (no brackets left in
+  AGENTS.md, no instruction file in a parent folder, commands offered).
+- Mode ship | learn removed, as in the workflow: teaching is a per-task request.
+- Removed: the kit's `workflow/README.md`, its core/profile templates and the
+  "Dead ends" section (all 1.3.0). The pi package now carries only the guard
+  extension.
+- Docs: GUIDE, README, 02, 03, 04, 05, 08, 09, 10 reworked. Games must be
+  created outside the kit folder; the first-weekend guide copies the example
+  out before an agent is started in it.
+
 ## Kit 1.3.0 / Harness 1.2.1 - 2026-11-12
+
+(Superseded by 1.4.0 two days later; kept for the record.)
 
 The owner's general short-loop workflow is now the session layer of the kit.
 

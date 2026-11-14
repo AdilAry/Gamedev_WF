@@ -1,9 +1,10 @@
 ---
-name: change-request
 description: Change a rule or feature after the spec exists - write docs/changes/CR-NNN.md, update the spec and test plan, then implement through build. Use when the user wants something to work differently, or says CR or change request.
+argument-hint: the wish, in your own words
 ---
-
 # /change-request - change the spec first, then the code
+
+Request: $ARGUMENTS
 
 The spec stays the single source of truth (`docs/spec/<system>.md`, or the
 GDD in a small game). Code never drifts away from it. If the wish contradicts
@@ -24,8 +25,10 @@ not edit `design/`), and the CR records which file changed.
 5. Apply to the spec / GDD: edit requirement rows, new IDs for new behaviour, mark
    removed ones `dropped` (never reuse an ID), add a change-log row with the
    CR number. Update TESTPLAN rows to `todo`/`red`.
-6. Implement with the `/build` loop (tests first; the CR the human approved
-   in step 4 counts as checkpoint A if it lists the tests and expected values). Commit message starts with
+6. Do not implement in this session unless the change is a few lines. Put
+   the CR under "Next" in PROGRESS.md with its requirement IDs; the human
+   starts it with `/start CR-<NNN>` in a fresh session. The CR's "Proof"
+   section is that task's plan: tests with inputs and expected results. Commit message starts with
    the CR number: `CR-004: winter halves farm output (ECO-010, BAL-004)`.
 7. Set the CR status to `implemented` and note the commit.
 

@@ -2,21 +2,21 @@
 Updated: [date and time]. Current state only, under ~60 lines. Finished work is in docs/history.md.
 
 ## Now
-- **Working on:** [milestone or system, e.g. M2 core feature].
-- **State:** [what works and what doesn't, in 1-3 lines]. Last green Check: [commit].
+- **Task:** [e.g. M2 core feature | fix the export].
+- **State:** [what works and what doesn't, in 1–3 lines].
 
 ## Next
-1. [The single next slice, concrete enough to start without asking.]
-2. [The slice after that.]
+1. [The single next step, concrete enough to start without asking: the task, and the first file or command.]
+2. [The step after that.]
 
 ## Broken
 - [Issue, where it shows, how to reproduce | nothing known].
 
-## Dead ends
-- [Something that was tried and did not work, and why, so nobody tries it again | none]. Keep at most 5; drop one when its topic is finished.
-
 ## Waiting on me
-- [Questions or decisions only I can make | nothing].
+- [Questions or decisions only I can make | "awaiting my check: M2, open the export in Excel, the columns line up" | nothing].
+
+## Done
+- [M0 skeleton]: [one line]. Details in docs/history.md.
 
 ## How to run
 ```

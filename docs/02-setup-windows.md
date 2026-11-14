@@ -37,11 +37,14 @@ cd ~ && git clone https://github.com/AdilAry/Gamedev_WF.git
 powershell -ExecutionPolicy Bypass -File ~/Gamedev_WF/scripts/install.ps1
 ```
 
-This copies the skills to `%USERPROFILE%\.claude\skills\` (so `/spec`,
-`/build` etc. work in **every** project) and sets `GAMEDEV_WF`. Restart Claude
-Desktop afterwards. If pi is installed it also registers the kit with pi; but
-read [10-pi.md](10-pi.md) first: pi runs without permission prompts, so the
-Mint box is the better home for it.
+This copies the commands to `%USERPROFILE%\.claude\commands\` (so `/start`,
+`/wrap`, `/spec` etc. work in **every** project), installs your user-level
+"How I work" file if there is none, and sets `GAMEDEV_WF`. Restart Claude
+Desktop afterwards, then open `%USERPROFILE%\.claude\CLAUDE.md` once and fill
+its one bracket. On Windows the commands are copies: run the script again
+after every `git pull` of the kit. pi is not set up on this machine on
+purpose: it runs without permission prompts, so the Mint box is its home
+([10-pi.md](10-pi.md)).
 
 ## 3. Try the example project
 In Git Bash:
@@ -57,8 +60,9 @@ table, and `./harness/gw.sh shot` for screenshots in `reports/shots/`.
 
 ## 4. Claude Code in Claude Desktop
 - Open Claude Desktop, switch to the **Code** tab, choose a **local** session
-  and pick your project folder (e.g. `~/Gamedev_WF/example/colony_sim`).
-- Type `/` to see the skills. Try: *"Run the harness check and explain the
+  and pick your project folder (a game in `~/games/`, or a copy of the
+  example; not a folder inside the kit, see [08-first-weekend.md](08-first-weekend.md)).
+- Type `/` to see the commands. Try: *"Run the harness check and explain the
   architecture of this project in 10 lines."*
 - Permissions: the first time it wants to run `./harness/gw.sh`, allow it
   "always for this project". Projects created by `/harness` also get a
@@ -74,10 +78,7 @@ installer from the Claude Code docs (PowerShell one-liner), then run
 Use normal chats / **Projects** for thinking, not coding:
 - Create a Project per game, add `docs/GDD.md` and `docs/STYLE_GUIDE.md` as
   project knowledge, and use it for brainstorming mechanics, naming, lore,
-  and reviewing your GDD before `/build`.
-- Skills can also be added to Claude Desktop/claude.ai (Settings ->
-  Capabilities/Skills, upload a skill folder as a zip). `/pitch`, `/spec`, `/define`
-  and `/style-guide` are useful there too. Check the current UI, it moves.
+  and reviewing your design before `/spec`.
 
 ## 6. SSH into the Mint box (after doc 03)
 Windows 10/11 ships an OpenSSH client:

@@ -9,7 +9,7 @@
 | RAM | 16 GB dual channel | 8 GB single channel |
 | Disk | 476 GB SSD | 380 GB SSD |
 | OS | Windows 10 | Linux Mint |
-| **Role** | **You**: Godot editor, playtesting, Obsidian (your `design/` documents, answering `docs/QUESTIONS.md`), Claude Desktop (design chats + supervised Claude Code) | **The agent**: pi or Claude Code without permission prompts, headless Godot, test/sim/screenshot loops, long simulation runs, prepared batches |
+| **Role** | **You**: Godot editor, playtesting, Obsidian (your `design/` documents, answering `docs/QUESTIONS.md`), Claude Desktop (design chats + supervised Claude Code) | **The agent**: pi or Claude Code without permission prompts, headless Godot, test/sim/screenshot loops, long simulation runs |
 
 Why this split, following the embedded videos:
 - The agent needs **full control** to be fast (install, run, delete,

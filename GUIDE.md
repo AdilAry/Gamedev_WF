@@ -11,11 +11,27 @@ ThinkPad T480s you can spare.
 > **The one-sentence version:** you design the game, in as much detail as you
 > like, in your own documents; the agent turns them into numbered
 > requirements, **asks you about every gap instead of filling it**, writes the
-> GDScript one small slice at a time, and a harness lets it **run the game
-> headless, test it and play it with bots**, so each slice comes back proven
+> GDScript one small task at a time, and a harness lets it **run the game
+> headless, test it and play it with bots**, so each task comes back proven
 > and each balance question comes back with numbers. You stay in the loop at
-> the two points where your judgement is cheap and decisive: before a slice
-> (are these the right tests?) and after it (here is how to see it).
+> two gates: before the work (is this the right plan, with the right expected
+> results?) and after it (finished is your call, not the agent's).
+
+## How the pieces fit
+
+Three layers, each usable without the one above it:
+
+| Layer | What it is | Where |
+|---|---|---|
+| **Your short-loop workflow** | one task per session, `/start` and `/wrap`, two gates, `PROGRESS.md` as a snapshot, `/judge` in a fresh session. Works for any software project | [workflow/](workflow/WORKFLOW.md), your files, unchanged |
+| **The harness** | `gw.sh`: headless tests in tiers, simulation runs, balance cases, traces, screenshots, the commit gate | `harness/` |
+| **The game commands** | `/spec`, `/harness`, `/commission`, `/qa`, `/balance`, `/playtest`, `/change-request`, and for ideas and art `/pitch`, `/define`, `/style-guide`, `/asset` | `commands/` |
+
+A game is a normal short-loop project whose AGENTS.md says: Check is
+`./harness/gw.sh check`, the plan lives in `docs/spec/` and
+`docs/TESTPLAN.md`, expected results come from the worked examples in the
+spec, and design gaps go to `docs/QUESTIONS.md`. There is no separate
+"build" command: `/start STA-004` is the build loop.
 
 ## How this kit differs from the videos
 
@@ -28,10 +44,8 @@ and changes three things:
 | The videos | This kit |
 |---|---|
 | `/define` interviews you and writes the spec | `/spec` reads the design you already wrote (`design/`), restates it as testable requirements, and files every contradiction or gap as a question for you. `/define` is still there for when you only have an idea |
-| one long autonomous `/build` | one slice, two checkpoints, stop. Batches only on request and only for repeat work. [docs/09-loops.md](docs/09-loops.md) explains why, and when the long loop wins |
-| one agent (Claude Code) | any agent that reads `AGENTS.md` and Agent Skills: Claude Code, the Code tab of Claude Desktop, and pi. [docs/10-pi.md](docs/10-pi.md) |
-
----
+| one long autonomous `/build` | one task per session, two gates, a Run limit. [docs/09-loops.md](docs/09-loops.md) explains why, and where a bigger task still fits |
+| one agent (Claude Code) | the same files and commands in Claude Code, the Code tab of Claude Desktop, and pi. [docs/10-pi.md](docs/10-pi.md) |
 
 ## Why bother? (and what went wrong in the Gambo pipeline)
 
@@ -54,7 +68,7 @@ The embedded videos fix this with three things, and they all carry over:
 | Datasheets in the project folder | **Godot API dump** of *your* version + design references in `docs/` |
 | Pi testbench = the AI's hands and eyes | `harness/gw.sh` + Godot's `--headless`, `--write-movie` screenshots |
 | VM / container with YOLO permissions | **The Mint laptop** as the agent box |
-| /define /harness /commission /build | the same skills, plus /spec /qa /pitch /balance /playtest /style-guide /asset /change-request, and the general session skills /start /wrap /review |
+| /define /harness /commission /build | /spec (or /define), /harness, /commission as commands; the build loop is your workflow's /start and /wrap; plus /qa /balance /playtest /change-request /pitch /style-guide /asset and /judge |
 
 Strategy and sim games fit this approach **better than platformers**: their
 core is numbers and rules, which can be tested headless, while "game feel"
@@ -119,7 +133,7 @@ repos are limited but plenty for headless tests.
 An agent that can't run Godot is a chat window with extra steps. Allow it to
 run the harness, git and file edits without asking every time. On **Windows
 (your main machine)** use the allow-list in `.claude/settings.json` (the
-`/harness` skill installs one) or Claude Code's auto mode. Don't give it
+`/harness` command installs one) or Claude Code's auto mode. Don't give it
 blanket access on that machine. pi has no permission prompts at all, so pi
 belongs on the agent box (next level); the kit's guard extension adds the
 few questions that matter (see [docs/10-pi.md](docs/10-pi.md)).
@@ -143,11 +157,10 @@ resume**:
   standing instructions) and `PROGRESS.md` (the current state: now, next,
   broken, dead ends, waiting on you; a snapshot of under 60 lines, not a log).
 - `/wrap` ends every session by rewriting that snapshot, committing and pushing,
-  so the next session (on either laptop, or from your phone) starts with
-  `/build` or `/start`, which read PROGRESS.md and nothing else.
+  so the next session (on either laptop, in either agent) starts with
+  `/start`, which reads PROGRESS.md and only the rows of the plan it needs.
 - Run the agent in `tmux` on the Mint box, so a dropped SSH connection does
-  not end the session. A prepared batch (`/build batch ...`, see
-  [docs/09-loops.md](docs/09-loops.md)) can run there while you are at work.
+  not end the session.
   Remote options (Claude Code on the web, Remote Control) let you check in
   from your phone - see the Pro playbook.
 
@@ -168,8 +181,9 @@ the video. Godot runs without a window:
 ```
 
 The agent writes code, runs these, **reads the errors and numbers itself**,
-fixes, and repeats until the slice's tests pass. You get back
-"done, 41 tests green, see it with this command, 1 question for you". Details:
+fixes, and repeats until the task's "done when" passes. You get back
+five lines: the result, the output line that proves it, what is left, and
+what to check before you type `/wrap`. Details:
 [docs/05-testing-tiers.md](docs/05-testing-tiers.md).
 
 ### Level 9 - Reference material in the project ("datasheets")
@@ -195,7 +209,7 @@ the rewrite can be checked against the old one.
 
 ---
 
-## The harness workflow (what you actually do)
+## The workflow (what you actually do)
 
 ```
  YOU: design/*.md  (your documents, as detailed as you like; the agent never edits them)
@@ -207,22 +221,34 @@ the rewrite can be checked against the old one.
    /harness, /commission   (once per project / per machine)
         |
         v
-     /build  one slice --> A: "these tests?" -- YOU: go --> red, code, green, commit --> B: report, STOP
-        ^                                                                                  |
-        |  "next"                                                                          v
-        +------------------------- YOU check it in one command  <--------------------------+
+     /start <IDs>  --> Gate 1: plan, tests with expected results, "done when" -- YOU: OK
+        |              the agent loops alone until "done when" passes (or a stop rule fires)
+     /wrap         --> Check, PROGRESS.md rewritten, TESTPLAN ticked, commit
+        |              Gate 2: YOU check what it names; a hand check stays "awaiting my check"
+        |  clear the session, /start again
+        v
+      /qa  the agent plays it: bugs with seed + tick and a reproducing test; your balance cases as one table
         |
-      /qa  the agent plays it: bugs with seed + tick, a red test each; your balance cases as one table
-        |
-        +-- bug -------> /build (the red test is already there)
+        +-- bug -------> /start <the bug>  (its plan begins with the reproducing test)
         +-- numbers ---> /balance: options with before/after  --> YOU pick --> data/*.json
-        +-- design ----> /change-request  (you change design/, the spec follows, then code)
+        +-- design ----> /change-request  (you change design/, the spec follows, then /start CR-NNN)
         |
    YOU play it --> /playtest sorts your notes into the same three buckets
         |
-     /wrap  PROGRESS.md rewritten, commit, push: the next session starts in one minute, in any agent
+     /judge  in a fresh session, after a system: is green really proven, were tests weakened, did structure drift
 ```
 
+Every session, in any project:
+- **/start <task>** - pulls, reads PROGRESS.md and only the task's rows of the
+  plan, and proposes at most 5 bullets ending in "done when". Nothing changes
+  before your OK. Then the agent works alone until "done when" passes, or
+  until it must leave the plan, the same failure survived 3 fixes, or the
+  Run limit is reached.
+- **/wrap** - runs Check, rewrites PROGRESS.md, ticks what is finished,
+  commits, and tells you what to check. Finished means checked by you.
+- **/judge** - a review in a new session that did not build the work.
+
+Game commands, when you need them:
 1. **/pitch** - park a new idea in 5 minutes. Pick the best one later.
 2. **/spec** - for the game you have designed. First a cheap map of your
    documents (which file belongs to which system, which notes amend which,
@@ -231,30 +257,18 @@ the rewrite can be checked against the old one.
    a glossary, and a question for everything that is missing or contradictory.
    (**/define** instead, if there is only an idea: it interviews you.)
 3. **/harness** - creates the Godot project with the right structure, copies
-   the runners, `AGENTS.md`, test plan, balance cases, CI workflow.
+   the runners, and sets the game up as a short-loop project: `AGENTS.md`,
+   `PROGRESS.md`, test plan, balance cases, CI workflow.
 4. **/commission** - proves the setup itself works, including that a failing
    test really fails. After this, a red test means a game bug, not a setup bug.
-5. **/build** - one slice. You approve the tests, it builds, reports, stops.
-   `/build batch ...` for repeat work, when you ask for it.
-6. **/qa** - the agent as playtester: fuzzing with a random bot, fault
+5. **/qa** - the agent as playtester: fuzzing with a random bot, fault
    injection, your balance cases, traces of the interesting runs, a report.
    It finds and shows; it does not fix or retune on its own.
-7. **/balance** - evidence and options for one balance question; you pick;
+6. **/balance** - evidence and options for one balance question; you pick;
    then it changes only JSON numbers and shows before/after.
-8. **/playtest** - you play, ramble your notes, the agent sorts them.
-9. **/change-request** - change the design and spec first, then the code.
-10. **/wrap** - always, at the end of each session.
-11. **/start <task>** - the same two checkpoints for work that is not a
-    requirement slice: a bug you saw, a refactor, tooling.
-12. **/review** - in a fresh session, after a system is finished: structure,
-    weakened tests, invented things. `/qa` checks what the game does;
-    `/review` checks what the code has become.
-
-`/start`, `/wrap` and `/review` are not game-specific. They are your
-short-loop workflow, kept in [workflow/README.md](workflow/README.md) with
-templates for non-game projects.
-
-In pi the same skills are `/skill:spec`, `/skill:build` and so on.
+7. **/playtest** - you play, ramble your notes, the agent sorts them.
+8. **/change-request** - change the design and spec first; the code change is
+   then an ordinary `/start`.
 
 Art runs in parallel and stays placeholder until the mechanics are fun:
 **/style-guide** (from reference images) and **/asset** (SVG/procedural or
@@ -273,17 +287,18 @@ prompts for image tools, with a provenance manifest). See
 3. **The balance cases and targets.** `tests/cases/balance.json` lists the
    situations you care about and what "right" means for each. The agent
    proposes; the file is yours. Vague targets get vague games.
-4. **Approving tests, not code.** At checkpoint A you read a few lines of
+4. **Approving tests, not code.** At Gate 1 you read a few lines of
    "given this, expect that". That, plus ten minutes with `TESTPLAN.md` now
    and then, is worth more than an hour reading code.
-5. **Playtesting.** Bots tell you a strategy dominates; only you can tell
-   whether it's *boring*.
+5. **Checking and playtesting.** "Done when" passing is the agent's evidence;
+   finished is your call. Bots tell you a strategy dominates; only you can
+   tell whether it's *boring*.
 6. **Saying no.** The agent will happily build features. Scope fences in the
    GDD ("out of scope") protect your limited time.
 
 ## Honest limits
 
-- **Pro usage limits are real.** That is why the default loop is short. Keep
+- **Pro usage limits are real.** That is why the loop is short and every session has a Run limit. Keep
   AGENTS.md short, read one spec file at a time, filter test output (the
   runner already prints only failures). See the Pro playbook.
 - **pi does not run on your Pro allowance.** Anthropic bills third-party
@@ -312,4 +327,4 @@ prompts for image tools, with a provenance manifest). See
 8. [docs/08-first-weekend.md](docs/08-first-weekend.md) - a step-by-step plan and prompt cheat sheet
 9. [docs/09-loops.md](docs/09-loops.md) - short loops, long loops, and who decides what
 10. [docs/10-pi.md](docs/10-pi.md) - using pi: cost, install, the guard extension
-11. [workflow/README.md](workflow/README.md) - the short-loop workflow for any software project (the session files and skills this kit is built on)
+11. [workflow/WORKFLOW.md](workflow/WORKFLOW.md) - your short-loop workflow, for any software project: the session files and commands this kit is built on
