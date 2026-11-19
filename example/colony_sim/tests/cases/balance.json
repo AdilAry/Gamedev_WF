@@ -1,0 +1,68 @@
+{
+  "defaults": {
+    "seeds": "1-10",
+    "ticks": 500,
+    "show": [
+      "population",
+      "wood"
+    ]
+  },
+  "cases": [
+    {
+      "name": "greedy-300",
+      "note": "BAL-001: a simple bot has a healthy colony by tick 300",
+      "ticks": 300,
+      "params": {
+        "bot": "greedy"
+      },
+      "expect": {
+        "population": [
+          20,
+          null
+        ]
+      }
+    },
+    {
+      "name": "greedy-500",
+      "note": "BAL-003 (open): wood should stay useful late in the game",
+      "params": {
+        "bot": "greedy"
+      },
+      "expect": {
+        "wood": [
+          null,
+          500
+        ]
+      }
+    },
+    {
+      "name": "idle",
+      "note": "BAL-002: doing nothing must be punished",
+      "ticks": 200,
+      "params": {
+        "bot": "idle"
+      },
+      "expect": {
+        "population": [
+          null,
+          5
+        ]
+      }
+    },
+    {
+      "name": "monkey",
+      "note": "random button presses: nothing to balance, it only has to survive the invariants",
+      "params": {
+        "bot": "random"
+      }
+    },
+    {
+      "name": "hungry",
+      "note": "what-if, no target: people eat twice as much. Look at the numbers, then decide",
+      "params": {
+        "bot": "greedy",
+        "food_per_person": 2
+      }
+    }
+  ]
+}

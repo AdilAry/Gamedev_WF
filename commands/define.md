@@ -1,14 +1,33 @@
 ---
-name: define
-description: Interview the user one question at a time and turn a game idea into a Game Design Document (docs/GDD.md) whose every requirement has an ID and says how it will be proven (unit, sim, scene, visual or playtest). Use when starting a new game project, when the user says "define", "spec", "GDD", or wants to turn an idea or pitch into a specification.
+description: Interview the user one question at a time and turn a game idea into a Game Design Document with requirement IDs and proofs. Use only when there are no design documents yet and the user says define, GDD, or wants an idea specified.
+argument-hint: the idea, or empty to be asked
 ---
-
 # /define - idea to testable Game Design Document
+
+Request: $ARGUMENTS
+
+**First check which situation this is.** If the user already has design
+documents (a `design/` folder, a pile of notes or drafts they point to), this
+is the wrong command: their documents are the design, and an interview would
+make them repeat it. Put the files in `design/` and use `/spec` instead.
+`/define` is for the other case: there is only an idea, and the user wants to
+be asked the right questions.
 
 This is the "functional specification" step. Output: `docs/IDEA.md` (if
 missing) and `docs/GDD.md`, following the template in the Gamedev-WF kit
-(`$GAMEDEV_WF/harness/templates/GDD.md`; if `$GAMEDEV_WF` is unset try
-`~/Gamedev_WF`, then ask the user where the kit is).
+(`$GAMEDEV_WF/harness/templates/GDD.md`; if `$GAMEDEV_WF` is unset, ask the
+user where the kit is and suggest running its installer).
+
+## 0. Investigate first (optional, offer it)
+The embedded workflow researches the hardware and protocols before writing
+the spec. The game equivalent: if the idea leans on a known mechanic, genre
+convention or real-world system (e.g. "supply lines like Hearts of Iron",
+"queueing at a harbour", "Lanchester combat", "logistic population growth"),
+offer to research it first and write a short `docs/ref/<topic>.md`: how it
+works, the formulas or rules, typical numbers, what players like and
+complain about, and sources. Keep each under ~100 lines. The interview and the
+GDD then build on facts, and later tasks can cite them. Skip this if the user
+wants to go straight to questions.
 
 ## Rules for the interview
 - **One question per message.** Offer 2-4 concrete options plus "you decide".
@@ -36,8 +55,8 @@ missing) and `docs/GDD.md`, following the template in the Gamedev-WF kit
 14. Platforms and input (default: Windows + Linux, mouse + keyboard).
 
 ## Writing the GDD
-- Fill every section of the template. Unknowns go to "Open questions", not
-  into invented detail.
+- Fill every section of the template. Unknowns go to `docs/QUESTIONS.md`
+  (kit template `harness/templates/QUESTIONS.md`), not into invented detail.
 - Every requirement row: `ID | requirement | tier | proof`. Use prefixes per
   system (ECO, POP, MAP, AI, UI, SYS, BAL, SAV ...). Choose the **fastest tier
   that can prove it**:
@@ -50,7 +69,8 @@ missing) and `docs/GDD.md`, following the template in the Gamedev-WF kit
 - Always include the system requirements SYS-001 (determinism: same seed +
   commands = same result) and SYS-002 (invariants: no negative resources, no
   NaN, no unit outside the map...), plus at least one fault-injection case.
-- Add balance targets (BAL-*) as numbers so `/balance` can measure them.
+- Add balance targets (BAL-*) as numbers so `/balance` and `/qa` can measure
+  them; each becomes a case in `tests/cases/balance.json`.
 - Split work into phases. Phase 1 is always: simulation core + unit/sim tests,
   no graphics beyond debug labels.
 
@@ -59,4 +79,4 @@ missing) and `docs/GDD.md`, following the template in the Gamedev-WF kit
    requirements per tier, open questions.
 2. Ask them to read `docs/GDD.md` (it is the contract) and to answer the open
    questions or say "go".
-3. Suggest the next step: `/harness` (new project) or `/build` (harness exists).
+3. Suggest the next step: `/harness` (new project) or `/start <IDs>` (harness exists).

@@ -26,8 +26,14 @@ Unzip both to e.g. `C:\Tools\Godot\` and set an environment variable (PowerShell
 [Environment]::SetEnvironmentVariable("GODOT", "C:\Tools\Godot\Godot_v4.7.2-stable_win64_console.exe", "User")
 ```
 
-## 2. Get this kit
-In Git Bash:
+## 2. Get the workflow, then this kit
+The kit is an add-on to your short-loop workflow, which lives in its own repo.
+Install that first: clone it to a fixed folder and run the PowerShell lines in
+its WORKFLOW.md §3 from there. They install `/start`, `/wrap`, `/judge` and
+your user-level "How I work" file, and set `WORKFLOW_DIR`, which the kit needs
+(see the [README](../README.md#quick-start)).
+
+Then, in Git Bash:
 
 ```bash
 cd ~ && git clone https://github.com/AdilAry/Gamedev_WF.git
@@ -37,9 +43,15 @@ cd ~ && git clone https://github.com/AdilAry/Gamedev_WF.git
 powershell -ExecutionPolicy Bypass -File ~/Gamedev_WF/scripts/install.ps1
 ```
 
-This copies the skills to `%USERPROFILE%\.claude\skills\` (so `/define`,
-`/build` etc. work in **every** project) and sets `GAMEDEV_WF`. Restart Claude
-Desktop afterwards.
+This stops if `WORKFLOW_DIR` is not set. Otherwise it copies the game commands
+to `%USERPROFILE%\.claude\commands\` (so `/spec`, `/harness` etc. work in
+**every** project, next to the workflow's `/start` and `/wrap`) and sets
+`GAMEDEV_WF`. Restart Claude Desktop afterwards, then open
+`%USERPROFILE%\.claude\CLAUDE.md` once and fill its one bracket. On Windows
+the commands are copies: after a `git pull`, run this script again (kit) or
+the workflow's §3 copy line (workflow). pi is not set up on this machine on
+purpose: it runs without permission prompts, so the Mint box is its home
+([10-pi.md](10-pi.md)).
 
 ## 3. Try the example project
 In Git Bash:
@@ -48,15 +60,16 @@ In Git Bash:
 cd ~/Gamedev_WF/example/colony_sim && ./harness/gw.sh check
 ```
 
-You should see `RESULT OK: 15 passed`, `SMOKE OK`, `CHECK OK`. Then open
+You should see `RESULT OK: 17 passed`, `SMOKE OK`, `CHECK OK`. Then open
 the folder in the Godot editor (Import -> `project.godot`) and press F5 to
 play it. Try `./harness/gw.sh sim --seeds=1-10 --ticks=500` for the balance
 table, and `./harness/gw.sh shot` for screenshots in `reports/shots/`.
 
 ## 4. Claude Code in Claude Desktop
 - Open Claude Desktop, switch to the **Code** tab, choose a **local** session
-  and pick your project folder (e.g. `~/Gamedev_WF/example/colony_sim`).
-- Type `/` to see the skills. Try: *"Run the harness check and explain the
+  and pick your project folder (a game in `~/games/`, or a copy of the
+  example; not a folder inside the kit, see [08-first-weekend.md](08-first-weekend.md)).
+- Type `/` to see the commands. Try: *"Run the harness check and explain the
   architecture of this project in 10 lines."*
 - Permissions: the first time it wants to run `./harness/gw.sh`, allow it
   "always for this project". Projects created by `/harness` also get a
@@ -72,10 +85,7 @@ installer from the Claude Code docs (PowerShell one-liner), then run
 Use normal chats / **Projects** for thinking, not coding:
 - Create a Project per game, add `docs/GDD.md` and `docs/STYLE_GUIDE.md` as
   project knowledge, and use it for brainstorming mechanics, naming, lore,
-  and reviewing your GDD before `/build`.
-- Skills can also be added to Claude Desktop/claude.ai (Settings ->
-  Capabilities/Skills, upload a skill folder as a zip). `/pitch`, `/define`
-  and `/style-guide` are useful there too. Check the current UI, it moves.
+  and reviewing your design before `/spec`.
 
 ## 6. SSH into the Mint box (after doc 03)
 Windows 10/11 ships an OpenSSH client:
@@ -94,3 +104,6 @@ cd ~/games/my-game && git pull && "$GODOT" --path .
 ```
 
 (or open it in the editor). Then `/playtest` with your notes.
+
+The first time you clone a game on this laptop, also run
+`./harness/gw.sh hooks` in it, so your own commits go through the same gate.

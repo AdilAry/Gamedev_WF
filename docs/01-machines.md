@@ -9,7 +9,7 @@
 | RAM | 16 GB dual channel | 8 GB single channel |
 | Disk | 476 GB SSD | 380 GB SSD |
 | OS | Windows 10 | Linux Mint |
-| **Role** | **You**: Godot editor, playtesting, Claude Desktop (design chats + supervised Claude Code), Obsidian | **The agent**: Claude Code with full permissions, headless Godot, test/sim/screenshot loops, long unattended `/build` runs |
+| **Role** | **You**: Godot editor, playtesting, Obsidian (your `design/` documents, answering `docs/QUESTIONS.md`), Claude Desktop (design chats + supervised Claude Code) | **The agent**: pi or Claude Code without permission prompts, headless Godot, test/sim/screenshot loops, long simulation runs |
 
 Why this split, following the embedded videos:
 - The agent needs **full control** to be fast (install, run, delete,
@@ -27,7 +27,7 @@ Why this split, following the embedded videos:
    Legion (Windows)                         ThinkPad (Mint)
  ┌──────────────────────┐   SSH / tmux   ┌──────────────────────────┐
  │ Claude Desktop       │ ─────────────► │ user "agent"             │
- │  - Chat: design, GDD │                │  superclaude (YOLO)      │
+ │  - Chat: design, GDD │                │  pi / superclaude        │
  │  - Code tab: small,  │                │  godot --headless        │
  │    supervised edits  │                │  gw.sh test/sim/shot     │
  │ Godot editor + play  │                │  xvfb for screenshots    │
@@ -53,6 +53,20 @@ Yes. Options, from easiest:
 The two-laptop setup is recommended because it also lets the agent work
 while you play or use the main laptop for something else.
 
+**pi changes this choice a little.** Claude Code asks before it runs things
+unless you tell it not to; pi never asks. So pi on the Legion means an agent
+with your full Windows account from the first minute. Use pi on the Mint box
+(or in WSL2), and keep the Legion for the Code tab of Claude Desktop, where
+the allow-list applies. See [10-pi.md](10-pi.md).
+
+## Short loops work from either machine
+
+The short loop (approve the tests, get a report, say "next") needs you at a
+keyboard, but not at a particular one: SSH into the Mint box from the Legion
+and talk to the agent in tmux, or sit at the ThinkPad. What you do between
+slices (reading the spec, answering questions, playing the build) happens on
+the Legion with no agent involved.
+
 ## Windows 10 - important
 
 Microsoft ended Windows 10 support on 14 Oct 2025. In the EU/EEA, consumers
@@ -64,8 +78,15 @@ Practical consequences:
 - The i5-9300H **is** on the Windows 11 supported CPU list and the Y540 has a
   firmware TPM (Intel PTT, enable it in the BIOS if the upgrade check complains),
   so a free Windows 11 upgrade should be possible. Back up first.
-- Or move your main dev work to Linux as well. Godot, Git, Claude Code and
-  Obsidian all run natively on Linux.
+- Or move your main dev work to Linux as well, which you said you are
+  considering. Godot, Git, Claude Code, pi and Obsidian all run natively on
+  Linux, the harness is developed and CI-tested there, and pi's own docs list
+  several Windows terminal problems that do not exist on Linux. The costs
+  to weigh: check whether the Claude Desktop app is offered for Linux when
+  you decide (if not, claude.ai in the browser plus the `claude` command line
+  cover the same ground), and you would test your game's Windows build less
+  often. A low-risk way to find out: use the Mint ThinkPad as your only
+  machine for one week of game work.
 
 ## Small upgrades worth considering (optional)
 

@@ -8,6 +8,12 @@ on:
   pull_request:
   workflow_dispatch:
 
+# A newer push cancels the older run of the same branch (saves Actions minutes,
+# which are limited for private repos).
+concurrency:
+  group: godot-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   GODOT_VERSION: "4.7.2"   # keep in sync with the version you use locally (./harness/gw.sh version)
 
@@ -16,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Cache Godot
         id: cache-godot
@@ -44,9 +50,16 @@ jobs:
           GODOT: /home/runner/godot/godot
         run: ./harness/gw.sh sim --seeds=1-10 --ticks=500 || true
 
+      - name: Balance cases (a showcase - add --strict once your targets are settled)
+        if: always()
+        env:
+          GODOT: /home/runner/godot/godot
+        run: |
+          if [ -f tests/cases/balance.json ]; then ./harness/gw.sh cases || true; fi
+
       - name: Upload reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: reports
           path: reports/

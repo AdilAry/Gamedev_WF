@@ -8,6 +8,9 @@ on:
 
 env:
   GODOT_VERSION: "4.7.2"
+  # The short-loop workflow this kit builds on (WORKFLOW.md §8). Its only URL in the kit's CI:
+  # change it here when the workflow repo moves.
+  WORKFLOW_GIT_URL: "https://github.com/AdilAry/Workflow.git"
 
 jobs:
   colony-sim:
@@ -17,11 +20,78 @@ jobs:
       run:
         working-directory: example/colony_sim
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Harness copy in example is identical to the kit
         working-directory: .
-        run: diff -r harness/godot/harness example/colony_sim/harness
+        run: diff -r -x '*.uid' harness/godot/harness example/colony_sim/harness
+
+      - name: Shell scripts pass shellcheck
+        working-directory: .
+        run: shellcheck -S warning harness/godot/harness/gw.sh scripts/install.sh scripts/update-harness.sh
+
+      - name: JSON files are valid
+        working-directory: .
+        run: |
+          for f in package.json harness/templates/cases.json harness/templates/claude-settings.json example/colony_sim/tests/cases/balance.json example/colony_sim/data/rules.json; do
+            python3 -m json.tool "$f" > /dev/null || { echo "invalid JSON: $f"; exit 1; }
+          done
+
+      - name: Commands are valid in both agents
+        working-directory: .
+        run: |
+          python3 - <<'PY'
+          import glob, re, sys, yaml
+          bad = 0
+          files = sorted(glob.glob('commands/*.md'))
+          for p in files:
+              s = open(p).read()
+              if not s.startswith('---\n'):
+                  print(p, 'no frontmatter'); bad += 1; continue
+              fm = yaml.safe_load(s.split('---', 2)[1])
+              body = s.split('---', 2)[2]
+              if not isinstance(fm.get('description'), str) or len(fm['description']) > 400:
+                  print(p, 'description missing or too long'); bad += 1
+              if '$ARGUMENTS' not in body and 'argument-hint' in fm:
+                  print(p, 'takes arguments but never uses $ARGUMENTS'); bad += 1
+              if re.search(r'(^|[\s(])@[A-Za-z./~]', body) or '!`' in body:
+                  print(p, 'body contains an @file or !`cmd` that Claude Code would expand'); bad += 1
+          print(len(files), 'command files checked')
+          sys.exit(1 if bad or len(files) != 11 else 0)
+          PY
+
+      - name: Installer links every command for both agents (empty home)
+        working-directory: .
+        run: |
+          WF="$(mktemp -d)/workflow"; git clone -q --depth 1 "$WORKFLOW_GIT_URL" "$WF"
+          T="$(mktemp -d)"; mkdir -p "$T/.claude/skills/wrap" "$T/.claude/skills/mine" "$T/.pi/agent"
+          printf -- '---\nname: wrap\n---\nrewrite PROGRESS.md\n' > "$T/.claude/skills/wrap/SKILL.md"
+          printf -- '---\nname: mine\n---\nsomething else\n' > "$T/.claude/skills/mine/SKILL.md"
+          # without WORKFLOW_DIR it must stop, say how to fix it, and change nothing
+          if env -u WORKFLOW_DIR HOME="$T" bash scripts/install.sh > nowf.out 2>&1; then cat nowf.out; echo "installed without WORKFLOW_DIR"; exit 1; fi
+          grep -q 'Install the short-loop workflow first' nowf.out || { cat nowf.out; echo "no clear message without WORKFLOW_DIR"; exit 1; }
+          [[ ! -e "$T/.claude/commands" ]] || { echo "changed files without WORKFLOW_DIR"; exit 1; }
+          rm nowf.out
+          HOME="$T" WORKFLOW_DIR="$WF" bash scripts/install.sh
+          for c in start wrap judge spec define harness commission qa balance playtest change-request pitch style-guide asset; do
+            for d in "$T/.claude/commands" "$T/.pi/agent/prompts"; do
+              [[ -L "$d/$c.md" && -s "$d/$c.md" ]] || { echo "missing or dead: $d/$c.md"; exit 1; }
+            done
+          done
+          [[ -f "$T/.claude/CLAUDE.md" && -f "$T/.pi/agent/AGENTS.md" ]] || { echo "user-level file not installed"; exit 1; }
+          [[ ! -e "$T/.claude/skills/wrap" && -e "$T/.claude/skills-replaced-by-gamedev-wf/wrap" ]] || { echo "old kit skill not moved aside"; exit 1; }
+          [[ -e "$T/.claude/skills/mine" ]] || { echo "an unrelated skill was touched"; exit 1; }
+          grep -q 'GAMEDEV_WF=' "$T/.bashrc" || { echo "GAMEDEV_WF not set"; exit 1; }
+          HOME="$T" WORKFLOW_DIR="$WF" bash scripts/install.sh > /dev/null   # a second run must not fail
+          echo "installer ok"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: pi guard rules (node --test)
+        working-directory: .
+        run: npm test
 
       - name: Download Godot
         run: |
@@ -43,7 +113,10 @@ jobs:
           mkdir -p tests/unit
           printf 'extends "res://harness/gw_test.gd"\nfunc test_canary_must_fail() -> void:\n\tassert_eq(1, 2, "canary")\n' > tests/unit/test_zz_canary.gd
           if ./harness/gw.sh test unit canary; then echo "runner did NOT report the failure"; exit 1; fi
-          rm tests/unit/test_zz_canary.gd
+          # fail-fast: a red unit tier must skip the slower tiers
+          if ./harness/gw.sh test all > ff.out; then cat ff.out; echo "test all passed with a red canary"; exit 1; fi
+          grep -q 'skipped sim,scene' ff.out || { cat ff.out; echo "slower tiers were not skipped"; exit 1; }
+          rm tests/unit/test_zz_canary.gd ff.out
           echo "runner correctly failed on the canary"
 
       - name: Harness catches a script error (canary)
@@ -51,14 +124,107 @@ jobs:
           GODOT: /home/runner/godot/godot
         run: |
           printf 'extends "res://harness/gw_test.gd"\nfunc test_canary_crash() -> void:\n\tvar d := {}\n\tvar x: int = d["missing"].size()\n' > tests/unit/test_zz_crash.gd
-          if ./harness/gw.sh test unit crash; then echo "runner did NOT catch the script error"; exit 1; fi
-          rm tests/unit/test_zz_crash.gd
+          if ./harness/gw.sh test unit crash; then echo "gw.sh did NOT catch the script error"; exit 1; fi
+          # the runner on its own (no gw.sh grep) must fail the crashing test by name
+          if "$GODOT" --headless --path . -s res://harness/test_runner.gd -- --tier=unit --filter=crash > crash.out 2>&1; then cat crash.out; echo "runner exited 0 on a script error"; exit 1; fi
+          grep -q 'FAIL \[unit\] test_zz_crash.gd::test_canary_crash' crash.out || { cat crash.out; echo "crash not attributed to the test"; exit 1; }
+          grep -q 'RESULT FAILED' crash.out || { cat crash.out; echo "summary line not FAILED"; exit 1; }
+          rm tests/unit/test_zz_crash.gd crash.out
           echo "runner correctly failed on the script error"
 
-      - name: Sim runner
+      - name: Type mismatch is caught at load even if the line never runs (canary)
         env:
           GODOT: /home/runner/godot/godot
-        run: ./harness/gw.sh sim --seeds=1-10 --ticks=500
+        run: |
+          printf 'extends "res://harness/gw_test.gd"\nfunc test_canary_typed() -> void:\n\tif randf() > 2.0:\n\t\tvar pop: int = "many"\n' > tests/unit/test_zz_typed.gd
+          if ./harness/gw.sh test unit typed > typed.out; then cat typed.out; echo "type mismatch was not caught"; exit 1; fi
+          rm tests/unit/test_zz_typed.gd typed.out
+          echo "type mismatch rejected at load time"
+
+      - name: Harness fails a test that waits forever (canary)
+        env:
+          GODOT: /home/runner/godot/godot
+          GW_TEST_TIMEOUT: "3"
+        run: |
+          printf 'extends "res://harness/gw_test.gd"\nfunc test_canary_wait() -> void:\n\tawait wait_seconds(999)\n' > tests/unit/test_zz_wait.gd
+          if ./harness/gw.sh test unit wait > wait.out; then cat wait.out; echo "a hanging test passed"; exit 1; fi
+          grep -q 'timed out' wait.out || { cat wait.out; echo "no timeout message"; exit 1; }
+          rm tests/unit/test_zz_wait.gd wait.out
+          echo "runner correctly timed out the waiting test"
+
+      - name: Harness kills an endless loop (canary)
+        env:
+          GODOT: /home/runner/godot/godot
+          GW_TIMEOUT: "15"
+        run: |
+          printf 'extends "res://harness/gw_test.gd"\nfunc test_canary_loop() -> void:\n\tvar i := 0\n\twhile true:\n\t\ti += 1\n' > tests/unit/test_zz_loop.gd
+          if ./harness/gw.sh test unit loop > loop.out; then cat loop.out; echo "an endless loop passed"; exit 1; fi
+          grep -q 'stopped after 15s' loop.out || { cat loop.out; echo "no time-limit message"; exit 1; }
+          rm tests/unit/test_zz_loop.gd loop.out
+          echo "gw.sh correctly stopped the endless loop"
+
+      - name: Pre-commit hook blocks a red commit (canary)
+        env:
+          GODOT: /home/runner/godot/godot
+        run: |
+          git config user.email ci@example.com && git config user.name ci
+          ./harness/gw.sh hooks
+          printf 'extends "res://harness/gw_test.gd"\nfunc test_canary_red() -> void:\n\tassert_eq(1, 2, "canary")\n' > tests/unit/test_zz_red.gd
+          git add tests/unit/test_zz_red.gd
+          if git commit -m "red canary"; then echo "hook let a red commit through"; exit 1; fi
+          git rm -q --cached tests/unit/test_zz_red.gd && rm tests/unit/test_zz_red.gd
+          echo "docs only" >> docs/history.md && git add docs/history.md
+          git commit -q -m "docs canary" || { echo "hook blocked a docs-only commit"; exit 1; }
+          echo "hook blocks red commits and lets docs-only commits through"
+
+      - name: Sim runner, run twice to prove determinism (same digest)
+        env:
+          GODOT: /home/runner/godot/godot
+        run: |
+          set -o pipefail
+          ./harness/gw.sh sim --seeds=1-10 --ticks=500 | tee sim1.out
+          ./harness/gw.sh sim --seeds=1-10 --ticks=500 > sim2.out
+          a=$(grep '^DIGEST' sim1.out); b=$(grep '^DIGEST' sim2.out)
+          [[ -n "$a" && "$a" == "$b" ]] || { echo "digests differ or missing: '$a' vs '$b'"; exit 1; }
+          echo "deterministic: $a"
+
+      - name: Balance cases (table, targets, strict mode)
+        env:
+          GODOT: /home/runner/godot/godot
+        run: |
+          set -o pipefail
+          ./harness/gw.sh cases | tee cases.out
+          grep -q '^CASES 5 cases' cases.out || { echo "no CASES summary"; exit 1; }
+          grep -q 'greedy-500 .*OFF high' cases.out || { echo "the open BAL-003 case should be OFF"; exit 1; }
+          ls reports/cases/*.md > /dev/null || { echo "no Markdown report"; exit 1; }
+          # a showcase by default, a gate with --strict
+          if ./harness/gw.sh cases --strict > /dev/null; then echo "--strict passed with an off target"; exit 1; fi
+          ./harness/gw.sh cases --strict --only=idle > /dev/null || { echo "--strict failed on a case that is on target"; exit 1; }
+          # a what-if override reaches every case
+          ./harness/gw.sh cases --param.growth_ticks=20 --only=greedy-300 | grep -q 'greedy-300 .*population .* 20 ' || { echo "override did not change the result"; exit 1; }
+          rm cases.out
+
+      - name: Trace (one run as a timeline)
+        env:
+          GODOT: /home/runner/godot/godot
+        run: |
+          ./harness/gw.sh trace --seed=3 --ticks=120 > trace.out || { cat trace.out; exit 1; }
+          grep -q '^TRACE seed=3, 120 of 120 ticks' trace.out || { cat trace.out; echo "no TRACE header"; exit 1; }
+          grep -q 'build farm' trace.out || { cat trace.out; echo "no events in the trace"; exit 1; }
+          grep -q '^END ran all 120 ticks' trace.out || { cat trace.out; echo "no END line"; exit 1; }
+          rm trace.out
+
+      - name: A new class_name works without a manual import
+        env:
+          GODOT: /home/runner/godot/godot
+        run: |
+          printf 'class_name ZzCanaryClass\nextends RefCounted\n\nstatic func answer() -> int:\n\treturn 42\n' > sim/zz_canary_class.gd
+          printf 'extends "res://harness/gw_test.gd"\nfunc test_canary_newclass() -> void:\n\tassert_eq(ZzCanaryClass.answer(), 42)\n' > tests/unit/test_zz_newclass.gd
+          ./harness/gw.sh test unit newclass > newclass.out || { cat newclass.out; echo "new class was not picked up"; exit 1; }
+          grep -q 'RESULT OK: 1 passed' newclass.out || { cat newclass.out; exit 1; }
+          rm sim/zz_canary_class.gd tests/unit/test_zz_newclass.gd newclass.out
+          rm -f sim/zz_canary_class.gd.uid tests/unit/test_zz_newclass.gd.uid
+          echo "new class_name picked up automatically"
 
       - name: Screenshot (xvfb)
         env:
@@ -69,7 +235,7 @@ jobs:
 
       - name: Upload reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: colony-sim-reports
           path: example/colony_sim/reports/

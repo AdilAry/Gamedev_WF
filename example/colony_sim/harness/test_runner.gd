@@ -5,12 +5,20 @@ extends SceneTree
 ##     godot --headless --path . -s res://harness/test_runner.gd -- --tier=unit
 ##     godot --headless --path . -s res://harness/test_runner.gd -- --tier=all --filter=economy
 ##     ... -- --verbose            (also print PASS lines)
+##     ... -- --timeout=120        (seconds per test, default 60)
+##     ... -- --all-tiers          (with --tier=all: keep going after a red tier)
 ##
 ## Tiers map to folders:  unit -> res://tests/unit
 ##                        sim  -> res://tests/sim
 ##                        scene-> res://tests/scene
 ## Output is deliberately terse (failures + one summary line) so an AI agent
 ## can read it without burning context. Exit code 0 = all green, 1 = failures.
+## --tier=all is fail-fast: if unit is red, sim and scene are skipped, since
+## their failures would mostly be echoes of the same bug and cost time/tokens.
+##
+## A test fails when an assertion fails, when it triggers a script error or
+## push_error() it did not announce with expect_error() (Godot 4.5+), or when
+## it is still waiting after the timeout.
 
 const TIER_DIRS := {
 	"unit": "res://tests/unit",
@@ -18,10 +26,13 @@ const TIER_DIRS := {
 	"scene": "res://tests/scene",
 }
 const TIER_ORDER := ["unit", "sim", "scene"]
+const CAPTURE_SCRIPT := "res://harness/gw_error_capture.gd"
 
 var _passed := 0
 var _failed := 0
 var _verbose := false
+var _timeout_ms := 60000
+var _capture: Object = null  # gw_error_capture.gd, null on engines without Logger
 
 
 func _initialize() -> void:
@@ -31,6 +42,7 @@ func _initialize() -> void:
 func _run() -> void:
 	var args := _parse_args(OS.get_cmdline_user_args())
 	_verbose = args.has("verbose")
+	_timeout_ms = int(float(args.get("timeout", "60")) * 1000.0)
 	var filter: String = args.get("filter", "")
 	var tier_arg: String = args.get("tier", "all")
 
@@ -45,15 +57,27 @@ func _run() -> void:
 				return
 			tiers.append(t)
 
+	var fail_fast := tier_arg == "all" and not args.has("all-tiers")
+	var ran: Array[String] = []
+	var skipped: Array[String] = []
+	_start_capture()
 	var started := Time.get_ticks_msec()
 	for tier in tiers:
+		if fail_fast and _failed > 0:
+			skipped.append(tier)
+			continue
+		ran.append(tier)
 		var files := _find_tests(TIER_DIRS[tier])
 		for path in files:
 			await _run_file(tier, path, filter)
 
 	var ms := Time.get_ticks_msec() - started
+	_stop_capture()
 	var status := "FAILED" if _failed > 0 else "OK"
-	print("RESULT %s: %d passed, %d failed (%s) in %d ms" % [status, _passed, _failed, ",".join(PackedStringArray(tiers)), ms])
+	var scope := ",".join(PackedStringArray(ran))
+	if not skipped.is_empty():
+		scope += "; skipped %s - fix the faster tier first" % ",".join(PackedStringArray(skipped))
+	print("RESULT %s: %d passed, %d failed (%s) in %d ms" % [status, _passed, _failed, scope, ms])
 	if _passed + _failed == 0:
 		print("HARNESS: no tests found. Test files must be named test_*.gd inside tests/<tier>/")
 	quit(1 if _failed > 0 else 0)
@@ -78,16 +102,21 @@ func _run_file(tier: String, path: String, filter: String) -> void:
 	for mname in methods:
 		var inst = script.new()
 		inst.tree = self
-		if inst.has_method("before_each"):
-			await inst.before_each()
-		await inst.call(mname)
-		if inst.has_method("after_each"):
-			await inst.after_each()
+		if _capture:
+			_capture.begin()
+		var finished: bool = await _run_one(inst, mname)
+		var errors: Array[String] = []
+		if _capture:
+			errors = _capture.end()
 		inst._cleanup()
 		# give queued frees a frame to happen before the next test
 		await process_frame
 
-		var failures: Array[String] = inst._failures
+		var failures: Array[String] = inst._failures.duplicate()
+		if not finished:
+			failures.append("timed out after %.0f s (waiting for a signal/frame that never comes?)" % (_timeout_ms / 1000.0))
+		if _capture:
+			failures.append_array(inst._check_errors(errors))
 		var label := "[%s] %s::%s" % [tier, path.get_file(), mname]
 		if failures.is_empty():
 			_passed += 1
@@ -98,6 +127,43 @@ func _run_file(tier: String, path: String, filter: String) -> void:
 			print("FAIL " + label)
 			for f in failures:
 				print("     - " + f)
+
+
+## Runs before_each + test + after_each as one coroutine. Returns false if it
+## did not finish within the timeout (the test is then reported and skipped).
+## A test that loops forever WITHOUT awaiting never yields; gw.sh's outer
+## timeout (GW_TIMEOUT) catches that case.
+func _run_one(inst: Object, mname: String) -> bool:
+	var state := {"done": false}
+	var body := func() -> void:
+		if inst.has_method("before_each"):
+			await inst.before_each()
+		await inst.call(mname)
+		if inst.has_method("after_each"):
+			await inst.after_each()
+		state["done"] = true
+	body.call()
+	var started := Time.get_ticks_msec()
+	while not state["done"]:
+		if Time.get_ticks_msec() - started > _timeout_ms:
+			return false
+		await process_frame
+	return true
+
+
+func _start_capture() -> void:
+	if not ClassDB.class_exists("Logger"):
+		return  # Godot < 4.5: gw.sh's log grep still catches script errors
+	var capture_script: Script = load(CAPTURE_SCRIPT)
+	if capture_script == null or not capture_script.can_instantiate():
+		return
+	_capture = capture_script.new()
+	OS.call("add_logger", _capture)
+
+
+func _stop_capture() -> void:
+	if _capture:
+		OS.call("remove_logger", _capture)
 
 
 func _find_tests(dir_path: String) -> Array[String]:

@@ -2,7 +2,7 @@
 
 The Gambo pipeline turned into spaghetti within days. Better prompts don't
 fix that; **structure plus tests** do. The agent follows structure well if
-it is written down (CLAUDE.md) and enforced (tests). This is the structure
+it is written down (AGENTS.md) and enforced (tests). This is the structure
 `/harness` sets up, and the example project uses it.
 
 ## The split: simulation core vs presentation
@@ -35,7 +35,7 @@ peripherals. You test the logic on the host and keep the hardware layer thin.
 - **Small files with one job** fit in the agent's context. Big tangled files
   cause the "corrupted main file" disasters the video mentions.
 
-## Time models (pick in /define)
+## Time models (state it in your design, or pick in /define)
 
 | Model | Fits | Note |
 |---|---|---|
@@ -61,7 +61,7 @@ peripherals. You test the logic on the host and keep the hardware layer thin.
   sim for rules and pathfinding (`AStarGrid2D` works without a scene tree).
 - **Save = serialise the state**: `state.to_dict()` -> JSON. Test round trips.
 
-## Godot specifics the agent gets wrong (they're in CLAUDE.md)
+## Godot specifics the agent gets wrong (they are in AGENTS.md)
 
 - Godot 3 vs 4 syntax. Keep `docs/ref/godot-api/` (from `gw.sh doc`) and tell it
   to grep there.
@@ -69,6 +69,16 @@ peripherals. You test the logic on the host and keep the hardware layer thin.
   `sim/colony_rules.gd`), or `typeof()` checks and dictionary keys go wrong.
 - `:=` can't infer the type from a `Variant` (e.g. `dict.get()`); give an
   explicit type.
+- **GDScript has no compiler to catch hallucinations.** The embedded video
+  says compilers don't tolerate hallucinations: an invented function in C
+  simply doesn't build. GDScript is weaker. Types help (assigning a String
+  to an `int` is rejected when the script loads, so CI checks that), but
+  **a call to a method that doesn't exist only fails when that line runs**.
+  This kit's CI tested it on Godot 4.7: `var sim: ColonySim` plus
+  `sim.bild_farm()` in a branch no test reaches passes every check. So for
+  games, tests that exercise every branch are the compiler. Two habits
+  follow: the agent greps `docs/ref/godot-api/` instead of guessing method
+  names, and every new `if`/`match` branch in `sim/` gets a test that reaches it.
 - Hand-editing `.tscn` files: keep the root scene small, build UI in code,
   or have *you* lay out scenes in the editor and let the agent attach scripts.
 - Autoloads (singletons) are convenient but make tests order-dependent; keep

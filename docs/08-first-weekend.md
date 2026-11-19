@@ -1,74 +1,120 @@
 # 08 - Your first weekend (and the daily cheat sheet)
 
 A realistic plan for someone with a job and limited Pro usage. Each block
-is roughly one evening or half a day.
+is roughly one evening or half a day. The commands are the same in Claude
+Code and in pi.
 
-## Block 1 - Main laptop (1-2 h)
+## Block 1 - Main laptop (1-2 h, no AI usage)
 1. Follow [02-setup-windows.md](02-setup-windows.md) steps 1-3.
 2. `cd ~/Gamedev_WF/example/colony_sim && ./harness/gw.sh check` -> `CHECK OK`.
 3. Open it in Godot, play for 2 minutes. Notice that wood piles up.
-4. Read `example/colony_sim/docs/GDD.md` and `TESTPLAN.md` side by side.
-   This is the format your own games will use.
-
-## Block 2 - Agent box (1-2 h)
-1. Follow [03-setup-mint.md](03-setup-mint.md).
-2. From the Legion: `ssh agent@mint-dev.local`, `tmux new -A -s game`.
-3. `cd ~/Gamedev_WF/example/colony_sim && superclaude`
-4. Prompt: *"Run /commission on this project."* Read the resulting
-   `docs/COMMISSIONING.md`.
-
-## Block 3 - Practise the loop on the example (1-2 h)
-Copy the example so you can mess with it freely:
+4. See the same thing as numbers, then as a story:
 
 ```bash
-cp -r ~/Gamedev_WF/example/colony_sim ~/games/colony-practice && cd ~/games/colony-practice && git init && git add -A && git commit -m "start"
+./harness/gw.sh cases
 ```
 
-Then in `superclaude`:
-1. *"/balance - BAL-003: wood should stay useful. Target: GreedyBot wood stock
-   below 500 at tick 500. Propose 2-3 options before changing anything."*
-2. *"/change-request: every 60 ticks there is a winter of 15 ticks in which
-   farms produce half. Show the CR first."* -> "go" -> watch it test, build, fix.
-3. Pull it on the Legion and play it. Run *"/playtest"* with your raw notes.
-4. *"/wrap-up"*.
+```bash
+./harness/gw.sh trace --seed=3 --ticks=300
+```
 
-You've now used the whole loop once on something small.
+5. Read `example/colony_sim/AGENTS.md`, `PROGRESS.md`, `docs/GDD.md`,
+   `docs/TESTPLAN.md` and `tests/cases/balance.json`. This is the format your
+   own games will use (bigger games get one spec file per system).
 
-## Block 4 - Your own game (rest of the weekend)
-1. Dump 3-5 ideas: *"/pitch"* for each one (5 min each, a voice dump is fine).
-2. Pick the highest-scoring one with the cheapest prototype.
-3. `mkdir ~/games/<name> && cd ~/games/<name> && superclaude`
-4. *"/define"* - answer the questions. Prefer the smaller option every time.
-5. Read the GDD properly. It's your contract. Fix it, then: *"/harness"*,
-   *"/commission"*.
-6. *"/build phase 1"* - simulation core, no graphics. Go do something else.
-7. Check in, review `TESTPLAN.md`, *"/wrap-up"*.
+## Block 2 - Agent box (1-2 h)
+1. Follow [03-setup-mint.md](03-setup-mint.md). If you want pi there, also
+   [10-pi.md](10-pi.md) (read its cost section first).
+2. Open the user-level file the installer created (`~/.claude/CLAUDE.md`, and
+   `~/.pi/agent/AGENTS.md` for pi) and fill its one bracket.
+3. Copy the example out of the kit. An agent started inside the kit folder
+   would also load the kit's own AGENTS.md, which is about maintaining the kit:
+
+```bash
+mkdir -p ~/games && cp -r ~/Gamedev_WF/example/colony_sim ~/games/colony-practice && cd ~/games/colony-practice && git init -q && ./harness/gw.sh hooks && git add -A && git commit -q -m "start"
+```
+
+4. Start your agent there (`superclaude` or `pi`) and type `/commission`.
+   Read the resulting `docs/COMMISSIONING.md`.
+
+## Block 3 - Practise the loop on the copy (1-2 h)
+One command per session; clear the session (`/clear`, pi: `/new`) between them.
+1. `/qa` - it plays the game with bots and writes a report. Check that it
+   found the wood problem and did not change anything.
+2. `/balance wood piles up; target wood below 500 at tick 500 for the greedy bot` -
+   it comes back with options and a before/after table. **You** pick one.
+   Then it edits `data/rules.json`. `/wrap`.
+3. `/change-request every 60 ticks there is a winter of 15 ticks in which farms produce half` -
+   read the CR, say "go". `/wrap`.
+4. `/start CR-001` - Gate 1: read the plan (the tests with their expected
+   numbers, and "done when"). OK it. When it reports, `/wrap`, then run what
+   it tells you to run. That was Gate 2.
+5. Pull it on the Legion and play it. `/playtest` with your raw notes.
+
+You've now used the whole loop once on something small, and you know what the
+two gates feel like.
+
+## Block 4 - Your own game (rest of the weekend, and the weeks after)
+You design in documents already, so start from them.
+
+1. Create the folder outside the kit and outside any other project:
+   `mkdir -p ~/games/<name>/design && cd ~/games/<name> && git init`
+2. Copy the design documents **for the part you want playable first** into
+   `design/`. Not the whole archive: combat rules and three units, not the
+   monetisation notes. Old and superseded drafts stay out (or go in
+   `design/old/`, and tell the agent to ignore that folder).
+3. `/spec` - you get a map: which file belongs to which system, which notes
+   seem to amend which, a suggested build order. Correct it.
+4. `/spec <first system>` - read `docs/spec/<system>.md`. Every row should
+   be something you recognise from your own text. Then open
+   `docs/QUESTIONS.md` in Obsidian and answer. Expect many questions the
+   first time; that is the command working. Then `/spec questions answered`.
+5. `/harness`, then `/commission` (each in its own session).
+6. `/start` - it takes the first task from PROGRESS.md. Gate 1, OK, it
+   works, `/wrap`, Gate 2, clear. Two to four tasks is a normal evening.
+7. When a system is done: `/qa <system>`, add the situations you care
+   about to `tests/cases/balance.json`, and in a new session `/judge`.
+
+Only an idea, no documents? `/pitch`, then `/define` instead of steps 2-4.
 
 ## Daily cheat sheet
 
-| I want to... | Say / run |
+| I want to... | Type / run |
 |---|---|
-| park a new idea | `/pitch` + paste the ramble |
-| start a project | `/define` -> `/harness` -> `/commission` |
-| continue work | "Read the latest LOG entry and continue with the next step." or `/build` |
-| build specific things | `/build ECO-004 ECO-005` |
-| fix a bug I saw | "Write a failing test for: <what happened>, then fix it." |
-| tune numbers | `/balance <what feels wrong + target>` |
-| change the design | `/change-request <the wish>` |
+| park a new idea | `/pitch` + the ramble |
+| see what the agent makes of my design docs | `/spec` (map), `/spec <system>` |
+| tell the agent I answered its questions | `/spec questions answered` |
+| set a project up | `/spec` -> `/harness` -> `/commission` |
+| continue work | `/start` (takes "Next" from PROGRESS.md) |
+| build specific things | `/start STA-004 STA-005` |
+| fix a bug I saw | `/start <what happened>` (the plan starts with a test that reproduces it) |
+| several repeat requirements in one task | `/start UNI-010 to UNI-014, same pattern as UNI-008. Run limit 50 for this task.` ([09-loops.md](09-loops.md)) |
+| end the session | `/wrap`, then do the check it names, then clear |
+| have the agent playtest | `/qa` or `/qa <system>` |
+| see my balance situations | `./harness/gw.sh cases` (no agent needed) |
+| watch one run | `./harness/gw.sh trace --seed=7 --ticks=300` |
+| tune numbers | `/balance <what feels wrong + target>` -> pick an option |
+| change the design | edit `design/`, then `/change-request <what changed>` |
 | report a play session | `/playtest` + notes |
+| a second look at finished work | new session, `/judge` |
+| see where the project stands, without an agent | open `PROGRESS.md` |
 | art direction | put refs in `docs/style_refs/`, `/style-guide` |
 | an icon/sprite | `/asset food icon, 32 px` |
-| stop for today | `/wrap-up` |
-| check things myself | `./harness/gw.sh check`, `./harness/gw.sh sim --seeds=1-20 --ticks=600` |
+| check things myself | `./harness/gw.sh check` |
 | see what the agent changed | `git log --oneline -10`, `git diff HEAD~1` |
-| undo the agent's last commit | "Revert the last commit and explain what it did." |
+| make sure nobody touched my design | `git log --oneline -- design/` |
+| the setup itself seems broken (Godot, git, CI) | `/commission` |
 
 ## Signs things are going wrong (and the fix)
 | Sign | Fix |
 |---|---|
-| Tests changed alongside every feature | Ask why; insist on `/change-request` for expectation changes |
-| One file keeps growing | "Refactor X into smaller classes, tests must stay green" |
-| Same bug comes back | It had no test. "Write a regression test first" |
-| Agent goes in circles | Stop it. Ask it to log what it tried; clarify the requirement yourself |
-| Usage limit every evening | Smaller batches, `/clear` between tasks, fewer screenshots, shorter CLAUDE.md |
+| The spec contains a rule you never wrote | Say so; it must be removed or become a question. Check the row's `source` |
+| The plan at Gate 1 has a number you don't recognise | Ask where it comes from. No worked example in the spec means it should have been a question |
+| The agent hits the Run limit | The task is too big or its "done when" too far away. Split it |
+| "Waiting on me" piles up | You're not checking. Nothing there counts as done; check before starting more |
+| Tests changed alongside every feature | Ask why; insist on `/change-request` for expectation changes. `/judge` looks for exactly this |
+| One file keeps growing | `/start refactor X into smaller classes, tests must stay green` |
+| Same bug comes back | It had no test. The fix task starts with the test that reproduces it |
+| Usage limit every evening | One task per session and clear between; fewer screenshots; a shorter AGENTS.md; answer questions in the file instead of in chat |
+| `docs/QUESTIONS.md` keeps growing | The design for that system is not ready to build. Design more, build something else |
 | Game works, isn't fun | That's normal and it's your job. Playtest, cut, `/change-request`. Don't add features to rescue it |

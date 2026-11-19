@@ -92,6 +92,11 @@ echo "alias superclaude='claude --dangerously-skip-permissions'" >> ~/.bashrc &&
 
 Only ever add this alias in the `agent` account on this box.
 
+### pi (optional, same account)
+Install pi with the command from [10-pi.md](10-pi.md) and sign in with
+`/login`. pi needs no "skip permissions" alias: it never asks. Read the cost
+section of that page before signing in with your Claude subscription.
+
 ## 5. Git + GitHub for the agent
 Still as `agent`:
 
@@ -113,7 +118,15 @@ only push to the repos you allow. The convenient way is your account's SSH keys.
 Optionally install the GitHub CLI `gh` so the agent can create repos and
 read CI results (`gh auth login`).
 
-## 6. The kit and its skills (as `agent`)
+## 6. The workflow, the kit and their commands (as `agent`)
+
+The kit is an add-on to your short-loop workflow, which lives in its own repo.
+Install the workflow first; its installer sets `WORKFLOW_DIR`, and the kit's
+installer stops without it (clone URL in the [README](../README.md#quick-start)):
+
+```bash
+git clone https://github.com/AdilAry/Workflow.git ~/Workflow && bash ~/Workflow/install.sh && source ~/.bashrc
+```
 
 ```bash
 git clone https://github.com/AdilAry/Gamedev_WF.git ~/Gamedev_WF && ~/Gamedev_WF/scripts/install.sh && source ~/.bashrc
@@ -125,6 +138,12 @@ cd ~/Gamedev_WF/example/colony_sim && ./harness/gw.sh check && ./harness/gw.sh s
 
 You want `CHECK OK` and three PNG paths. That's your first commissioning.
 
+The two installers link `/start`, `/wrap`, `/judge` and the game commands into
+`~/.claude/commands/` (and `~/.pi/agent/prompts/` if pi is there), so a later
+`git pull` in `~/Workflow` or `~/Gamedev_WF` updates them with nothing to re-run. It also
+creates the user-level "How I work" file for each agent if there is none:
+open it once and fill its one bracket.
+
 ## 7. Working on it from the Legion
 
 ```bash
@@ -135,9 +154,13 @@ ssh agent@mint-dev.local
 tmux new -A -s game
 ```
 
-Inside tmux: `cd ~/games/<project> && superclaude`, give it a task (e.g.
-`/build phase 2`), then detach with `Ctrl-b d`. Close the laptop lid, go to
-work, come back, `tmux attach -t game` to read the summary.
+When you clone a game repo onto this box for the first time, run
+`./harness/gw.sh hooks` in it once (git does not clone hooks).
+
+Inside tmux: `cd ~/games/<project> && superclaude` (or `pi`), then one task
+per session: `/start STA-004`, read the plan, OK it, `/wrap` when it reports,
+do the check it names, clear. tmux keeps the session alive if the SSH
+connection drops; detach with `Ctrl-b d` and `tmux attach -t game` later.
 
 Several projects in parallel = several tmux windows (`Ctrl-b c`), one per
 project folder. Keep it to two or three: the limit is your Pro usage, not
@@ -173,3 +196,5 @@ and can conflict with the agent's.
   occasionally: `rm -rf ~/games/*/reports`.
 - Update Claude Code from time to time (it usually updates itself) and
   `git -C ~/Gamedev_WF pull && ~/Gamedev_WF/scripts/install.sh` for kit updates.
+  Then bring each game's harness up to date with
+  `~/Gamedev_WF/scripts/update-harness.sh ~/games/<project>` (see CHANGELOG.md).

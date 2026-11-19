@@ -1,0 +1,29 @@
+{
+  "defaults": { "seeds": "1-10", "ticks": 500, "show": ["population"] },
+  "cases": [
+    {
+      "name": "baseline",
+      "note": "BAL-001: what this situation is and why you care about it",
+      "params": { "bot": "greedy" },
+      "expect": { "population": [20, null] }
+    },
+    {
+      "name": "do-nothing",
+      "note": "BAL-002: a player who does nothing must lose",
+      "params": { "bot": "idle" },
+      "expect": { "population": [null, 5] }
+    },
+    {
+      "name": "a-vs-b",
+      "note": "BAL-003: no strategy should dominate. 'win' is 1 or 0 per seed, so its mean is the win rate",
+      "seeds": "1-100",
+      "params": { "bot": "rusher", "enemy_bot": "turtle" },
+      "expect": { "win": { "mean": [0.4, 0.6] } }
+    },
+    {
+      "name": "what-if",
+      "note": "no target: a situation you only want to look at",
+      "params": { "bot": "greedy", "some_rule": 2 }
+    }
+  ]
+}

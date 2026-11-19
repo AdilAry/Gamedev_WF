@@ -11,12 +11,15 @@ extends RefCounted
 ## Every method whose name starts with "test_" is run on a FRESH instance.
 ## Optional hooks: before_each() and after_each(). Any of them may use await.
 ## Assertions never stop the test; all failures are collected and reported.
+## A script error or push_error() during the test fails it (Godot 4.5+),
+## unless the test announced it with expect_error().
 
 ## The running SceneTree. Use it for scene-tier tests (tree.root, frames).
 var tree: SceneTree
 
 var _failures: Array[String] = []
 var _spawned: Array[Node] = []
+var _expected_errors: Array[String] = []
 
 
 # --- assertions ------------------------------------------------------------
@@ -75,6 +78,16 @@ func assert_null(value: Variant, msg: String = "") -> void:
 		_fail("expected null, got <%s>" % str(value), msg)
 
 
+## Announce that this test deliberately triggers an error (e.g. a loader given
+## a broken file calls push_error). Every error whose text contains `fragment`
+## (case-insensitive) is then allowed, and at least one must happen.
+## Errors that match no announced fragment still fail the test.
+## For push_error() and engine errors only: a SCRIPT ERROR is always a bug,
+## and gw.sh fails the run on it whatever the test declares.
+func expect_error(fragment: String) -> void:
+	_expected_errors.append(fragment)
+
+
 # --- scene-tier helpers ----------------------------------------------------
 
 ## Instantiate a scene, add it to the running tree, free it after the test.
@@ -116,6 +129,25 @@ func _same(a: Variant, b: Variant) -> bool:
 	if typeof(a) != typeof(b):
 		return false
 	return a == b
+
+
+## Called by the runner with the errors captured during this test.
+## Returns failure lines (empty = fine).
+func _check_errors(errors: Array[String]) -> Array[String]:
+	var out: Array[String] = []
+	var seen := {}
+	for e in errors:
+		var allowed := false
+		for frag in _expected_errors:
+			if e.findn(frag) != -1:
+				allowed = true
+				seen[frag] = true
+		if not allowed:
+			out.append(e)
+	for frag in _expected_errors:
+		if not seen.has(frag):
+			out.append("expected an error containing <%s>, none happened" % frag)
+	return out
 
 
 func _cleanup() -> void:

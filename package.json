@@ -1,0 +1,18 @@
+{
+  "name": "gamedev-wf",
+  "version": "1.5.0",
+  "private": true,
+  "description": "Gamedev-WF: a Godot harness and game commands on the short-loop workflow, plus a pi guard extension",
+  "type": "module",
+  "pi": {
+    "extensions": [
+      "./pi/extensions/gamedev-wf-guard/index.ts"
+    ]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
+  },
+  "scripts": {
+    "test": "node --test pi/extensions/gamedev-wf-guard/rules.test.ts"
+  }
+}

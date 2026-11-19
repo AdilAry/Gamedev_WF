@@ -1,9 +1,9 @@
 ---
-name: style-guide
-description: Create docs/STYLE_GUIDE.md for a game from reference images the user picked - proportions, shapes, palette, materials, lighting, edges, detail level, UI readability and what the style is not - plus a reusable prompt preamble for image generators. Use when the user starts art direction, shares reference images, or asks for a style guide or consistent look.
+description: Create docs/STYLE_GUIDE.md from reference images the user picked - shapes, palette, lighting, UI readability, what the style is not, plus a prompt preamble for image generators. Use when the user starts art direction or shares references.
 ---
-
 # /style-guide - art direction the agent can follow
+
+Request: $ARGUMENTS
 
 Based on the reference-first approach: the user generates or collects a batch
 of images, keeps the ones they like, and you extract the shared visual rules

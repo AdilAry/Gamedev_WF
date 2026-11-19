@@ -1,8 +1,14 @@
 # <Game title> - Game Design Document (GDD / functional spec)
 
-> This is the single source of truth. The agent implements what is written
-> here, nothing more. If behaviour is wrong, fix THIS document first, then ask
-> for the change (see docs/changes/). Every requirement says how it is proven.
+> The contract between you and the agent. It implements what is written
+> here and in `docs/spec/`, nothing more. Every requirement says how it is proven.
+>
+> Two ways to fill it:
+> - **You already wrote the design** (files in `design/`): `/spec` builds the
+>   systems table below and one `docs/spec/<system>.md` per system. Your
+>   `design/` files stay the origin; this file is only the index.
+> - **You only have an idea**: `/define` interviews you and writes the
+>   requirements straight into section 6 (fine for small games).
 
 | Field | Value |
 |---|---|
@@ -35,8 +41,15 @@ Turn-based / fixed tick (N ticks per second, pausable, speed x1/x2/x4) /
 real-time. Simulation must be deterministic for a given seed + command list.
 
 ## 6. Systems
-One subsection per system. Each system lists its rules, the data it reads
-(data/*.json) and its requirements.
+| System | Prefix | Design files | Spec | Depends on | Status |
+|---|---|---|---|---|---|
+| Stats & levels | STA | `design/Progression/...` | `docs/spec/stats.md` | - | mapped / specified / building / done |
+
+Build order: the system others depend on first; inside it, the smallest
+slice that runs headless.
+
+Small game without `docs/spec/`: one subsection per system right here, each
+with its rules, the data it reads (data/*.json) and its requirements.
 
 ### 6.1 <System name, e.g. Economy>
 Rules in plain language. Numbers live in `data/<file>.json`, not here; this
@@ -52,7 +65,8 @@ document says what the numbers *mean* and their intended ranges.
 ### 6.4 <Save / load>
 
 ## 7. Balance targets (what "feels right" means, in numbers)
-These are checked by `/balance` with headless simulation runs.
+Each target becomes a case in `tests/cases/balance.json`; `./harness/gw.sh cases`
+shows them side by side. You own that file: it lists the situations you care about.
 
 | ID | Target | How measured |
 |---|---|---|
@@ -86,7 +100,7 @@ Link to docs/STYLE_GUIDE.md. Placeholder policy (what can stay grey-box).
 | 3 | ... | | |
 
 ## 12. Open questions
--
+See `docs/QUESTIONS.md` (the decision queue). Answer there, in any editor.
 
 ## 13. Change log
 | Date | Change | CR |
