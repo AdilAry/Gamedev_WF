@@ -8,6 +8,9 @@ on:
 
 env:
   GODOT_VERSION: "4.7.2"
+  # The short-loop workflow this kit builds on (WORKFLOW.md §8). Its only URL in the kit's CI:
+  # change it here when the workflow repo moves.
+  WORKFLOW_GIT_URL: "https://github.com/AdilAry/Workflow.git"
 
 jobs:
   colony-sim:
@@ -40,7 +43,7 @@ jobs:
           python3 - <<'PY'
           import glob, re, sys, yaml
           bad = 0
-          files = sorted(glob.glob('commands/*.md') + glob.glob('workflow/templates/commands/*.md'))
+          files = sorted(glob.glob('commands/*.md'))
           for p in files:
               s = open(p).read()
               if not s.startswith('---\n'):
@@ -51,19 +54,25 @@ jobs:
                   print(p, 'description missing or too long'); bad += 1
               if '$ARGUMENTS' not in body and 'argument-hint' in fm:
                   print(p, 'takes arguments but never uses $ARGUMENTS'); bad += 1
-              if p.startswith('commands/') and (re.search(r'(^|[\s(])@[A-Za-z./~]', body) or '!`' in body):
+              if re.search(r'(^|[\s(])@[A-Za-z./~]', body) or '!`' in body:
                   print(p, 'body contains an @file or !`cmd` that Claude Code would expand'); bad += 1
           print(len(files), 'command files checked')
-          sys.exit(1 if bad or len(files) != 14 else 0)
+          sys.exit(1 if bad or len(files) != 11 else 0)
           PY
 
       - name: Installer links every command for both agents (empty home)
         working-directory: .
         run: |
+          WF="$(mktemp -d)/workflow"; git clone -q --depth 1 "$WORKFLOW_GIT_URL" "$WF"
           T="$(mktemp -d)"; mkdir -p "$T/.claude/skills/wrap" "$T/.claude/skills/mine" "$T/.pi/agent"
           printf -- '---\nname: wrap\n---\nrewrite PROGRESS.md\n' > "$T/.claude/skills/wrap/SKILL.md"
           printf -- '---\nname: mine\n---\nsomething else\n' > "$T/.claude/skills/mine/SKILL.md"
-          HOME="$T" bash scripts/install.sh
+          # without WORKFLOW_DIR it must stop, say how to fix it, and change nothing
+          if env -u WORKFLOW_DIR HOME="$T" bash scripts/install.sh > nowf.out 2>&1; then cat nowf.out; echo "installed without WORKFLOW_DIR"; exit 1; fi
+          grep -q 'Install the short-loop workflow first' nowf.out || { cat nowf.out; echo "no clear message without WORKFLOW_DIR"; exit 1; }
+          [[ ! -e "$T/.claude/commands" ]] || { echo "changed files without WORKFLOW_DIR"; exit 1; }
+          rm nowf.out
+          HOME="$T" WORKFLOW_DIR="$WF" bash scripts/install.sh
           for c in start wrap judge spec define harness commission qa balance playtest change-request pitch style-guide asset; do
             for d in "$T/.claude/commands" "$T/.pi/agent/prompts"; do
               [[ -L "$d/$c.md" && -s "$d/$c.md" ]] || { echo "missing or dead: $d/$c.md"; exit 1; }
@@ -73,7 +82,7 @@ jobs:
           [[ ! -e "$T/.claude/skills/wrap" && -e "$T/.claude/skills-replaced-by-gamedev-wf/wrap" ]] || { echo "old kit skill not moved aside"; exit 1; }
           [[ -e "$T/.claude/skills/mine" ]] || { echo "an unrelated skill was touched"; exit 1; }
           grep -q 'GAMEDEV_WF=' "$T/.bashrc" || { echo "GAMEDEV_WF not set"; exit 1; }
-          HOME="$T" bash scripts/install.sh > /dev/null   # a second run must not fail
+          HOME="$T" WORKFLOW_DIR="$WF" bash scripts/install.sh > /dev/null   # a second run must not fail
           echo "installer ok"
 
       - uses: actions/setup-node@v4

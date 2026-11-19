@@ -4,6 +4,50 @@ What changed in the kit, and what to do in games that already use it.
 Harness version = `HARNESS_VERSION` in `harness/godot/harness/gw.sh`
 (`./harness/gw.sh version` in a game shows its copy).
 
+## Kit 1.5.0 / Harness 1.2.1 - 2026-11-19
+
+The short-loop workflow is no longer bundled. It is its own repo, and the
+kit is an add-on to it: it finds it through `WORKFLOW_DIR` and uses only the
+list in the workflow's WORKFLOW.md §8 ("Building a kit on this workflow"),
+contract of 19 November 2026. A new workflow version needs no kit release
+unless that list changes.
+
+**On every machine:**
+1. Clone the workflow repo to a fixed folder and install it. Linux:
+   `bash install.sh` in that folder. Windows: the PowerShell lines in its
+   WORKFLOW.md §3. Both set `WORKFLOW_DIR`.
+2. Open a new terminal, `git pull` the kit, and run `scripts/install.sh`
+   again (Windows: `scripts\install.ps1`). Both stop with a message if
+   `WORKFLOW_DIR` is not set. On Linux the commands now link into the
+   workflow's folder, not into the kit's old `workflow/`.
+
+**In a game set up with 1.4.0:** in AGENTS.md, replace the line "A finished
+task is ticked by setting its rows to `green` in `docs/TESTPLAN.md`" with the
+two hooks from `harness/templates/AGENTS.md` ("At /start also" and the new
+start of "At /wrap also"). The workflow's `/wrap` now ticks only plans with
+checkboxes, so without this the TESTPLAN rows would stay as they are. You may
+also delete "Never weaken, skip or delete a test to make it pass": `/start`
+has that rule now. Nothing else, unless you copied files from the kit's
+`workflow/` folder by hand (take them from `$WORKFLOW_DIR` instead).
+
+- `workflow/` removed. CI clones the workflow from `WORKFLOW_GIT_URL` (one
+  line at the top of `example-ci.yml`) and tests the installer with it, and
+  without it (must stop, change nothing).
+- `scripts/install.sh` runs `"$WORKFLOW_DIR/install.sh"` with the kit's
+  commands; `install.ps1` copies only the kit's commands (the workflow's §3
+  installs its own). Neither saves `WORKFLOW_DIR`: the workflow does.
+- `/harness` takes PROGRESS.md, history.md and decisions.md from
+  `$WORKFLOW_DIR/templates/project/`. `/harness`, `/spec` and `/define` no
+  longer guess where the kit is (`~/Gamedev_WF`, `/c/Users/...`): they use
+  `$GAMEDEV_WF` and `$WORKFLOW_DIR`, and stop or ask when one is unset.
+- `/commission` records the workflow version (check 1) and says to install
+  the workflow first when `/start` is not offered (check 13).
+- Game AGENTS.md template: TESTPLAN rows go `green` through "At /start also"
+  and "At /wrap also"; the test-weakening rule is gone (it is in `/start`).
+- README names the contract date and gives the install order for Linux and
+  Windows; GUIDE, docs/02, 03, 05, 09, 10 and the kit's AGENTS.md point to the
+  external workflow.
+
 ## Kit 1.4.0 / Harness 1.2.1 - 2026-11-14
 
 Version 4 of the owner's short-loop workflow replaces the kit's own session

@@ -3,7 +3,8 @@
 (`AGENTS.md` is the instruction file; `CLAUDE.md` only imports it, so Claude
 Code, pi and other agents all read the same text.)
 
-This repo is a kit (guide + workflow + game commands + harness + example),
+This repo is a kit (guide + game commands + harness + example) on top of
+the owner's short-loop workflow,
 not a game. Games are created in their own folders/repos, outside this one,
 with the `/harness` command. Do not start an agent for game work inside this
 folder: it would load this file too.
@@ -13,13 +14,13 @@ folder: it would load this file too.
   beginner embedded engineer, Godot hobbyist, Claude Pro user who also uses
   the pi coding agent, Windows 10 main laptop + Linux Mint agent box. They
   design their games in detail themselves and want short, human-checked loops.
-- `workflow/`: **the owner's short-loop workflow, vendored unchanged**
-  (WORKFLOW.md, `/start` `/wrap` `/judge` in `templates/commands/`,
-  `install.sh`, `new-project.sh`, templates). Do not edit anything in it:
-  the owner maintains it and drops in new versions. The kit adapts around it,
-  through the hooks it offers: Check, Done gate, Run limit, Push, "where the
-  plan lives", "At /start also", "At /wrap also", "Judged on" in a project's
-  AGENTS.md, and extra command folders for `workflow/install.sh`.
+- **The short-loop workflow is an external dependency** (its own repo,
+  found through `$WORKFLOW_DIR`, which its installer sets). The kit uses only
+  the WORKFLOW.md §8 list ("Building a kit on this workflow"); the README names
+  the contract date it was written against. A change to how sessions work
+  belongs in the workflow repo first. If the kit needs a word the §8 list
+  doesn't have, list it for the owner. Never copy or restate the workflow's
+  files here.
 - `commands/<name>.md`: the game commands, in the workflow's command format
   (frontmatter `description` and optional `argument-hint`, body uses
   `$ARGUMENTS`). They are linked into `~/.claude/commands` and
@@ -31,7 +32,7 @@ folder: it would load this file too.
 - There is no build command. A requirement task is `/start <IDs>`; what makes
   it game-specific is in `harness/templates/AGENTS.md`. Game logic belongs
   there or in a game command, never in a copy of the workflow's commands.
-- `/harness` copies `workflow/templates/project/{PROGRESS.md,docs/history.md,docs/decisions.md}`
+- `/harness` copies `$WORKFLOW_DIR/templates/project/{PROGRESS.md,docs/history.md,docs/decisions.md}`
   into games, so there is one copy of those templates.
 - `pi/extensions/gamedev-wf-guard/`: pi extension. Decisions live in
   `rules.ts` (no pi imports) and are tested with `npm test`.
@@ -46,10 +47,12 @@ folder: it would load this file too.
 ## Checks
 - `cd example/colony_sim && ./harness/gw.sh check` (needs Godot 4.7.x as `godot` or `$GODOT`).
 - `npm test` (Node 22.18+): the pi guard's rules.
-- `HOME=$(mktemp -d) bash scripts/install.sh` after creating `.claude` in that
-  folder: every command must end up linked.
+- `HOME=$(mktemp -d) WORKFLOW_DIR=<a workflow clone> bash scripts/install.sh`
+  after creating `.claude` in that folder: every command must end up linked.
+  Without `WORKFLOW_DIR` it must stop with a message.
 - CI: `.github/workflows/example-ci.yml` runs the example, canaries, sim runner, screenshots.
-- Keep `GODOT_VERSION` the same in both workflow files and the docs when upgrading Godot.
+- Keep `GODOT_VERSION` the same in both CI files (`.github/workflows/example-ci.yml`,
+  `harness/ci/godot-ci.yml`) and the docs when upgrading Godot.
 
 ## Conventions
 - GDScript 2.0 (Godot 4). Explicit types where a `Variant` is involved; tabs for indentation.

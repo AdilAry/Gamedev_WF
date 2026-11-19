@@ -31,8 +31,8 @@ Loaded in every session, by every agent (`CLAUDE.md` is the one-line import). Ke
 - The plan lives in `docs/spec/<system>.md` (what each requirement says) and `docs/TESTPLAN.md` (its test and status). A task is 1-3 requirement IDs of one system, or free text for anything else.
 - In the /start plan, list each test as input -> expected result, taken from the spec's worked examples. A value the spec does not give is a question for me, not a number you choose.
 - UI, visual and playtest requirements always have a part only I can check. Say what to look at and what I should see; they stay "awaiting my check" until I confirm.
-- A finished task is ticked by setting its rows to `green` in `docs/TESTPLAN.md`.
-- **At /wrap also:** statuses in `docs/TESTPLAN.md` match reality; every question raised this session is filed in `docs/QUESTIONS.md`, and the ones blocking "Next" are named under "Waiting on me".
+- **At /start also:** a check I confirmed sets that task's rows in `docs/TESTPLAN.md` to `green`.
+- **At /wrap also:** a finished task's rows in `docs/TESTPLAN.md` are set to `green`, and every status there matches reality; every question raised this session is filed in `docs/QUESTIONS.md`, and the ones blocking "Next" are named under "Waiting on me".
 - **Judged on** (for /judge): every `green` requirement has a test that really proves it; no test was weakened and no expected value changed without a change request (`git log -p -- tests/`); the architecture rules below hold; nothing in code or data that is in neither `design/`, the spec nor an answered question; PROGRESS.md and the statuses match the code.
 
 ## Engine facts
@@ -52,7 +52,7 @@ Loaded in every session, by every agent (`CLAUDE.md` is the one-line import). Ke
 ## Working rules
 - Tests first, in the fastest tier that can prove the requirement: `tests/unit` (a rule or formula), `tests/sim` (many ticks, seeds, bots), `tests/scene` (real nodes and input). Each test cites its requirement ID.
 - While iterating, run filtered tests (`./harness/gw.sh test unit <filter>`); slower tiers only when the faster ones are green.
-- Never weaken, skip or delete a test to make it pass. If a test or a requirement looks wrong, stop and tell me; a change of behaviour goes through `/change-request`.
+- A change of behaviour goes through `/change-request`.
 - A script error or `push_error()` fails the running test. A test that provokes one on purpose declares it with `expect_error("fragment")`.
 - Never bypass the commit gate (`git commit --no-verify`). Commit messages name the requirement IDs.
 - No addons, Godot version changes or project settings changes without asking.

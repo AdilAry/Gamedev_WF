@@ -15,8 +15,8 @@ Where things live (create what is missing):
 - `design/` - the human's documents. **Read-only for you.** Any structure, any
   number of files, Obsidian links and images welcome.
 - `docs/spec/<system>.md` - one contract per system, written by you from the
-  kit template (`<kit>/harness/templates/SPEC.md`; kit = `$GAMEDEV_WF`, else
-  `~/Gamedev_WF`, else ask).
+  kit template (`<kit>/harness/templates/SPEC.md`; kit = `$GAMEDEV_WF`; if it is
+  unset, ask).
 - `docs/QUESTIONS.md` - the decision queue (`<kit>/harness/templates/QUESTIONS.md`).
 - `docs/GDD.md` - the short index: pitch, scope, the systems table, build order.
 

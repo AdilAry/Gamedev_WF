@@ -11,12 +11,15 @@ test, read results, fix, repeat. Without it every iteration goes through the
 human. This command also sets the game up on the short-loop workflow, so
 `/start`, `/wrap` and `/judge` work in it.
 
-## 0. Find the kit
-Kit root = `$GAMEDEV_WF`, else `~/Gamedev_WF`, else
-`/c/Users/<user>/Gamedev_WF` on Windows, else ask the user. You need:
+## 0. Find the kit and the workflow
+Kit root = `$GAMEDEV_WF` (set by the kit's installer); workflow = `$WORKFLOW_DIR`
+(set by the short-loop workflow's installer). If either is unset, stop and tell
+the user: install the workflow (its WORKFLOW.md §3), then the kit
+(`scripts/install.sh`, Windows `scripts\install.ps1`), and open a new terminal.
+Never guess a path. You need:
 - `<kit>/harness/godot/harness/` (gw.sh, test_runner.gd, sim_runner.gd, gw_test.gd, gw_error_capture.gd)
 - `<kit>/harness/templates/` (AGENTS.md, CLAUDE.md, TESTPLAN.md, QUESTIONS.md, cases.json, ...)
-- `<kit>/workflow/templates/project/` (PROGRESS.md, docs/history.md, docs/decisions.md:
+- `$WORKFLOW_DIR/templates/project/` (PROGRESS.md, docs/history.md, docs/decisions.md:
   the session files of the short-loop workflow, the same in every project)
 - `<kit>/harness/ci/godot-ci.yml`
 - `<kit>/example/colony_sim/` - a working reference project. When unsure how

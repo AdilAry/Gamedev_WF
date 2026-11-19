@@ -118,7 +118,15 @@ only push to the repos you allow. The convenient way is your account's SSH keys.
 Optionally install the GitHub CLI `gh` so the agent can create repos and
 read CI results (`gh auth login`).
 
-## 6. The kit and its commands (as `agent`)
+## 6. The workflow, the kit and their commands (as `agent`)
+
+The kit is an add-on to your short-loop workflow, which lives in its own repo.
+Install the workflow first; its installer sets `WORKFLOW_DIR`, and the kit's
+installer stops without it (clone URL in the [README](../README.md#quick-start)):
+
+```bash
+git clone https://github.com/AdilAry/Workflow.git ~/Workflow && bash ~/Workflow/install.sh && source ~/.bashrc
+```
 
 ```bash
 git clone https://github.com/AdilAry/Gamedev_WF.git ~/Gamedev_WF && ~/Gamedev_WF/scripts/install.sh && source ~/.bashrc
@@ -130,9 +138,9 @@ cd ~/Gamedev_WF/example/colony_sim && ./harness/gw.sh check && ./harness/gw.sh s
 
 You want `CHECK OK` and three PNG paths. That's your first commissioning.
 
-The installer links `/start`, `/wrap`, `/judge` and the game commands into
-`~/.claude/commands/` and `~/.pi/agent/prompts/`, so a later
-`git -C ~/Gamedev_WF pull` updates them with nothing to re-run. It also
+The two installers link `/start`, `/wrap`, `/judge` and the game commands into
+`~/.claude/commands/` (and `~/.pi/agent/prompts/` if pi is there), so a later
+`git pull` in `~/Workflow` or `~/Gamedev_WF` updates them with nothing to re-run. It also
 creates the user-level "How I work" file for each agent if there is none:
 open it once and fill its one bracket.
 

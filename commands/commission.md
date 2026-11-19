@@ -14,7 +14,8 @@ repo, plug in hardware).
 ## Checklist (run in order, record each result)
 
 1. **Environment**: OS, `./harness/gw.sh version` (harness + Godot), `git --version`,
-   free disk space, the kit version (`git -C <kit> log -1 --oneline`).
+   free disk space, the kit version (`git -C "$GAMEDEV_WF" log -1 --oneline`)
+   and the workflow version (`git -C "$WORKFLOW_DIR" log -1 --oneline`).
    Godot major.minor must match `config/features` in project.godot and
    `GODOT_VERSION` in `.github/workflows/godot-ci.yml`. If the kit's
    `HARNESS_VERSION` (in `<kit>/harness/godot/harness/gw.sh`) is newer than
@@ -59,8 +60,9 @@ repo, plug in hardware).
     and is under ~60 lines; no parent folder has an AGENTS.md or CLAUDE.md of
     its own (it would be loaded into every session here). Say which agent you
     are. Ask the human to type `/` and confirm that `/start`, `/wrap`,
-    `/judge` and the game commands are offered; if not, the kit is not
-    installed on this machine (`<kit>/scripts/install.sh`). On pi the startup
+    `/judge` and the game commands are offered; if not, install the
+    short-loop workflow (its WORKFLOW.md §3, which sets `WORKFLOW_DIR`), then
+    the kit (`<kit>/scripts/install.sh`). On pi the startup
     header also lists the guard extension; on Claude Code
     `.claude/settings.json` exists.
 

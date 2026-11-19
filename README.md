@@ -14,9 +14,11 @@ with you in it**:
 3. **The agent playtests.** Bots, fuzzing and your balance cases: bugs come
    back with a seed and a reproducing test, balance comes back as one table (`/qa`).
 
-The session routine is your own **short-loop workflow**
-([workflow/WORKFLOW.md](workflow/WORKFLOW.md)), included unchanged; the game
-kit plugs into it through each game's AGENTS.md.
+The session routine is your own **short-loop workflow**, a separate repo this
+kit depends on and does not copy. The kit is an add-on to it: it plugs in
+through each game's AGENTS.md and uses only what the workflow's WORKFLOW.md §8
+("Building a kit on this workflow") lists. **Written against the contract of
+19 November 2026.**
 
 It follows the ideas of the "10 levels of AI-assisted embedded development"
 and "Embedded AI Harness" videos (spec-driven development, agents, a
@@ -31,7 +33,7 @@ laptop and a Linux Mint agent box**.
 2. **[docs/08-first-weekend.md](docs/08-first-weekend.md)**: a step-by-step first weekend plus a cheat sheet.
 3. **[docs/09-loops.md](docs/09-loops.md)**: short loops vs long loops, and who decides what.
 4. **[docs/10-pi.md](docs/10-pi.md)**: using pi (cost with Claude Pro, install, the guard extension).
-5. **[workflow/WORKFLOW.md](workflow/WORKFLOW.md)**: the short-loop workflow for any software project, not only games.
+5. **WORKFLOW.md in the workflow repo** (`$WORKFLOW_DIR/WORKFLOW.md` once installed): the short-loop workflow for any software project, not only games.
 
 ## What's in the box
 
@@ -39,21 +41,48 @@ laptop and a Linux Mint agent box**.
 |---|---|
 | [`GUIDE.md`](GUIDE.md) | the guide |
 | [`docs/`](docs/) | machines & roles, Windows setup, Mint agent-box setup, Claude Pro playbook, testing tiers, architecture, asset pipeline, first weekend, loops, pi |
-| [`workflow/`](workflow/) | your short-loop workflow, unchanged: the guide, `/start` `/wrap` `/judge`, its installer, `new-project.sh`, the user-level and project templates. Usable for any software project |
 | [`commands/`](commands/) | the 11 game commands, in the same format: `/pitch` `/spec` `/define` `/harness` `/commission` `/qa` `/balance` `/playtest` `/change-request` `/style-guide` `/asset` |
 | [`harness/godot/harness/`](harness/godot/harness/) | the harness copied into every game: `gw.sh`, a dependency-free test runner that also catches script errors and hangs, the headless sim runner (seeds, balance cases, traces) |
 | [`harness/templates/`](harness/templates/) | the game-specific files: AGENTS.md (+ CLAUDE.md import), SPEC per system, QUESTIONS (decision queue), GDD index, TESTPLAN, balance cases, QA report, IDEA, STYLE_GUIDE, ASSETS manifest, CR, PLAYTEST, safe permissions |
 | [`pi/extensions/`](pi/extensions/) + [`package.json`](package.json) | pi package: a guard extension (asks before `design/` or `harness/` are edited, blocks `--no-verify` and forced pushes) |
 | [`harness/ci/godot-ci.yml`](harness/ci/godot-ci.yml) | GitHub Actions workflow for game repos |
 | [`example/colony_sim/`](example/colony_sim/) | a small working tick-based colony economy built the harness way: 17 tests over 3 tiers, sim runner hook, three bots, balance cases, GDD, test plan |
-| [`scripts/`](scripts/) | `install.sh` / `install.ps1`: run the workflow's installer with the game commands added (Claude Code and pi); `update-harness.sh`: bring a game's `harness/` up to date |
+| [`scripts/`](scripts/) | `install.sh` / `install.ps1`: install the game commands next to the workflow's (needs `WORKFLOW_DIR`); `update-harness.sh`: bring a game's `harness/` up to date |
 | [`CHANGELOG.md`](CHANGELOG.md) | what changed in the kit and harness, and what to do in existing games |
 
 ## Quick start
 
+Install the workflow first, then the kit. The workflow's installer sets
+`WORKFLOW_DIR`; the kit's installer only checks that it is there and stops
+with a message if it isn't. The workflow repo is on GitHub for now
+(<https://github.com/AdilAry/Workflow>); if it moves, only its clone URL changes.
+
+**Linux (the agent box):** keep the workflow folder in one fixed place, since the
+commands are links into it.
+
+```bash
+git clone https://github.com/AdilAry/Workflow.git ~/Workflow && bash ~/Workflow/install.sh
+```
+
+Open a new terminal (so `WORKFLOW_DIR` is set), then:
+
 ```bash
 git clone https://github.com/AdilAry/Gamedev_WF.git ~/Gamedev_WF && ~/Gamedev_WF/scripts/install.sh
 ```
+
+**Windows (main laptop):** clone the workflow (Git Bash), then run the
+PowerShell lines in its WORKFLOW.md §3 from that folder; the last one sets
+`WORKFLOW_DIR`. Then, in Git Bash:
+
+```bash
+cd ~ && git clone https://github.com/AdilAry/Gamedev_WF.git
+```
+
+```bash
+powershell -ExecutionPolicy Bypass -File ~/Gamedev_WF/scripts/install.ps1
+```
+
+Then try the example:
 
 ```bash
 cd ~/Gamedev_WF/example/colony_sim && ./harness/gw.sh check

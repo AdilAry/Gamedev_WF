@@ -1,15 +1,27 @@
 # Install the Gamedev-WF kit for Claude Code on Windows (PowerShell).
 #   powershell -ExecutionPolicy Bypass -File scripts\install.ps1
-# - copies the workflow commands (/start /wrap /judge) and the game commands
-#   to %USERPROFILE%\.claude\commands\   (copies: run this again after a git pull)
-# - installs the user-level "How I work" file if there is none yet
+# Needs the short-loop workflow installed first (its WORKFLOW.md section 3):
+# that puts /start /wrap /judge and the "How I work" file in place and sets the
+# user environment variable WORKFLOW_DIR. This script then
+# - copies the game commands to %USERPROFILE%\.claude\commands\
+#   (copies: run this again after a git pull of the kit)
 # - sets the user environment variable GAMEDEV_WF to this kit's folder
 # - moves aside the skills that kit versions before 1.4 copied to .claude\skills
-# pi on Windows is not set up here: run pi on the Linux box (docs\10-pi.md).
 $ErrorActionPreference = "Stop"
 $Kit    = Split-Path -Parent $PSScriptRoot
 $Claude = Join-Path $env:USERPROFILE ".claude"
 $Cmds   = Join-Path $Claude "commands"
+
+# A variable set in another window is not in this one's environment yet; the
+# user setting is the same variable.
+$Wf = $env:WORKFLOW_DIR
+if (-not $Wf) { $Wf = [Environment]::GetEnvironmentVariable("WORKFLOW_DIR", "User") }
+if (-not $Wf -or -not (Test-Path (Join-Path $Wf "templates\commands"))) {
+    Write-Host "WORKFLOW_DIR is not set, or is not the workflow folder: '$Wf'."
+    Write-Host "Install the short-loop workflow first (its WORKFLOW.md section 3 sets WORKFLOW_DIR), then run this again."
+    exit 1
+}
+
 New-Item -ItemType Directory -Force -Path $Cmds | Out-Null
 
 $Old   = Join-Path $Claude "skills"
@@ -25,19 +37,10 @@ foreach ($name in "asset","balance","build","change-request","commission","defin
     }
 }
 
-foreach ($dir in (Join-Path $Kit "workflow\templates\commands"), (Join-Path $Kit "commands")) {
-    Get-ChildItem -File -Filter *.md $dir | ForEach-Object {
-        Copy-Item -Force $_.FullName (Join-Path $Cmds $_.Name)
-        Write-Host "installed /$($_.BaseName)"
-    }
-}
-
-$Global = Join-Path $Claude "CLAUDE.md"
-if (-not (Test-Path $Global)) {
-    Copy-Item (Join-Path $Kit "workflow\templates\user-level\AGENTS.md") $Global
-    Write-Host "installed $Global  <- open it once and fill the one [bracket]"
-} else {
-    Write-Host "kept your $Global"
+Copy-Item (Join-Path $Kit "commands\*.md") "$Cmds\"
+Get-ChildItem -File -Filter *.md (Join-Path $Kit "commands") | ForEach-Object { Write-Host "installed /$($_.BaseName)" }
+if (-not (Test-Path (Join-Path $Cmds "start.md"))) {
+    Write-Host "/start is not installed: run the workflow's WORKFLOW.md section 3 steps in $Wf"
 }
 
 [Environment]::SetEnvironmentVariable("GAMEDEV_WF", $Kit, "User")

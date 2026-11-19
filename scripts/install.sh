@@ -4,18 +4,29 @@
 #
 #     scripts/install.sh [--copy]
 #
+# Needs the short-loop workflow installed first: its installer sets
+# WORKFLOW_DIR, and this kit uses only what that workflow's WORKFLOW.md §8
+# ("Building a kit on this workflow") lists.
+#
 # 1. Sets GAMEDEV_WF in ~/.bashrc so the game commands can find this kit.
-# 2. Runs the short-loop workflow's own installer (workflow/install.sh) and
-#    hands it this kit's commands/ folder. Result, for pi and for Claude Code:
-#    /start /wrap /judge plus the game commands (/spec /harness /qa ...), and
-#    the user-level "How I work" file if there is none yet. The commands are
-#    LINKED into this folder, so `git pull` here is the whole update.
+# 2. Runs "$WORKFLOW_DIR/install.sh" with this kit's commands/ folder. Result,
+#    for Claude Code (and pi, if it is installed): /start /wrap /judge plus the
+#    game commands (/spec /harness /qa ...). The commands are LINKED into the
+#    two folders, so `git pull` in either one is the whole update.
 #    --copy copies them instead (then re-run this after every pull).
-# 3. pi only: registers this folder as a pi package, for the guard extension.
+# 3. pi only, if pi is installed: registers this folder as a pi package, for
+#    the guard extension (for later; see docs/10-pi.md).
 # 4. Moves aside the skills that kit versions before 1.4 copied to
 #    ~/.claude/skills (a skill with the same name would shadow the new command).
 set -euo pipefail
 KIT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+if [[ -z "${WORKFLOW_DIR:-}" || ! -f "${WORKFLOW_DIR:-}/install.sh" ]]; then
+  echo "WORKFLOW_DIR is not set, or has no install.sh: '${WORKFLOW_DIR:-}'." >&2
+  echo "Install the short-loop workflow first (bash install.sh in its folder sets WORKFLOW_DIR)," >&2
+  echo "then open a new terminal (or: source ~/.bashrc) and run this again." >&2
+  exit 1
+fi
 
 chmod +x "$KIT/harness/godot/harness/gw.sh" "$KIT/example/colony_sim/harness/gw.sh" 2>/dev/null || true
 if ! grep -q "GAMEDEV_WF=" "$HOME/.bashrc" 2>/dev/null; then
@@ -37,7 +48,7 @@ for name in asset balance build change-request commission define harness judge p
   fi
 done
 
-bash "$KIT/workflow/install.sh" "$@" "$KIT/commands"
+bash "$WORKFLOW_DIR/install.sh" "$@" "$KIT/commands"
 
 if command -v pi >/dev/null 2>&1; then
   if pi install "$KIT"; then

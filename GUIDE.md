@@ -23,7 +23,7 @@ Three layers, each usable without the one above it:
 
 | Layer | What it is | Where |
 |---|---|---|
-| **Your short-loop workflow** | one task per session, `/start` and `/wrap`, two gates, `PROGRESS.md` as a snapshot, `/judge` in a fresh session. Works for any software project | [workflow/](workflow/WORKFLOW.md), your files, unchanged |
+| **Your short-loop workflow** | one task per session, `/start` and `/wrap`, two gates, `PROGRESS.md` as a snapshot, `/judge` in a fresh session. Works for any software project | its own repo (`$WORKFLOW_DIR/WORKFLOW.md`); the kit depends on it and keeps no copy |
 | **The harness** | `gw.sh`: headless tests in tiers, simulation runs, balance cases, traces, screenshots, the commit gate | `harness/` |
 | **The game commands** | `/spec`, `/harness`, `/commission`, `/qa`, `/balance`, `/playtest`, `/change-request`, and for ideas and art `/pitch`, `/define`, `/style-guide`, `/asset` | `commands/` |
 
@@ -327,4 +327,4 @@ prompts for image tools, with a provenance manifest). See
 8. [docs/08-first-weekend.md](docs/08-first-weekend.md) - a step-by-step plan and prompt cheat sheet
 9. [docs/09-loops.md](docs/09-loops.md) - short loops, long loops, and who decides what
 10. [docs/10-pi.md](docs/10-pi.md) - using pi: cost, install, the guard extension
-11. [workflow/WORKFLOW.md](workflow/WORKFLOW.md) - your short-loop workflow, for any software project: the session files and commands this kit is built on
+11. `$WORKFLOW_DIR/WORKFLOW.md`, in the workflow's own repo - your short-loop workflow, for any software project: the session files and commands this kit is built on (install it first: [README](README.md#quick-start))

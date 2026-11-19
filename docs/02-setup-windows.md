@@ -26,8 +26,14 @@ Unzip both to e.g. `C:\Tools\Godot\` and set an environment variable (PowerShell
 [Environment]::SetEnvironmentVariable("GODOT", "C:\Tools\Godot\Godot_v4.7.2-stable_win64_console.exe", "User")
 ```
 
-## 2. Get this kit
-In Git Bash:
+## 2. Get the workflow, then this kit
+The kit is an add-on to your short-loop workflow, which lives in its own repo.
+Install that first: clone it to a fixed folder and run the PowerShell lines in
+its WORKFLOW.md §3 from there. They install `/start`, `/wrap`, `/judge` and
+your user-level "How I work" file, and set `WORKFLOW_DIR`, which the kit needs
+(see the [README](../README.md#quick-start)).
+
+Then, in Git Bash:
 
 ```bash
 cd ~ && git clone https://github.com/AdilAry/Gamedev_WF.git
@@ -37,12 +43,13 @@ cd ~ && git clone https://github.com/AdilAry/Gamedev_WF.git
 powershell -ExecutionPolicy Bypass -File ~/Gamedev_WF/scripts/install.ps1
 ```
 
-This copies the commands to `%USERPROFILE%\.claude\commands\` (so `/start`,
-`/wrap`, `/spec` etc. work in **every** project), installs your user-level
-"How I work" file if there is none, and sets `GAMEDEV_WF`. Restart Claude
-Desktop afterwards, then open `%USERPROFILE%\.claude\CLAUDE.md` once and fill
-its one bracket. On Windows the commands are copies: run the script again
-after every `git pull` of the kit. pi is not set up on this machine on
+This stops if `WORKFLOW_DIR` is not set. Otherwise it copies the game commands
+to `%USERPROFILE%\.claude\commands\` (so `/spec`, `/harness` etc. work in
+**every** project, next to the workflow's `/start` and `/wrap`) and sets
+`GAMEDEV_WF`. Restart Claude Desktop afterwards, then open
+`%USERPROFILE%\.claude\CLAUDE.md` once and fill its one bracket. On Windows
+the commands are copies: after a `git pull`, run this script again (kit) or
+the workflow's §3 copy line (workflow). pi is not set up on this machine on
 purpose: it runs without permission prompts, so the Mint box is its home
 ([10-pi.md](10-pi.md)).
 

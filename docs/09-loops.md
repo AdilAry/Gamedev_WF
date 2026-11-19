@@ -1,8 +1,8 @@
 # 09 - Short loops, long loops, and who decides what
 
-The loop this kit runs is your own short-loop workflow
-([workflow/WORKFLOW.md](../workflow/WORKFLOW.md)), unchanged. This page shows
-what it looks like in a game, what the kit adds through the game's AGENTS.md,
+The loop this kit runs is your own short-loop workflow (its own repo;
+`$WORKFLOW_DIR/WORKFLOW.md` once installed). The kit does not change it.
+This page shows what it looks like in a game, what the kit adds through the game's AGENTS.md,
 and where a longer loop still has a place.
 
 ## One task, two gates
@@ -41,9 +41,9 @@ AGENTS.md, and that is where the kit plugs in:
 | Check | `./harness/gw.sh check` |
 | Done gate | the tests the plan names pass, then Check |
 | Run limit | 20 harness runs (every `gw.sh` call that starts Godot) |
-| where the plan lives | `docs/spec/<system>.md` (what) and `docs/TESTPLAN.md` (test and status) |
-| what "tick it" means | the task's rows go `green` in `docs/TESTPLAN.md` |
-| "At /wrap also" | TESTPLAN matches reality; questions are filed in `docs/QUESTIONS.md` |
+| "Read only when needed" (where the plan lives) | `docs/spec/<system>.md` (what) and `docs/TESTPLAN.md` (test and status) |
+| "At /start also" | a check you confirmed sets the task's rows to `green` in `docs/TESTPLAN.md` |
+| "At /wrap also" | a finished task's rows go `green`; TESTPLAN matches reality; questions are filed in `docs/QUESTIONS.md` |
 | "Judged on" (for `/judge`) | green means proven, no weakened tests, architecture rules hold, nothing invented |
 
 Three rules in the game's AGENTS.md make the plan at Gate 1 worth reading:

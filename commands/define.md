@@ -15,8 +15,8 @@ be asked the right questions.
 
 This is the "functional specification" step. Output: `docs/IDEA.md` (if
 missing) and `docs/GDD.md`, following the template in the Gamedev-WF kit
-(`$GAMEDEV_WF/harness/templates/GDD.md`; if `$GAMEDEV_WF` is unset try
-`~/Gamedev_WF`, then ask the user where the kit is).
+(`$GAMEDEV_WF/harness/templates/GDD.md`; if `$GAMEDEV_WF` is unset, ask the
+user where the kit is and suggest running its installer).
 
 ## 0. Investigate first (optional, offer it)
 The embedded workflow researches the hardware and protocols before writing
