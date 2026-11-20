@@ -36,10 +36,13 @@ One paragraph: genre, player fantasy, core tension, what makes it different.
 - **Long loop (session / campaign):**
 - **Win / lose / end conditions:**
 
-## 5. Time model
+## 5. Time model and simulation
 Turn-based / fixed tick (N ticks per second, pausable, speed x1/x2/x4) /
 real-time (the strategy/sim choices; an action game usually runs on Godot's
 physics frame). The rules must be deterministic for a given seed + command list.
+
+Simulation (rules that run without a screen, that a bot can play): yes / no.
+`/harness` reads this to decide the sim tier, bots and balance cases.
 
 ## 6. Systems
 | System | Prefix | Design files | Spec | Depends on | Status |

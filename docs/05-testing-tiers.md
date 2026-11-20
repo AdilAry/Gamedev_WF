@@ -249,10 +249,9 @@ instruction the agent may forget into a rule it can't skip by accident.
 
 ## The CI mirror
 `harness/ci/godot-ci.yml` runs `gw.sh check` on every push, on GitHub's
-machines, plus a balance snapshot for a game with a simulation (without a
-hook that step only prints an error; it never fails the run). If the agent on
-the Mint box (or you) pushes something broken, the Actions tab turns red even
-if nobody ran the tests.
+machines, plus a balance snapshot for a game with a simulation (it is skipped
+without a hook). If the agent on the Mint box (or you) pushes something
+broken, the Actions tab turns red even if nobody ran the tests.
 Free for public repos; private repos get a monthly allowance of minutes that
 headless tests barely touch.
 

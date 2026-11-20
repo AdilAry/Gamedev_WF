@@ -3,7 +3,7 @@ Updated: 2026-11-14. Current state only, under ~60 lines. Finished work is in do
 
 ## Now
 - **Task:** none in progress.
-- **State:** phase 2 (sim + playable UI) works. 17 tests green (unit 9, sim 5, scene 3), smoke OK, Godot 4.7.2, harness 1.2.2.
+- **State:** phase 2 (sim + playable UI) works. 17 tests green (unit 9, sim 5, scene 3), smoke OK, Godot 4.7.2, harness 1.2.3.
 
 ## Next
 1. BAL-003, wood must stay useful: `/balance wood piles up; target wood <= 500 at tick 500 for the greedy bot`. First command: `./harness/gw.sh cases --only=greedy-500`.

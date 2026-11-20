@@ -48,7 +48,8 @@ jobs:
         if: always()
         env:
           GODOT: /home/runner/godot/godot
-        run: ./harness/gw.sh sim --seeds=1-10 --ticks=500 || true
+        run: |
+          if [ -f sim/harness_hook.gd ]; then ./harness/gw.sh sim --seeds=1-10 --ticks=500 || true; fi
 
       - name: Balance cases (a showcase - add --strict once your targets are settled)
         if: always()

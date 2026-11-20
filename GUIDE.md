@@ -108,8 +108,8 @@ machines and whether level data is valid. But more tasks will end as
   `/pitch`, the strategy examples in the GDD template and `cases.json`.
 
 A game without a simulation skips the second list. An empty `tests/sim/` is
-fine: `check` runs the same. (Today `/harness` still creates the hook, the
-bots and a cases file in every game; you can leave them unused.)
+fine: `check` runs the same. `/harness` asks which kind your game is and only
+sets up the second list when it has a simulation.
 
 ---
 
@@ -295,7 +295,8 @@ Game commands, when you need them:
    (**/define** instead, if there is only an idea: it interviews you.)
 3. **/harness** - creates the Godot project with the right structure, copies
    the runners, and sets the game up as a short-loop project: `AGENTS.md`,
-   `PROGRESS.md`, test plan, balance cases, CI workflow.
+   `PROGRESS.md`, test plan, CI workflow, and with a simulation the hook,
+   bots and balance cases.
 4. **/commission** - proves the setup itself works, including that a failing
    test really fails. After this, a red test means a game bug, not a setup bug.
 5. **/qa** - the agent as playtester: the test tiers and the spec's edge

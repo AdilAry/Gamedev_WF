@@ -1,5 +1,5 @@
 extends SceneTree
-## Gamedev-WF headless simulation runner (the "bench" for strategy / sim games).
+## Gamedev-WF headless simulation runner (the "bench" for games with a simulation; fits strategy/sim best).
 ##
 ## Runs the game's simulation core with NO rendering. Three modes:
 ##
