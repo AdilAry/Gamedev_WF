@@ -35,12 +35,15 @@ wants to go straight to questions.
 - Keep it to roughly 10-15 questions. Skip anything the idea already answers.
 - The user is a beginner developer and has little time: always push towards the
   **smallest vertical slice that tests the core mechanic.**
-- Prefer designs that are easy to test headless: tick- or turn-based
-  simulation, deterministic seeded randomness, numbers in data files.
+- Prefer designs whose rules can be tested headless: rules in plain classes,
+  seeded randomness, numbers in data files. Don't push a design toward ticks
+  or turns to get there; the time model is the user's choice.
 
 ## Question bank (pick what matters, in roughly this order)
 1. Player fantasy and the one-sentence pitch (confirm your summary).
-2. Time model: turn-based / ticks with pause & speed / real-time.
+2. Time model: turn-based / ticks with pause & speed / real-time. And: does
+   the game have a simulation (rules that run without a screen and that a bot
+   can play)? This decides the sim tier, bots and balance cases.
 3. The core loop at three scales: seconds, minutes, whole session.
 4. Win, lose and end conditions. How long is a session?
 5. The main resources / quantities and what converts into what.
@@ -61,18 +64,23 @@ wants to go straight to questions.
   system (ECO, POP, MAP, AI, UI, SYS, BAL, SAV ...). Choose the **fastest tier
   that can prove it**:
   - `unit`  - a rule or formula on the pure simulation
-  - `sim`   - needs many ticks/seeds/bots (stability, balance, AI behaviour)
+  - `sim`   - needs many ticks/seeds/bots (stability, balance, AI behaviour; games with a simulation)
   - `scene` - needs real nodes/signals/input (UI wiring)
   - `visual`- needs a screenshot judged against the style guide
   - `playtest` - only a human can judge (fun, clarity, feel). Keep these few
     and specific ("a new player finds the build menu within 30 s").
-- Always include the system requirements SYS-001 (determinism: same seed +
-  commands = same result) and SYS-002 (invariants: no negative resources, no
-  NaN, no unit outside the map...), plus at least one fault-injection case.
-- Add balance targets (BAL-*) as numbers so `/balance` and `/qa` can measure
-  them; each becomes a case in `tests/cases/balance.json`.
-- Split work into phases. Phase 1 is always: simulation core + unit/sim tests,
-  no graphics beyond debug labels.
+- Always include SYS-002 (invariants: what must never happen, e.g. no
+  negative resources, health never below 0, nothing outside the map), plus at
+  least one fault-injection case. With a simulation also SYS-001
+  (determinism: same seed + commands = same result).
+- With a simulation, add balance targets (BAL-*) as numbers so `/balance` and
+  `/qa` can measure them; each becomes a case in `tests/cases/balance.json`.
+  Without one, a number that matters (a level's length, a boss's health) is a
+  unit-tested requirement or a playtest question.
+- Split work into phases. Phase 1 is the smallest slice that tests the core
+  mechanic. With a simulation: the simulation core with unit and sim tests,
+  no graphics beyond debug labels. Without one: the player's rules with unit
+  tests, plus one grey-box test level to play.
 
 ## Finish
 1. Show the user a 10-line summary: pitch, pillars, phase plan, number of

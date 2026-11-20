@@ -1,5 +1,5 @@
 ---
-description: Verify the development setup itself (Godot, test runner catching failures, sim runner, screenshots, commit gate, CI, agent setup) and record it in docs/COMMISSIONING.md. Use after harness, on a new machine or Godot version, or when failures look like setup problems.
+description: Verify the development setup itself (Godot, test runner catching failures, sim runner if the game has one, screenshots, commit gate, CI, agent setup) and record it in docs/COMMISSIONING.md. Use after harness, on a new machine or Godot version, or when failures look like setup problems.
 ---
 # /commission - prove the test bench before trusting it
 
@@ -38,9 +38,9 @@ repo, plug in hardware).
    `await wait_seconds(999)` and run `GW_TEST_TIMEOUT=3 ./harness/gw.sh test unit canary`.
    It must fail with `timed out`. Delete the canary file afterwards.
 7. **Smoke**: `./harness/gw.sh smoke 300` -> `SMOKE OK`.
-8. **Sim runner**: `./harness/gw.sh sim --seeds=1-3 --ticks=100` -> summary
+8. **Sim runner** (N/A without `sim/harness_hook.gd`): `./harness/gw.sh sim --seeds=1-3 --ticks=100` -> summary
    table and a CSV path. Open the CSV head to confirm columns.
-9. **Determinism**: run the same sim command twice; the `DIGEST` lines must match.
+9. **Determinism** (N/A without a hook): run the same sim command twice; the `DIGEST` lines must match.
    **Cases and trace**: `./harness/gw.sh cases` prints the table and a `CASES`
    line (N/A if `tests/cases/balance.json` does not exist yet);
    `./harness/gw.sh trace --seed=1 --ticks=50` prints a timeline with events.
@@ -57,7 +57,9 @@ repo, plug in hardware).
 13. **Workflow setup**: `AGENTS.md` exists with Check, Done gate, Run limit
     and Push filled in and no bracket left (`grep -n '\[' AGENTS.md` finds
     nothing); `CLAUDE.md` is the one-line import of it; `PROGRESS.md` exists
-    and is under ~60 lines; no parent folder has an AGENTS.md or CLAUDE.md of
+    and is under ~60 lines; the Simulation line in AGENTS.md says yes exactly
+    when `sim/harness_hook.gd` exists (if they disagree, FAIL; a game set up
+    before kit 1.6.0 may have no such line: note it, not a FAIL); no parent folder has an AGENTS.md or CLAUDE.md of
     its own (it would be loaded into every session here). Say which agent you
     are. Ask the human to type `/` and confirm that `/start`, `/wrap`,
     `/judge` and the game commands are offered; if not, install the
@@ -73,5 +75,5 @@ human must do.
 Commit it ("Commissioning: <machine> <date>").
 
 ## Finish
-Summarise in 5 lines. If everything critical (1-9, 11) passes, say the project
+Summarise in 5 lines. If everything critical (1-7, 11, and 8-9 in a game with a simulation) passes, say the project
 is ready for `/start`.

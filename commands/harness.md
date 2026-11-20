@@ -1,5 +1,5 @@
 ---
-description: Strap a Godot 4 project into the Gamedev-WF harness once - folder structure, headless test and simulation runners, AGENTS.md, PROGRESS.md, balance cases, CI and git hook. Use after spec or define, or to retrofit or update the harness.
+description: Strap a Godot 4 project into the Gamedev-WF harness once - folder structure, the headless test runner and, for a game with a simulation, the sim hook, bots and balance cases, AGENTS.md, PROGRESS.md, CI and git hook. Use after spec or define, or to retrofit or update the harness.
 argument-hint: empty | "update" to bring an existing game's harness up to date
 ---
 # /harness - couple the agent to the project
@@ -32,6 +32,12 @@ Never guess a path. You need:
 - Godot is reachable: run `godot --version` (or `$GODOT --version`). On
   Windows it must be the `*_console.exe` build. If missing, explain how to set
   `GODOT` (see the kit's docs/02-setup-windows.md / docs/03-setup-mint.md).
+- **Simulation or not.** Read GDD section 5. If it doesn't say whether the
+  game has a simulation (rules that run without a screen and that a bot can
+  play: an economy, AI players, a world that runs by itself), ask the human
+  once, with your recommendation from the design. Strategy and sim games
+  usually do; platformers and action games usually don't. The answer decides
+  the parts marked "simulation only" below, and goes into AGENTS.md.
 
 ## 2. Create the structure (do not overwrite existing files without asking)
 ```
@@ -47,12 +53,12 @@ design/                  # the human's design documents - never create or edit f
 harness/                 # copied verbatim from the kit - never edit per project
 data/                    # JSON with every tunable number
 sim/                     # pure rules (RefCounted, class_name, deterministic)
-sim/harness_hook.gd      # setup/step/metrics/is_finished/check_invariants
-sim/ai/                  # simple bots for sim tests and balance runs, plus a seeded random bot for fuzzing
+sim/harness_hook.gd      # simulation only: setup/step/metrics/is_finished/check_invariants
+sim/ai/                  # simulation only: simple bots for sim tests and balance runs, plus a seeded random bot for fuzzing
 scenes/  ui/             # presentation only
 assets/ASSETS.md         # asset manifest
-tests/unit/ tests/sim/ tests/scene/
-tests/cases/balance.json # the human's balance cases, from templates/cases.json
+tests/unit/ tests/scene/ # plus tests/sim/ with a simulation
+tests/cases/balance.json # simulation only: the human's balance cases, from templates/cases.json
 docs/GDD.md docs/spec/ docs/QUESTIONS.md docs/TESTPLAN.md
 docs/history.md docs/decisions.md docs/notes/   # no docs/plan.md: the plan is spec + TESTPLAN
 docs/changes/ docs/playtests/
@@ -61,26 +67,33 @@ docs/changes/ docs/playtests/
   `config/features=PackedStringArray("<major.minor>", "GL Compatibility")` and
   `renderer/rendering_method="gl_compatibility"`. Copy the example's file and
   change the name.
+- `harness/` is copied whole, `sim_runner.gd` included, so updates stay a
+  plain copy; without a hook it is simply never called.
 - `chmod +x harness/gw.sh`.
 - Set `GODOT_VERSION` in the CI workflow to the version from `godot --version`.
 
 ## 3. Seed the code
 - A minimal main scene (`scenes/main.tscn` + `main.gd`) that builds its UI in code.
-- Skeleton sim classes for the first system in build order (state, rules, sim
-  with `step()`), plus `sim/harness_hook.gd` implementing the runner contract:
+- Skeleton rules classes for the first system in build order (state and
+  rules, as `RefCounted` classes in `sim/`).
+- **With a simulation** also: a sim class with `step()`, and
+  `sim/harness_hook.gd` implementing the runner contract:
   `setup/step/metrics/is_finished`, `check_invariants()`, `events()` (for
   `gw.sh trace`) and a `bot` param (`greedy`/`idle`/`random`, for cases and
-  fuzzing). Copy the example's hook and bots as the pattern.
-- `tests/cases/balance.json`: one case per BAL-* target that already has
+  fuzzing). Copy the example's hook and bots as the pattern. And
+  `tests/cases/balance.json`: one case per BAL-* target that already has
   numbers, using metric names the hook really reports. Leave targets the
   design does not state out; do not invent them.
+- **Without one:** no hook, no `sim/ai/`, no `tests/sim/`, no cases file. If
+  the game gets a simulation later, adding them is an ordinary `/start` task.
 - One trivial passing test, so Check has something to run. Do not write the
   requirement tests here: each task writes its own, after its plan is OK'd.
 - Fill `docs/TESTPLAN.md` from the spec (or the GDD): every requirement ->
   tier, test path (empty for now), status `todo`. This file is the only place
   where a requirement's test and status are kept.
 - Fill `AGENTS.md` with the game's facts and ask the human for the two
-  choices it needs (Push, and the second machine's role). Leave no bracket
+  choices it needs (Push, and the second machine's role); the Simulation
+  line comes from step 1. Leave no bracket
   behind: `grep -n '\[' AGENTS.md` must find nothing. Keep it under ~120
   lines; it is not a place for state.
 - Fill `PROGRESS.md`: "Now" = harness created, "Next" 1 = `/commission`,

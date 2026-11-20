@@ -4,6 +4,45 @@ What changed in the kit, and what to do in games that already use it.
 Harness version = `HARNESS_VERSION` in `harness/godot/harness/gw.sh`
 (`./harness/gw.sh version` in a game shows its copy).
 
+## Kit 1.6.0 / Harness 1.2.3 - 2026-11-20
+
+A game without a simulation no longer gets sim scaffolding. `/harness`
+reads GDD section 5 (or asks) whether the game has one, and only then
+creates the sim hook, bots, `tests/sim/` and balance cases. `/commission`
+marks the sim checks N/A without a hook, and `/define` stops pushing designs
+toward ticks and turns. A game with a simulation is set up exactly as
+before.
+
+**On every machine:** nothing.
+
+**In an existing game:** nothing required.
+- Harness 1.2.3 changes one comment (`sim_runner.gd` line 2), so updating
+  (`scripts/update-harness.sh <game folder>` from the kit) is optional.
+- You can add the new line under Project in its AGENTS.md:
+  `- **Simulation:** yes` (or `no`). Without it, `/commission` notes the
+  missing line but does not fail.
+- If the game never used its sim parts, you may delete
+  `sim/harness_hook.gd`, `sim/ai/`, `tests/sim/` and
+  `tests/cases/balance.json`, then run `./harness/gw.sh check`.
+- To skip the CI balance snapshot in a game without a hook, copy the new
+  `run:` lines of the "Balance snapshot" step from the kit's
+  `harness/ci/godot-ci.yml` into the game's copy.
+
+Changes:
+- `/harness`: decides "simulation or not" in its preconditions, and marks
+  the hook, `sim/ai/`, `tests/sim/` and the cases file as simulation only.
+- `/commission`: steps 8-9 are N/A without a hook; step 13 checks that the
+  AGENTS.md Simulation line matches the hook file.
+- `/define`: question 2 asks whether the game has a simulation. SYS-001
+  (determinism) and BAL- targets only with one. SYS-002 (invariants) has
+  genre-neutral examples. Phase 1 is the smallest slice that tests the core
+  mechanic.
+- Templates: AGENTS.md has a Simulation line; GDD section 5 is "Time model
+  and simulation". The example's AGENTS.md has the line too.
+- Game CI template: the balance snapshot runs only when
+  `sim/harness_hook.gd` exists, like the cases step.
+- Harness: the `sim_runner.gd` header comment is genre-neutral.
+
 ## Kit 1.5.3 / Harness 1.2.2 - 2026-11-20
 
 Wording only: the kit now reads as being for any Godot game. Strategy and

@@ -5,6 +5,7 @@ A tiny tick-based colony economy that shows the Gamedev-WF harness on the short-
 ## Project
 - **What:** a one-screen colony economy: buildings need workers, workers need food and housing.
 - **For:** me, as a teaching project.
+- **Simulation:** yes: sim/harness_hook.gd, bots in sim/ai/, tests/sim, balance cases.
 - **Second machine:** the agent box runs the same harness.
 
 ## Stack

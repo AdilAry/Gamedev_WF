@@ -5,6 +5,7 @@ Loaded in every session, by every agent (`CLAUDE.md` is the one-line import). Ke
 ## Project
 - **What:** [one line: genre and what the player does].
 - **For:** [me | the players it is meant for].
+- **Simulation:** [yes: sim/harness_hook.gd, bots in sim/ai/, tests/sim, balance cases | no: unit and scene tiers only].
 - **Second machine:** [no role in this project | the agent box: headless tests, simulation runs and screenshots].
 
 ## Scope

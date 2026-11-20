@@ -27,7 +27,7 @@
 
 set -uo pipefail
 
-HARNESS_VERSION="1.2.2"
+HARNESS_VERSION="1.2.3"
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_DIR" || exit 2
