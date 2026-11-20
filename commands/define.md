@@ -51,7 +51,7 @@ wants to go straight to questions.
 10. UI density: how many numbers on screen; which ones always visible?
 11. Art: placeholder shapes / pixel art / flat vector / 3D. 2D strongly preferred.
 12. Save/load needed in the first slice? (Default: no.)
-13. Balance targets in numbers ("a decent player reaches 50 pop by tick 300").
+13. Balance targets in numbers (strategy example: "a decent player reaches 50 pop by tick 300").
 14. Platforms and input (default: Windows + Linux, mouse + keyboard).
 
 ## Writing the GDD

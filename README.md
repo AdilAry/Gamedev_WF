@@ -1,4 +1,4 @@
-# Gamedev-WF: a Godot AI harness for strategy & sim games
+# Gamedev-WF: a Godot AI harness for games you design yourself
 
 A guide plus a working setup for building Godot games with a coding agent
 (**Claude Code**, in the terminal or the Code tab of Claude Desktop) in a **closed loop
@@ -11,8 +11,22 @@ with you in it**:
    (the tests with inputs and expected results, and the command that proves
    it) before code is written; it works until that command passes; finished
    is your call (`/start`, `/wrap`).
-3. **The agent playtests.** Bots, fuzzing and your balance cases: bugs come
-   back with a seed and a reproducing test, balance comes back as one table (`/qa`).
+3. **The agent tests what a headless run can prove; you play.** Every game
+   gets tiered tests, a smoke run and screenshots. A game with a simulation
+   also gets bots, fuzzing and your balance cases: bugs come back with a seed
+   and a reproducing test, balance comes back as one table (`/qa`). Feel is
+   your call (`/playtest`).
+
+**For any Godot game; strategy and sim games fit best.** Not only because
+some tools are made for them (bots, the sim runner, balance cases,
+`/balance`), but because their core is numbers and rules, and those can be
+tested without a screen. In a platformer or action game, much of what
+matters is how it feels: jump arcs, timing, impact. No headless test can
+judge that. The parts that are rules (damage, inventory, state machines,
+whether level data is valid) still get tests, but more tasks end as
+"awaiting my check", and `/playtest` does more of the work than the bots do.
+[GUIDE.md](GUIDE.md#what-every-game-uses-and-what-is-optional) lists what to
+use and what to skip.
 
 The session routine is your own **short-loop workflow**, a separate repo this
 kit depends on and does not copy. The kit is an add-on to it: it plugs in
@@ -42,11 +56,11 @@ laptop and a Linux Mint agent box**.
 | [`GUIDE.md`](GUIDE.md) | the guide |
 | [`docs/`](docs/) | machines & roles, Windows setup, Mint agent-box setup, Claude Pro playbook, testing tiers, architecture, asset pipeline, first weekend, loops, pi (for later) |
 | [`commands/`](commands/) | the 11 game commands, in the same format: `/pitch` `/spec` `/define` `/harness` `/commission` `/qa` `/balance` `/playtest` `/change-request` `/style-guide` `/asset` |
-| [`harness/godot/harness/`](harness/godot/harness/) | the harness copied into every game: `gw.sh`, a dependency-free test runner that also catches script errors and hangs, the headless sim runner (seeds, balance cases, traces) |
-| [`harness/templates/`](harness/templates/) | the game-specific files: AGENTS.md (+ CLAUDE.md import), SPEC per system, QUESTIONS (decision queue), GDD index, TESTPLAN, balance cases, QA report, IDEA, STYLE_GUIDE, ASSETS manifest, CR, PLAYTEST, safe permissions |
+| [`harness/godot/harness/`](harness/godot/harness/) | the harness copied into every game: `gw.sh`, a dependency-free test runner that also catches script errors and hangs, and, for games with a simulation, the headless sim runner (seeds, balance cases, traces) |
+| [`harness/templates/`](harness/templates/) | the game-specific files: AGENTS.md (+ CLAUDE.md import), SPEC per system, QUESTIONS (decision queue), GDD index, TESTPLAN, balance cases (optional), QA report, IDEA, STYLE_GUIDE, ASSETS manifest, CR, PLAYTEST, safe permissions |
 | [`pi/extensions/`](pi/extensions/) + [`package.json`](package.json) | pi package, for later: a guard extension (asks before `design/` or `harness/` are edited, blocks `--no-verify` and forced pushes) |
 | [`harness/ci/godot-ci.yml`](harness/ci/godot-ci.yml) | GitHub Actions workflow for game repos |
-| [`example/colony_sim/`](example/colony_sim/) | a small working tick-based colony economy built the harness way: 17 tests over 3 tiers, sim runner hook, three bots, balance cases, GDD, test plan |
+| [`example/colony_sim/`](example/colony_sim/) | a small working tick-based colony economy built the harness way: 17 tests over 3 tiers, sim runner hook, three bots, balance cases, GDD, test plan. It shows every part of the kit, the optional sim parts too; a game in another genre uses fewer |
 | [`scripts/`](scripts/) | `install.sh` / `install.ps1`: install the game commands next to the workflow's (needs `WORKFLOW_DIR`); `update-harness.sh`: bring a game's `harness/` up to date |
 | [`CHANGELOG.md`](CHANGELOG.md) | what changed in the kit and harness, and what to do in existing games |
 
@@ -113,6 +127,10 @@ inside the kit also loads the kit's own AGENTS.md.
 ./harness/gw.sh doc                                # Godot API of your version -> docs/ref/
 ./harness/gw.sh version                            # harness + Godot version
 ```
+
+`sim`, `cases`, `trace` and the `sim` test tier need a simulation hook
+(`sim/harness_hook.gd`); they fit strategy and sim games best. Everything
+else works in any game.
 
 ## Verified
 The example project and harness run in CI on every push (Godot 4.7.2 on

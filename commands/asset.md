@@ -20,8 +20,8 @@ the style guide.
 | **D. Free asset pack** | the user wants speed (e.g. Kenney, CC0) | file + licence noted |
 
 Strategy/sim games need many small readable things (icons, tiles, markers)
-far more than detailed art - route A/B usually wins, and placeholders are fine
-until the mechanics are proven by playtests.
+far more than detailed art, so route A/B usually wins there. In any genre,
+placeholders are fine until the mechanics are proven by playtests.
 
 ## 3. Route C - writing the prompt
 Start with the style guide's prompt preamble, then: subject, view

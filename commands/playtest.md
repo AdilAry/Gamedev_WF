@@ -25,7 +25,8 @@ actionable without losing anything.
      every commit). Do not fix it here; the fix is its own `/start`.
    - **Balance** - numbers feel wrong ("wood is useless after minute 5").
      Turn it into a hypothesis plus a measurable experiment for `/balance`,
-     and propose a case for `tests/cases/balance.json` that would have shown it.
+     and propose a case for `tests/cases/balance.json` that would have shown it
+     (with a simulation; otherwise, a data change to try in the next playtest).
    - **Feel / clarity / fun** - needs a design change. Draft a change request
      line; create `docs/changes/CR-<NNN>.md` only for the ones the user wants.
    - **Keep** - what worked. These protect good things from later changes.

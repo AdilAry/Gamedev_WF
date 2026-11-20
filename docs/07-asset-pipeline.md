@@ -6,21 +6,27 @@ demos**, weak for sustained development. So this kit keeps its strong part
 and connects it to the harness. The development side is covered by the
 harness and the architecture rules.
 
-## Principles for strategy/sim art
+## Principles for any game's art
 
-1. **Mechanics first, art last.** Bots and playtests decide whether the game
-   is fun. Until then, placeholders: coloured shapes, SVG icons, a free CC0
-   pack. Cheap to throw away.
-2. **Readability beats beauty.** Strategy players read the screen like a
-   dashboard: silhouettes at full zoom-out, player colours that differ in
-   brightness, icons at 32 px, numbers with rates. This is in the style guide
-   template.
-3. **2D or 2.5D (isometric) over 3D.** Far less work per asset, runs on the
+1. **Mechanics first, art last.** Playtests (and, in a game with a
+   simulation, bots) decide whether the game is fun. Until then,
+   placeholders: coloured shapes, SVG icons, a free CC0 pack. Cheap to throw
+   away.
+2. **2D or 2.5D (isometric) over 3D.** Far less work per asset, runs on the
    T480s's integrated GPU, and much easier for an agent to generate or draw.
-4. **Consistency comes from the style guide**, not from the image model.
-5. **Provenance.** Every asset gets a manifest row: source, licence, prompt.
+3. **Consistency comes from the style guide**, not from the image model.
+4. **Provenance.** Every asset gets a manifest row: source, licence, prompt.
    Stores (Steam) ask about AI-generated content, and you'll want to
    regenerate assets in the same style later.
+
+## Principles for strategy/sim art (genre-specific)
+
+- **Readability beats beauty.** Strategy players read the screen like a
+  dashboard: silhouettes at full zoom-out, player colours that differ in
+  brightness, icons at 32 px, numbers with rates. This is in the style guide
+  template. Another genre has its own readability rules (in a platformer:
+  the player and the hazards stand out from the background); write those
+  into your style guide instead.
 
 ## The steps
 
@@ -29,7 +35,8 @@ As Gambo does: generate or collect a batch of candidate images (any image
 generator, screenshots of games you like), keep the 4-12 you love, put them in
 `docs/style_refs/`, run `/style-guide`. Claude extracts the shared rules
 (proportions, shapes, palette in hex, materials, lighting, edges, detail
-level, **what the style is not**) plus strategy readability rules, and a
+level, **what the style is not**) plus readability rules (the template's are
+for strategy/sim; adapt them to your genre), and a
 **prompt preamble** reused for every asset.
 
 ### 2. Producing assets -> `/asset`
@@ -37,7 +44,7 @@ Four routes. Claude recommends one per asset:
 
 | Route | Best for | How |
 |---|---|---|
-| **A. SVG written by Claude** | icons, UI, resource symbols, map markers, flat buildings, placeholders | Claude writes `.svg` files directly; Godot imports SVG. Zero cost, perfectly consistent, editable. **Underrated for strategy games.** |
+| **A. SVG written by Claude** | icons, UI, resource symbols, map markers, flat buildings, placeholders | Claude writes `.svg` files directly; Godot imports SVG. Zero cost, perfectly consistent, editable. **Underrated, especially for strategy and sim games** (many small icons and markers). |
 | **B. Procedural** | terrain tiles, noise, colour variants (team colours), minimaps | a GDScript tool or generator script; reproducible |
 | **C. Image model** | painted art, portraits, concept art, detailed unit sprites | Claude writes the prompt from the style guide (Gambo's "Claude, here's my style, write a Gemini prompt for a tree"), you generate in Gemini / ChatGPT / a local model, drop the file in `assets/` |
 | **D. Asset packs** | speed | e.g. Kenney (CC0); note licence in manifest |

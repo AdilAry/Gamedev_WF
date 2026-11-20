@@ -19,7 +19,9 @@ so every later asset (and every UI change) stays consistent.
    (`<kit>/harness/templates/STYLE_GUIDE.md`). Be concrete and checkable:
    - **Proportions, shapes/silhouettes, colour + hex palette, materials,
      lighting, line/edge treatment, level of detail, what it is NOT.**
-   - Strategy/sim specifics: silhouettes readable at the furthest zoom; player
+   - Strategy/sim specifics (genre-specific; another genre writes its own,
+     e.g. in a platformer the player, hazards and platforms stand out from the
+     background): silhouettes readable at the furthest zoom; player
      colours that differ in brightness (colour-blind safe); icons legible at
      32 px; numbers always with units and +/- rate; consistent light direction
      on map tiles; how "selected", "disabled", "danger" look.

@@ -38,7 +38,8 @@ One paragraph: genre, player fantasy, core tension, what makes it different.
 
 ## 5. Time model
 Turn-based / fixed tick (N ticks per second, pausable, speed x1/x2/x4) /
-real-time. Simulation must be deterministic for a given seed + command list.
+real-time (the strategy/sim choices; an action game usually runs on Godot's
+physics frame). The rules must be deterministic for a given seed + command list.
 
 ## 6. Systems
 | System | Prefix | Design files | Spec | Depends on | Status |
@@ -51,7 +52,7 @@ slice that runs headless.
 Small game without `docs/spec/`: one subsection per system right here, each
 with its rules, the data it reads (data/*.json) and its requirements.
 
-### 6.1 <System name, e.g. Economy>
+### 6.1 <System name, e.g. Economy (strategy example) or Player movement>
 Rules in plain language. Numbers live in `data/<file>.json`, not here; this
 document says what the numbers *mean* and their intended ranges.
 
@@ -65,7 +66,8 @@ document says what the numbers *mean* and their intended ranges.
 ### 6.4 <Save / load>
 
 ## 7. Balance targets (what "feels right" means, in numbers)
-Each target becomes a case in `tests/cases/balance.json`; `./harness/gw.sh cases`
+In a game with a simulation, each target becomes a case in
+`tests/cases/balance.json`; `./harness/gw.sh cases`
 shows them side by side. You own that file: it lists the situations you care about.
 
 | ID | Target | How measured |
@@ -73,6 +75,9 @@ shows them side by side. You own that file: it lists the situations you care abo
 | BAL-001 | A simple bot reaches X by tick Y on 90% of seeds | sim runner, seeds 1-50 |
 | BAL-002 | Doing nothing loses within N ticks | sim test |
 | BAL-003 | No single strategy dominates (win rate 35-65%) | bot vs bot runs |
+
+The rows are strategy examples. Without a simulation, a target is a number a
+unit test checks (e.g. from level data) or a playtest question.
 
 ## 8. UI / UX
 Screens, what each shows, controls. Readability rules (icon size, colour
@@ -98,6 +103,9 @@ Link to docs/STYLE_GUIDE.md. Placeholder policy (what can stay grey-box).
 | 1 | Core sim, no graphics | ECO-*, SYS-* | unit + sim tiers green |
 | 2 | Playable UI | UI-* | scene tier green, playtest #1 |
 | 3 | ... | | |
+
+The rows are a strategy example; in an action game phase 1 might be the
+player's rules and movement in one test level.
 
 ## 12. Open questions
 See `docs/QUESTIONS.md` (the decision queue). Answer there, in any editor.

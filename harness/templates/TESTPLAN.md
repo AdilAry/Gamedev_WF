@@ -7,7 +7,7 @@ up to date; the human reviews it (this is where you decide what "done" means).
 | Tier | Runs | Speed | Proves | Command |
 |---|---|---|---|---|
 | unit | pure sim code, no scene tree | ms | rules, formulas, edge cases | `gw.sh test unit` |
-| sim | many seeds x many ticks, bots play | seconds | stability, invariants, balance targets | `gw.sh test sim`, `gw.sh sim` |
+| sim (if the game has a simulation) | many seeds x many ticks, bots play | seconds | stability, invariants, balance targets | `gw.sh test sim`, `gw.sh sim` |
 | scene | real scenes in a headless SceneTree, simulated input | seconds | UI wiring, scene setup, signals | `gw.sh test scene`, `gw.sh smoke` |
 | visual | real rendering to PNG, agent looks at it | ~10 s | layout, readability, "does it look broken" | `gw.sh shot` |
 | playtest | a human plays | minutes | fun, feel, clarity | docs/playtests/ |

@@ -1,5 +1,5 @@
 ---
-description: Tune a strategy or simulation game with evidence - run the balance cases and seeds, propose options with before/after numbers, change data/*.json only after the human picks. Use when the user says balance, tune, too easy or hard, or the economy feels off.
+description: Tune a number-driven game with evidence (fits strategy and sim games best) - run the balance cases and seeds with the sim runner, propose options with before/after numbers, change data/*.json only after the human picks. Use when the user says balance, tune, too easy or hard, or the economy feels off.
 argument-hint: what feels wrong, and the target if you have one
 ---
 # /balance - measure, propose, let the human pick, measure again
@@ -11,6 +11,11 @@ with bots across many seeds in seconds, and those runs cost CPU, not usage.
 The numbers in `data/` are part of the design, so **you bring the evidence and
 the options; the human picks**. Write to `data/*.json` only after they chose
 (or said up front "apply the best one").
+
+This command fits number-driven games: it needs the sim runner
+(`sim/harness_hook.gd` and a bot). If the game has none, say so in one line
+and stop. Offer what still works: tune by hand in `data/*.json` and judge it
+in a playtest (`/playtest`), or add a hook and a bot as a separate task.
 
 ## 1. Define the question
 State in one line what is being tuned and which target it serves, e.g.

@@ -15,7 +15,8 @@ Three to six lines in the designer's own terms: what this system is for.
 
 ## 2. Requirements
 One checkable statement per row. Tier = the fastest way to prove it:
-`unit` (a rule/formula), `sim` (many ticks/seeds/bots), `scene` (real nodes
+`unit` (a rule/formula), `sim` (many ticks/seeds/bots, in a game with a
+simulation), `scene` (real nodes
 and input), `visual` (screenshot), `playtest` (only a human can judge).
 
 | ID | Requirement | Source | Tier | Blocked by |
@@ -44,8 +45,9 @@ an empty value is an open question.
 |---|---|---|---|---|
 
 ## 5. Balance targets
-What "feels right" means in numbers. Each becomes a case in
-`tests/cases/balance.json` (`./harness/gw.sh cases`).
+What "feels right" means in numbers. With a simulation, each becomes a case
+in `tests/cases/balance.json` (`./harness/gw.sh cases`); otherwise say how it
+is checked (unit test or playtest).
 
 | ID | Situation | Target |
 |---|---|---|

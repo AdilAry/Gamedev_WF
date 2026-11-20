@@ -1,7 +1,9 @@
 # 08 - Your first weekend (and the daily cheat sheet)
 
 A realistic plan for someone with a job and limited Pro usage. Each block
-is roughly one evening or half a day.
+is roughly one evening or half a day. The practice blocks use the colony
+example, which uses every part of the kit, the optional sim parts too; your
+own game may use fewer.
 
 ## Block 1 - Main laptop (1-2 h, no AI usage)
 1. Follow [02-setup-windows.md](02-setup-windows.md) steps 1-3.
@@ -70,8 +72,10 @@ You design in documents already, so start from them.
 5. `/harness`, then `/commission` (each in its own session).
 6. `/start` - it takes the first task from PROGRESS.md. Gate 1, OK, it
    works, `/wrap`, Gate 2, clear. Two to four tasks is a normal evening.
-7. When a system is done: `/qa <system>`, add the situations you care
-   about to `tests/cases/balance.json`, and in a new session `/judge`.
+7. When a system is done: `/qa <system>`; in a game with a simulation, add
+   the situations you care about to `tests/cases/balance.json`; then, in a
+   new session, `/judge`. In a game that is mostly feel, also play it and
+   `/playtest`.
 
 Only an idea, no documents? `/pitch`, then `/define` instead of steps 2-4.
 
@@ -89,9 +93,9 @@ Only an idea, no documents? `/pitch`, then `/define` instead of steps 2-4.
 | several repeat requirements in one task | `/start UNI-010 to UNI-014, same pattern as UNI-008. Run limit 50 for this task.` ([09-loops.md](09-loops.md)) |
 | end the session | `/wrap`, then do the check it names, then clear |
 | have the agent playtest | `/qa` or `/qa <system>` |
-| see my balance situations | `./harness/gw.sh cases` (no agent needed) |
-| watch one run | `./harness/gw.sh trace --seed=7 --ticks=300` |
-| tune numbers | `/balance <what feels wrong + target>` -> pick an option |
+| see my balance situations (with a simulation) | `./harness/gw.sh cases` (no agent needed) |
+| watch one run (with a simulation) | `./harness/gw.sh trace --seed=7 --ticks=300` |
+| tune numbers (with a simulation) | `/balance <what feels wrong + target>` -> pick an option |
 | change the design | edit `design/`, then `/change-request <what changed>` |
 | report a play session | `/playtest` + notes |
 | a second look at finished work | new session, `/judge` |
