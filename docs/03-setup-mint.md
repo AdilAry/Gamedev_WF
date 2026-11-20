@@ -92,10 +92,9 @@ echo "alias superclaude='claude --dangerously-skip-permissions'" >> ~/.bashrc &&
 
 Only ever add this alias in the `agent` account on this box.
 
-### pi (optional, same account)
-Install pi with the command from [10-pi.md](10-pi.md) and sign in with
-`/login`. pi needs no "skip permissions" alias: it never asks. Read the cost
-section of that page before signing in with your Claude subscription.
+### pi (for later)
+Skip this for now: pi is for later (the workflow's WORKFLOW.md §6). When you
+add it, it goes in this same account, and [10-pi.md](10-pi.md) has the steps.
 
 ## 5. Git + GitHub for the agent
 Still as `agent`:
@@ -137,10 +136,10 @@ cd ~/Gamedev_WF/example/colony_sim && ./harness/gw.sh check && ./harness/gw.sh s
 You want `CHECK OK` and three PNG paths. That's your first commissioning.
 
 The two installers link `/start`, `/wrap`, `/judge` and the game commands into
-`~/.claude/commands/` (and `~/.pi/agent/prompts/` if pi is there), so a later
-`git pull` in `~/Workflow` or `~/Gamedev_WF` updates them with nothing to re-run. It also
-creates the user-level "How I work" file for each agent if there is none:
-open it once and fill its one bracket.
+`~/.claude/commands/` (later, also `~/.pi/agent/prompts/` once pi is
+installed), so a later `git pull` in `~/Workflow` or `~/Gamedev_WF` updates
+them with nothing to re-run. It also creates the user-level "How I work" file
+(`~/.claude/CLAUDE.md`) if there is none: open it once and fill its one bracket.
 
 ## 7. Working on it from the Legion
 
@@ -155,7 +154,7 @@ tmux new -A -s game
 When you clone a game repo onto this box for the first time, run
 `./harness/gw.sh hooks` in it once (git does not clone hooks).
 
-Inside tmux: `cd ~/games/<project> && superclaude` (or `pi`), then one task
+Inside tmux: `cd ~/games/<project> && superclaude`, then one task
 per session: `/start STA-004`, read the plan, OK it, `/wrap` when it reports,
 do the check it names, clear. tmux keeps the session alive if the SSH
 connection drops; detach with `Ctrl-b d` and `tmux attach -t game` later.

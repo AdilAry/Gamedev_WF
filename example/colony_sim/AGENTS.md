@@ -22,8 +22,9 @@ A tiny tick-based colony economy that shows the Gamedev-WF harness on the short-
 ## The plan
 - The plan lives in `docs/GDD.md` (requirements with IDs, sections 6-8) and `docs/TESTPLAN.md` (test and status). This game is small enough to have no `docs/spec/`.
 - In the /start plan, list each test as input -> expected result.
-- A finished task is ticked by setting its rows to `green` in `docs/TESTPLAN.md`.
-- **At /wrap also:** statuses in `docs/TESTPLAN.md` match reality.
+- **At /start also:** a check I confirmed sets that task's rows in `docs/TESTPLAN.md` to `green`.
+- **At /wrap also:** a finished task's rows in `docs/TESTPLAN.md` are set to `green`, and every status there matches reality.
+- **Judged on** (for /judge): every `green` requirement has a test that really proves it; no test was weakened and no expected value changed without a change request (`git log -p -- tests/`); the Architecture rules below hold; nothing in code or data that is in neither `docs/GDD.md` nor an answered question; PROGRESS.md and the statuses match the code.
 
 ## Engine facts
 - Never Godot 3 syntax. API of the installed version: `./harness/gw.sh doc` -> `docs/ref/godot-api/`.
@@ -33,7 +34,7 @@ A tiny tick-based colony economy that shows the Gamedev-WF harness on the short-
 - `sim/`: pure rules. `ColonyRules` (loads data/rules.json), `ColonyState` (data), `ColonySim` (commands and `step()`), `sim/ai/greedy_bot.gd`, `sim/ai/random_bot.gd` (fuzzing).
 - `data/rules.json`: every number. `scenes/main.gd`: presentation only, UI built in code.
 - `sim/harness_hook.gd`: adapter for the harness; parameter `bot` = greedy | idle | random.
-- Never weaken a test to make it pass. Never bypass the commit gate.
+- Never bypass the commit gate.
 
 ## Workflow
 - One task per session: `/start <task>` begins it, `/wrap` ends it. A fresh session continues from PROGRESS.md alone.

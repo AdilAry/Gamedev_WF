@@ -62,7 +62,7 @@ shows them side by side (BAL-003 is shown as OFF until wood has a use).
 |---|---|---|
 | BAL-001 | GreedyBot reaches >= 20 population by tick 300 on seeds 1-5 | test_long_runs.gd::test_bot_colony_grows |
 | BAL-002 | An idle colony shrinks below its starting population within 200 ticks | test_long_runs.gd::test_idle_colony_starves |
-| BAL-003 | (open) Wood should stay useful: stock below 500 at tick 500 for GreedyBot | not yet - see LOG |
+| BAL-003 | (open) Wood should stay useful: stock below 500 at tick 500 for GreedyBot | not yet - case `greedy-500` (`./harness/gw.sh cases --only=greedy-500`) |
 
 ## 8. UI
 | ID | Requirement | Tier | Proof |
@@ -73,7 +73,7 @@ shows them side by side (BAL-003 is shown as OFF until wood has a use).
 | UI-004 | Layout is readable at 960x540 | visual | `gw.sh shot` |
 
 ## 10. Technical rules
-See CLAUDE.md (sim/ pure, data/ numbers, scenes/ presentation).
+See AGENTS.md (sim/ pure, data/ numbers, scenes/ presentation).
 
 ## 11. Phases
 | Phase | Goal | Requirements | Status |

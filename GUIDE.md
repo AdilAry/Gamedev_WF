@@ -4,9 +4,9 @@ This guide takes the "10 levels" and "Embedded AI Harness" ideas from the
 embedded videos (spec-driven development, agents, a sandboxed machine, a
 harness that closes the loop) and moves them over to **Godot game
 development, with strategy and simulation games in mind**. It assumes
-your setup: Claude Pro, mostly Claude Desktop, the pi coding agent you are
-learning, a Windows 10 Legion Y540 as your main machine and a Linux Mint
-ThinkPad T480s you can spare.
+your setup: Claude Pro, mostly Claude Desktop and Claude Code (pi is for
+later: the workflow's WORKFLOW.md §6), a Windows 10 Legion Y540 as your
+main machine and a Linux Mint ThinkPad T480s you can spare.
 
 > **The one-sentence version:** you design the game, in as much detail as you
 > like, in your own documents; the agent turns them into numbered
@@ -39,13 +39,12 @@ The embedded videos end with "the human is completely out of the programming
 loop". That fits a smart-meter gateway, where the spec is small and the
 result is either right or wrong. It fits a game you have designed in depth
 less well, and it fits a small AI budget badly. So the kit keeps the harness
-and changes three things:
+and changes two things:
 
 | The videos | This kit |
 |---|---|
 | `/define` interviews you and writes the spec | `/spec` reads the design you already wrote (`design/`), restates it as testable requirements, and files every contradiction or gap as a question for you. `/define` is still there for when you only have an idea |
 | one long autonomous `/build` | one task per session, two gates, a Run limit. [docs/09-loops.md](docs/09-loops.md) explains why, and where a bigger task still fits |
-| one agent (Claude Code) | the same files and commands in Claude Code, the Code tab of Claude Desktop, and pi. [docs/10-pi.md](docs/10-pi.md) |
 
 ## Why bother? (and what went wrong in the Gambo pipeline)
 
@@ -134,16 +133,14 @@ An agent that can't run Godot is a chat window with extra steps. Allow it to
 run the harness, git and file edits without asking every time. On **Windows
 (your main machine)** use the allow-list in `.claude/settings.json` (the
 `/harness` command installs one) or Claude Code's auto mode. Don't give it
-blanket access on that machine. pi has no permission prompts at all, so pi
-belongs on the agent box (next level); the kit's guard extension adds the
-few questions that matter (see [docs/10-pi.md](docs/10-pi.md)).
+blanket access on that machine.
 
 ### Level 6 - A sandbox box with full permissions (the Mint laptop)
 The videos use a VM; you have something better for free: a whole spare
 laptop. The ThinkPad becomes the **agent box**: a dedicated Linux user,
-Godot, and your agent without permission prompts (pi works that way by
-default; for Claude Code it is `--dangerously-skip-permissions`, the
-`superclaude` alias), nothing personal on it. The agent can install, delete
+Godot, and Claude Code without permission prompts
+(`--dangerously-skip-permissions`, the `superclaude` alias), nothing
+personal on it. The agent can install, delete
 and experiment there; the worst case is reinstalling Mint. Setup:
 [docs/03-setup-mint.md](docs/03-setup-mint.md). Roles of both machines:
 [docs/01-machines.md](docs/01-machines.md).
@@ -301,8 +298,6 @@ prompts for image tools, with a provenance manifest). See
 - **Pro usage limits are real.** That is why the loop is short and every session has a Run limit. Keep
   AGENTS.md short, read one spec file at a time, filter test output (the
   runner already prints only failures). See the Pro playbook.
-- **pi does not run on your Pro allowance.** Anthropic bills third-party
-  tools per token on top of the plan. Details in [docs/10-pi.md](docs/10-pi.md).
 - **`/spec` is only as good as the documents.** It will not notice a rule you
   never wrote down; it can only notice that something it needs is missing.
 - **Headless can't judge feel.** Juice, camera, animation timing and audio
@@ -326,5 +321,5 @@ prompts for image tools, with a provenance manifest). See
 7. [docs/07-asset-pipeline.md](docs/07-asset-pipeline.md) - art with AI, adapted from the Gambo note
 8. [docs/08-first-weekend.md](docs/08-first-weekend.md) - a step-by-step plan and prompt cheat sheet
 9. [docs/09-loops.md](docs/09-loops.md) - short loops, long loops, and who decides what
-10. [docs/10-pi.md](docs/10-pi.md) - using pi: cost, install, the guard extension
+10. [docs/10-pi.md](docs/10-pi.md) - pi, for later: cost, install, the guard extension
 11. `$WORKFLOW_DIR/WORKFLOW.md`, in the workflow's own repo - your short-loop workflow, for any software project: the session files and commands this kit is built on (install it first: [README](README.md#quick-start))

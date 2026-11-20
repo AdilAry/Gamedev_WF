@@ -4,6 +4,28 @@ What changed in the kit, and what to do in games that already use it.
 Harness version = `HARNESS_VERSION` in `harness/godot/harness/gw.sh`
 (`./harness/gw.sh version` in a game shows its copy).
 
+## Kit 1.5.1 / Harness 1.2.1 - 2026-11-20
+
+Claude Code is the agent; pi is for later (the workflow's WORKFLOW.md §6).
+The safe allowlist now allows every git command the workflow runs (its
+WORKFLOW.md §8, "Git commands the workflow runs").
+
+**On every machine:** nothing.
+
+**In an existing game:** add these two lines to the `allow` list in
+`.claude/settings.json`, so `/start` and `/wrap` no longer wait on a prompt:
+`"Bash(git pull:*)"` and `"Bash(git show:*)"`.
+
+- `harness/templates/claude-settings.json`: allows `git pull` (`/start`) and
+  `git show` (`/wrap`). The deny and ask rules are unchanged.
+- README, GUIDE, docs/01-04, 08 and 10, the kit's AGENTS.md, `/harness` and
+  `/commission` (check 13): Claude Code is the default; pi is marked "for
+  later" and the reason is left to the workflow's §6. `docs/10-pi.md`, the
+  guard extension, `package.json` and the installers' pi step are kept.
+- GUIDE: "How this kit differs from the videos" has two rows now; the "one
+  agent" row is no longer a difference.
+- Example brought in line with `harness/templates/AGENTS.md` (At /start, At /wrap, Judged on); its GDD no longer points to the removed LOG and CLAUDE.md.
+
 ## Kit 1.5.0 / Harness 1.2.1 - 2026-11-19
 
 The short-loop workflow is no longer bundled. It is its own repo, and the

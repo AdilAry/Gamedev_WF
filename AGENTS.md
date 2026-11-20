@@ -1,7 +1,7 @@
 # Gamedev-WF kit - instructions for agents working on THIS repo
 
 (`AGENTS.md` is the instruction file; `CLAUDE.md` only imports it, so Claude
-Code, pi and other agents all read the same text.)
+Code reads it today, and pi can read the same text later, unchanged.)
 
 This repo is a kit (guide + game commands + harness + example) on top of
 the owner's short-loop workflow,
@@ -11,9 +11,10 @@ folder: it would load this file too.
 
 ## Layout
 - `GUIDE.md`, `docs/`: the human guide. Plain, practical English; the owner is a
-  beginner embedded engineer, Godot hobbyist, Claude Pro user who also uses
-  the pi coding agent, Windows 10 main laptop + Linux Mint agent box. They
-  design their games in detail themselves and want short, human-checked loops.
+  beginner embedded engineer, Godot hobbyist, Claude Pro user (Claude Code is
+  the only agent today; pi is for later), Windows 10 main laptop + Linux Mint
+  agent box. They design their games in detail themselves and want short,
+  human-checked loops.
 - **The short-loop workflow is an external dependency** (its own repo,
   found through `$WORKFLOW_DIR`, which its installer sets). The kit uses only
   the WORKFLOW.md §8 list ("Building a kit on this workflow"); the README names
@@ -23,18 +24,19 @@ folder: it would load this file too.
   files here.
 - `commands/<name>.md`: the game commands, in the workflow's command format
   (frontmatter `description` and optional `argument-hint`, body uses
-  `$ARGUMENTS`). They are linked into `~/.claude/commands` and
-  `~/.pi/agent/prompts` by `scripts/install.sh`, so they must work in both
-  agents: say "AGENTS.md", never rely on a tool only one agent has, keep the
-  frontmatter valid YAML (no `: ` inside a description), and do not write an
-  at-sign directly before a file name or an exclamation mark before a
-  backtick in a body (Claude Code would expand them).
+  `$ARGUMENTS`). They are linked into `~/.claude/commands` by
+  `scripts/install.sh` (and into `~/.pi/agent/prompts` when pi is installed).
+  Keep them agent-neutral so they keep working in pi later: say "AGENTS.md",
+  never rely on a tool only one agent has, keep the frontmatter valid YAML
+  (no `: ` inside a description), and do not write an at-sign directly
+  before a file name or an exclamation mark before a backtick in a body
+  (Claude Code would expand them).
 - There is no build command. A requirement task is `/start <IDs>`; what makes
   it game-specific is in `harness/templates/AGENTS.md`. Game logic belongs
   there or in a game command, never in a copy of the workflow's commands.
 - `/harness` copies `$WORKFLOW_DIR/templates/project/{PROGRESS.md,docs/history.md,docs/decisions.md}`
   into games, so there is one copy of those templates.
-- `pi/extensions/gamedev-wf-guard/`: pi extension. Decisions live in
+- `pi/extensions/gamedev-wf-guard/`: pi extension, for later. Decisions live in
   `rules.ts` (no pi imports) and are tested with `npm test`.
 - `harness/godot/harness/`: the canonical harness. **`example/colony_sim/harness/` must
   stay byte-identical** (CI diffs them). After editing the canonical copy:

@@ -7,9 +7,8 @@ and limits change, so check the current details on the Claude plans page
 and in `/usage` (or `/status`) inside Claude Code. These habits stretch the
 budget furthest.
 
-**pi is not covered by this budget.** Signed in with a Claude subscription,
-pi is billed per token on top of the plan (pi says so at startup). Your Pro
-allowance is spent in Claude Desktop and Claude Code. See [10-pi.md](10-pi.md).
+This playbook is about Claude Code and Claude Desktop. pi is for later; the
+workflow's WORKFLOW.md §6 says why.
 
 ## What costs nothing
 
@@ -31,14 +30,14 @@ Worth knowing before the habits, because it changes where you spend your time:
 | Brainstorming, pitches, lore, naming, reviewing a GDD | **Claude Desktop chat / Project** with the GDD attached | no tool overhead; you're thinking, not building |
 | `/spec` (your design -> requirements) | Claude Code / Code tab, strongest model you have, **one system per session** | the reading is the expensive part; the map step reads headings only |
 | `/define` interview (idea only) | Claude Code (writes the files directly), or a chat Project and paste the result | it's a conversation either way |
-| Building, testing, balancing | **Code tab on the Legion** (supervised, allow-list) or **the agent on the Mint box** in tmux (Claude Code or pi, no permission prompts) | closed loop; one task per session either way |
+| Building, testing, balancing | **Code tab on the Legion** (supervised, allow-list) or **the agent on the Mint box** in tmux (Claude Code, no permission prompts) | closed loop; one task per session either way |
 | Small supervised edits, reading code with you | **Code tab in Claude Desktop** on Windows | you watch each step |
 | Quick checks while at your job | Claude app on your phone: a chat about the design, or Claude Code on the web / Remote Control for a project on GitHub | check the current docs for what your plan includes |
 
 ## Token-saving habits (they really matter on Pro)
 
 1. **One session = one task.** `/start <IDs>`, OK the plan, `/wrap`, check,
-   then `/clear` (pi: `/new`). Long sessions re-read an ever-growing history
+   then `/clear`. Long sessions re-read an ever-growing history
    on every turn. `/start` reads only the task's rows of the spec, so a fresh
    session costs little.
 2. **Keep `AGENTS.md` short** (~100-150 lines). It is loaded every session. The
@@ -55,10 +54,10 @@ Worth knowing before the habits, because it changes where you spend your time:
    that" in your own document is the cheapest prompt you can write, and it
    becomes a test for free.
 7. **Rewind instead of correcting.** When the agent went the wrong way, go
-   back to before the attempt (Claude Code: Esc Esc; pi: `/tree`) and
+   back to before the attempt (Esc Esc) and
    re-prompt with what you learned. "No, try B" leaves the failed attempt in
    the context, where it is paid for on every turn and keeps steering.
-   Watch the context (`/context`; pi's footer): around 40% full, finish the
+   Watch the context (`/context`): around 40% full, finish the
    step and `/wrap`. Use `/compact` only when a session really must continue.
 8. **Model choice:** use the default model for the build loop. Switch to the
    strongest model your plan offers (`/model`) for design-heavy or tricky

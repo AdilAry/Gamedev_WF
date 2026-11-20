@@ -62,9 +62,9 @@ repo, plug in hardware).
     are. Ask the human to type `/` and confirm that `/start`, `/wrap`,
     `/judge` and the game commands are offered; if not, install the
     short-loop workflow (its WORKFLOW.md §3, which sets `WORKFLOW_DIR`), then
-    the kit (`<kit>/scripts/install.sh`). On pi the startup
-    header also lists the guard extension; on Claude Code
-    `.claude/settings.json` exists.
+    the kit (`<kit>/scripts/install.sh`). Check that
+    `.claude/settings.json` exists. (Later, on pi: the startup header lists
+    the guard extension instead.)
 
 ## Record
 Write `docs/COMMISSIONING.md`: date, machine, Godot and harness versions, a
