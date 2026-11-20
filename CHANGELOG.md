@@ -9,7 +9,8 @@ Harness version = `HARNESS_VERSION` in `harness/godot/harness/gw.sh`
 Wording only: the kit now reads as being for any Godot game. Strategy and
 sim games still fit best, and the parts made for them (the sim tier and
 runner, bots, balance cases, `/balance`, the genre advice) are labelled as
-optional. No command step, harness file, test or data changed.
+optional. No existing step changed; `/balance` and `/qa` gain a branch for
+games without a simulation.
 
 **On every machine:** nothing.
 
