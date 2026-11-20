@@ -121,12 +121,10 @@ read CI results (`gh auth login`).
 ## 6. The workflow, the kit and their commands (as `agent`)
 
 The kit is an add-on to your short-loop workflow, which lives in its own repo.
-Install the workflow first; its installer sets `WORKFLOW_DIR`, and the kit's
-installer stops without it (clone URL in the [README](../README.md#quick-start)):
-
-```bash
-git clone https://github.com/AdilAry/Workflow.git ~/Workflow && bash ~/Workflow/install.sh && source ~/.bashrc
-```
+Install the workflow first: clone it to `~/Workflow` and run its installer, as
+the Linux steps in the [README](../README.md#quick-start) show (the clone URL
+is kept there only). The installer sets `WORKFLOW_DIR`, and the kit's
+installer stops without it. Then, in a new terminal:
 
 ```bash
 git clone https://github.com/AdilAry/Gamedev_WF.git ~/Gamedev_WF && ~/Gamedev_WF/scripts/install.sh && source ~/.bashrc

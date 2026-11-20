@@ -9,7 +9,7 @@ Harness version = `HARNESS_VERSION` in `harness/godot/harness/gw.sh`
 The short-loop workflow is no longer bundled. It is its own repo, and the
 kit is an add-on to it: it finds it through `WORKFLOW_DIR` and uses only the
 list in the workflow's WORKFLOW.md §8 ("Building a kit on this workflow"),
-contract of 19 November 2026. A new workflow version needs no kit release
+contract of 20 November 2026. A new workflow version needs no kit release
 unless that list changes.
 
 **On every machine:**
