@@ -49,8 +49,8 @@ to `%USERPROFILE%\.claude\commands\` (so `/spec`, `/harness` etc. work in
 `GAMEDEV_WF`. Restart Claude Desktop afterwards, then open
 `%USERPROFILE%\.claude\CLAUDE.md` once and fill its one bracket. On Windows
 the commands are copies: after a `git pull`, run this script again (kit) or
-the workflow's §3 copy line (workflow). pi is not set up on this machine on
-purpose: it runs without permission prompts, so the Mint box is its home
+the workflow's §3 copy line (workflow). pi is for later (the workflow's
+WORKFLOW.md §6); when it comes, it goes on the Mint box, not here
 ([10-pi.md](10-pi.md)).
 
 ## 3. Try the example project

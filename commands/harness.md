@@ -109,6 +109,6 @@ When the kit has a newer harness (`./harness/gw.sh version` vs
 Run `./harness/gw.sh check`. Expected: `CHECK OK`. Report the result and
 suggest `/commission`, then `/start` for the first task.
 
-The guards against editing `design/` and `harness/`: Claude Code gets them
-from `.claude/settings.json`; pi gets them from the kit's guard extension,
-which loads once the kit is installed (`<kit>/scripts/install.sh`).
+The guards against editing `design/` and `harness/` come from
+`.claude/settings.json`. For pi, later, the kit's guard extension does the
+same once the kit is installed (`<kit>/scripts/install.sh`).

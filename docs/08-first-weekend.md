@@ -1,8 +1,7 @@
 # 08 - Your first weekend (and the daily cheat sheet)
 
 A realistic plan for someone with a job and limited Pro usage. Each block
-is roughly one evening or half a day. The commands are the same in Claude
-Code and in pi.
+is roughly one evening or half a day.
 
 ## Block 1 - Main laptop (1-2 h, no AI usage)
 1. Follow [02-setup-windows.md](02-setup-windows.md) steps 1-3.
@@ -23,10 +22,9 @@ Code and in pi.
    own games will use (bigger games get one spec file per system).
 
 ## Block 2 - Agent box (1-2 h)
-1. Follow [03-setup-mint.md](03-setup-mint.md). If you want pi there, also
-   [10-pi.md](10-pi.md) (read its cost section first).
-2. Open the user-level file the installer created (`~/.claude/CLAUDE.md`, and
-   `~/.pi/agent/AGENTS.md` for pi) and fill its one bracket.
+1. Follow [03-setup-mint.md](03-setup-mint.md).
+2. Open the user-level file the installer created (`~/.claude/CLAUDE.md`) and
+   fill its one bracket.
 3. Copy the example out of the kit. An agent started inside the kit folder
    would also load the kit's own AGENTS.md, which is about maintaining the kit:
 
@@ -34,11 +32,11 @@ Code and in pi.
 mkdir -p ~/games && cp -r ~/Gamedev_WF/example/colony_sim ~/games/colony-practice && cd ~/games/colony-practice && git init -q && ./harness/gw.sh hooks && git add -A && git commit -q -m "start"
 ```
 
-4. Start your agent there (`superclaude` or `pi`) and type `/commission`.
+4. Start Claude Code there (`superclaude`) and type `/commission`.
    Read the resulting `docs/COMMISSIONING.md`.
 
 ## Block 3 - Practise the loop on the copy (1-2 h)
-One command per session; clear the session (`/clear`, pi: `/new`) between them.
+One command per session; clear the session (`/clear`) between them.
 1. `/qa` - it plays the game with bots and writes a report. Check that it
    found the wood problem and did not change anything.
 2. `/balance wood piles up; target wood below 500 at tick 500 for the greedy bot` -

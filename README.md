@@ -1,7 +1,7 @@
 # Gamedev-WF: a Godot AI harness for strategy & sim games
 
 A guide plus a working setup for building Godot games with a coding agent
-(**Claude Code, the Code tab of Claude Desktop, or pi**) in a **closed loop
+(**Claude Code**, in the terminal or the Code tab of Claude Desktop) in a **closed loop
 with you in it**:
 
 1. **You design.** Your own documents in `design/`, as detailed as you like.
@@ -32,7 +32,7 @@ laptop and a Linux Mint agent box**.
 1. **[GUIDE.md](GUIDE.md)**: the concepts, the 10 levels for gamedev, and the workflow.
 2. **[docs/08-first-weekend.md](docs/08-first-weekend.md)**: a step-by-step first weekend plus a cheat sheet.
 3. **[docs/09-loops.md](docs/09-loops.md)**: short loops vs long loops, and who decides what.
-4. **[docs/10-pi.md](docs/10-pi.md)**: using pi (cost with Claude Pro, install, the guard extension).
+4. **[docs/10-pi.md](docs/10-pi.md)**: pi, for later (the workflow's WORKFLOW.md §6 says why).
 5. **WORKFLOW.md in the workflow repo** (`$WORKFLOW_DIR/WORKFLOW.md` once installed): the short-loop workflow for any software project, not only games.
 
 ## What's in the box
@@ -40,11 +40,11 @@ laptop and a Linux Mint agent box**.
 | Path | What |
 |---|---|
 | [`GUIDE.md`](GUIDE.md) | the guide |
-| [`docs/`](docs/) | machines & roles, Windows setup, Mint agent-box setup, Claude Pro playbook, testing tiers, architecture, asset pipeline, first weekend, loops, pi |
+| [`docs/`](docs/) | machines & roles, Windows setup, Mint agent-box setup, Claude Pro playbook, testing tiers, architecture, asset pipeline, first weekend, loops, pi (for later) |
 | [`commands/`](commands/) | the 11 game commands, in the same format: `/pitch` `/spec` `/define` `/harness` `/commission` `/qa` `/balance` `/playtest` `/change-request` `/style-guide` `/asset` |
 | [`harness/godot/harness/`](harness/godot/harness/) | the harness copied into every game: `gw.sh`, a dependency-free test runner that also catches script errors and hangs, the headless sim runner (seeds, balance cases, traces) |
 | [`harness/templates/`](harness/templates/) | the game-specific files: AGENTS.md (+ CLAUDE.md import), SPEC per system, QUESTIONS (decision queue), GDD index, TESTPLAN, balance cases, QA report, IDEA, STYLE_GUIDE, ASSETS manifest, CR, PLAYTEST, safe permissions |
-| [`pi/extensions/`](pi/extensions/) + [`package.json`](package.json) | pi package: a guard extension (asks before `design/` or `harness/` are edited, blocks `--no-verify` and forced pushes) |
+| [`pi/extensions/`](pi/extensions/) + [`package.json`](package.json) | pi package, for later: a guard extension (asks before `design/` or `harness/` are edited, blocks `--no-verify` and forced pushes) |
 | [`harness/ci/godot-ci.yml`](harness/ci/godot-ci.yml) | GitHub Actions workflow for game repos |
 | [`example/colony_sim/`](example/colony_sim/) | a small working tick-based colony economy built the harness way: 17 tests over 3 tiers, sim runner hook, three bots, balance cases, GDD, test plan |
 | [`scripts/`](scripts/) | `install.sh` / `install.ps1`: install the game commands next to the workflow's (needs `WORKFLOW_DIR`); `update-harness.sh`: bring a game's `harness/` up to date |
@@ -95,7 +95,7 @@ use the `*_console.exe` and Git Bash; see [docs/02-setup-windows.md](docs/02-set
 Then, in a new game folder: put your design documents in `design/`, and
 `/spec` -> `/harness` -> `/commission`, then `/start` ... `/wrap` for each
 task, and `/qa` when a system is built. With only an idea: `/pitch` ->
-`/define` instead of `/spec`. The commands are the same in Claude Code and pi.
+`/define` instead of `/spec`.
 Create games outside this folder (e.g. `~/games/<name>`): an agent started
 inside the kit also loads the kit's own AGENTS.md.
 
@@ -118,21 +118,23 @@ inside the kit also loads the kit's own AGENTS.md.
 The example project and harness run in CI on every push (Godot 4.7.2 on
 Ubuntu): shellcheck, all tiers, smoke run, sim runner (twice, digests must
 match), balance cases and trace, a new `class_name` picked up without a manual
-import, the pi guard's rules (`npm test`), the installer into an empty home
-(every command linked for both agents), xvfb screenshots, plus canary checks proving that a failed
+import, the guard's rules for pi (for later, `npm test`), the installer into
+an empty home (every command linked for Claude Code, and for pi when it is
+installed), xvfb screenshots, plus canary checks proving that a failed
 assertion, a runtime script error (attributed to the right test), a test
 that waits forever and an endless loop all fail the run, and that the
 pre-commit gate blocks a red commit.
 
-Not verified here: the pi package inside a running pi (see the 2-minute check
-in [docs/10-pi.md](docs/10-pi.md)), and anything on Windows.
+Not verified here: anything on Windows, and the pi package inside a running
+pi (for later; see the 2-minute check in [docs/10-pi.md](docs/10-pi.md)).
 
 ## Sources & credits
 - The embedded AI workflow videos (levels 0-10; the ESP32 workbench; the
   Embedded AI Harness with `/define`, `/harness`, `/commission`, `/build`).
   The structure of this kit is modelled on them.
-- pi, the coding agent ([pi.dev](https://pi.dev)); the pi integration follows
-  its documentation and bundled extension examples (version 1.5.2).
+- pi, the coding agent ([pi.dev](https://pi.dev)), for the parts kept for
+  later (docs/10 and the guard extension); they follow its documentation and
+  bundled extension examples (version 1.5.2).
 - Gambo7592's AI game-dev posts (style-guide-first asset generation, Claude
   writing image prompts and Blender scripts), as summarised in the owner's
   notes; adapted in [docs/07-asset-pipeline.md](docs/07-asset-pipeline.md).
