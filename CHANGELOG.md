@@ -4,6 +4,24 @@ What changed in the kit, and what to do in games that already use it.
 Harness version = `HARNESS_VERSION` in `harness/godot/harness/gw.sh`
 (`./harness/gw.sh version` in a game shows its copy).
 
+## Kit 1.5.2 / Harness 1.2.2 - 2026-11-20
+
+Godot no longer imports the harness output in `reports/`. It read the
+simulation CSVs as translation tables, and that import could crash Godot
+("double free or corruption"), so a check could fail now and then although
+nothing in the game was wrong.
+
+**On every machine:** nothing.
+
+**In an existing game:** update its harness (`scripts/update-harness.sh
+<game folder>` from the kit). Until then, `touch reports/.gdignore` in the
+game does the same. Then delete any `*.translation` and `*.csv.import` files
+under `reports/`.
+
+- `gw.sh` creates `reports/.gdignore` on every call, so Godot skips the
+  whole folder. The runners write there with plain file access, so nothing
+  else changes.
+
 ## Kit 1.5.1 / Harness 1.2.1 - 2026-11-20
 
 Claude Code is the agent; pi is for later (the workflow's WORKFLOW.md §6).

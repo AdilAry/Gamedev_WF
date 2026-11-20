@@ -27,13 +27,16 @@
 
 set -uo pipefail
 
-HARNESS_VERSION="1.2.1"
+HARNESS_VERSION="1.2.2"
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_DIR" || exit 2
 REPORTS="$PROJECT_DIR/reports"
 LOGS="$REPORTS/logs"
 mkdir -p "$LOGS"
+# Godot must not import harness output: it reads every .csv as a translation
+# table, and importing the sim CSVs could crash it ("double free").
+[[ -f "$REPORTS/.gdignore" ]] || touch "$REPORTS/.gdignore"
 
 find_godot() {
   if [[ -n "${GODOT:-}" ]]; then echo "$GODOT"; return; fi
