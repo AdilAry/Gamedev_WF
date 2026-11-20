@@ -288,6 +288,7 @@ cmd_hooks() {
 cmd_doc() {
   local out="$PROJECT_DIR/docs/ref/godot-api"
   mkdir -p "$out"
+  touch "$PROJECT_DIR/docs/ref/.gdignore" # thousands of XML files Godot need not scan
   "$GODOT_BIN" --headless --doctool "$out" >"$LOGS/doc.log" 2>&1
   echo "API reference for $("$GODOT_BIN" --version) written to docs/ref/godot-api ($(find "$out" -name '*.xml' | wc -l) classes)"
   echo "Tip: grep -l 'name=\"TileMapLayer\"' -r docs/ref/godot-api"

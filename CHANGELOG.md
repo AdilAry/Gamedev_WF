@@ -21,6 +21,10 @@ under `reports/`.
 - `gw.sh` creates `reports/.gdignore` on every call, so Godot skips the
   whole folder. The runners write there with plain file access, so nothing
   else changes.
+- `gw.sh doc` creates `docs/ref/.gdignore`, so Godot no longer scans the
+  API reference's XML files on every import. In an existing game, run
+  `./harness/gw.sh doc` once more after updating, or
+  `touch docs/ref/.gdignore`.
 
 ## Kit 1.5.1 / Harness 1.2.1 - 2026-11-20
 
