@@ -1,5 +1,5 @@
 ---
-description: Act as the game's playtester with headless runs - test tiers, balance cases, fuzzing bots, fault injection, traces; write a report with reproducible bugs and a balance table. Finds and shows, fixes nothing unasked. Use when the user says qa, find bugs, show me the balance, or after a system is built.
+description: Act as the game's playtester with headless runs - test tiers and spec edge cases in any game; balance cases, fuzzing bots, fault injection and traces where the game has a simulation. Write a report with reproducible bugs and, if there are cases, a balance table. Finds and shows, fixes nothing unasked. Use when the user says qa, find bugs, show me the balance, or after a system is built.
 argument-hint: a system name, or empty for the whole game
 ---
 # /qa - the agent as playtester
@@ -12,6 +12,13 @@ in this command unless the user asked for that in the same message.
 
 Runs cost CPU, not usage: prefer long runs with many seeds and read only the
 summaries. Never print CSVs or logs into the conversation.
+
+The fuzzing, fault-injection, trace and balance parts need a simulation hook
+(`sim/harness_hook.gd`); they fit number-driven games such as strategy and
+sim. If the game has none, say so in the report, skip them (steps 2.2, 2.3,
+the trace in 2.5, and section 3), and lean on the rest: the scene tests (is
+every input and UI path covered?) and a longer play script under "Only you
+can judge".
 
 ## 1. Scope (one line, then go)
 The whole game, or the system the user named. Note the commit
@@ -33,14 +40,14 @@ The whole game, or the system the user named. Note the commit
 4. **Edge cases from the spec**: for each rule with a limit ("at most 6",
    "cannot exceed 80%"), check there is a test at the limit and one step past
    it. List the missing ones; do not write them all unasked.
-5. For each failure, **replay it**: `./harness/gw.sh trace --seed=S --ticks=T`
+5. For each failure, **replay it** (with a simulation): `./harness/gw.sh trace --seed=S --ticks=T`
    (add the same `--param`s). The timeline usually shows the cause. Then write
    one test that reproduces it (tier unit if possible, citing the seed) **into
    the report**, as a code block with the file it belongs in. Do not add it to
    `tests/`: a red test in the tree blocks every commit. The task that fixes
    the bug adds it first and sees it fail. A bug without a test comes back.
 
-## 3. Balance showcase
+## 3. Balance showcase (games with a simulation)
 1. `./harness/gw.sh cases` - the human's cases (`tests/cases/balance.json`)
    side by side against their targets. This table is the core of the report.
    No cases file yet -> offer to draft one from the BAL-* targets in the spec
@@ -67,11 +74,11 @@ The whole game, or the system the user named. Note the commit
 (`<kit>/harness/templates/QA_REPORT.md`): commit, what was run (commands, so
 it can be repeated), then
 - **Bugs** - what happens, repro (seed, tick, params), the reproducing test, severity.
-- **Balance showcase** - the cases table (copy it from the `MD` file the run
+- **Balance showcase** (or "none: no simulation") - the cases table (copy it from the `MD` file the run
   printed), your reading, the traces.
 - **Test gaps** - rules without a test at their limits.
 - **Only you can judge** - what bots cannot see (fun, clarity, pacing, whether
-  a dominant strategy is boring), as a 10-minute play script: what to try and
+  a dominant way of playing is boring), as a 10-minute play script: what to try and
   what to watch for.
 
 ## 5. Report and stop

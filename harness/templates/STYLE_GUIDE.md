@@ -10,7 +10,7 @@
 
 ## 1. Proportions
 ## 2. Shapes & silhouettes
-Strategy rule: every unit / building must be recognisable by silhouette at the
+Strategy/sim rule (replace with your genre's): every unit / building must be recognisable by silhouette at the
 smallest zoom level.
 ## 3. Colour
 ### Palette (hex)
@@ -28,7 +28,7 @@ Colour-blind check: player colours must differ in brightness, not only hue.
 ## 7. Level of detail
 Target sizes: map tile __ px, unit sprite __ px, icon 32/64 px, UI font __ px.
 ## 8. UI & readability
-Numbers always show units and +/- rate. Icons always have a tooltip.
+Strategy/sim: numbers always show units and +/- rate. Icons always have a tooltip.
 ## 9. What this style is NOT
 -
 

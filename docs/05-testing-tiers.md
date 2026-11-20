@@ -12,7 +12,7 @@ each project's `harness/` folder:
 | `harness/test_runner.gd` | dependency-free test runner (no addon needed), tiers = folders, terse output, per-test timeout |
 | `harness/gw_test.gd` | base class with assertions, `expect_error()` and scene helpers |
 | `harness/gw_error_capture.gd` | catches script errors and `push_error()` while a test runs, so the runner can fail *that* test |
-| `harness/sim_runner.gd` | runs the simulation headless: many seeds/ticks (CSV, summary, digest, cost per tick), named **balance cases** against targets, or one run as a **trace** |
+| `harness/sim_runner.gd` | optional, for a game with a simulation (fits strategy/sim best): runs it headless: many seeds/ticks (CSV, summary, digest, cost per tick), named **balance cases** against targets, or one run as a **trace** |
 
 It works on Linux, in Git Bash on Windows, and in GitHub Actions. It is
 **verified in this repo's CI** against Godot 4.7.2 (see
@@ -46,8 +46,10 @@ are skipped and the summary says so. Their failures would mostly be echoes of
 the same bug. `GW_ALL_TIERS=1` runs everything anyway.
 
 ### 1. unit - the rules (like host tests)
-Pure simulation code, no scene tree. Milliseconds. Proves formulas, edge cases
-and rules: "an unstaffed farm produces nothing", "costs are paid up front".
+The rules in `sim/`, no scene tree. Milliseconds. Proves formulas, edge cases
+and rules: "an unstaffed farm produces nothing", "costs are paid up front",
+or in an action game "a hit during invulnerability does no damage", "every
+door in level 3 has a key".
 
 ```gdscript
 extends "res://harness/gw_test.gd"
@@ -60,9 +62,13 @@ func test_unstaffed_farm_produces_nothing() -> void:
 	assert_eq(sim.staffing()["farm"], 0)
 ```
 
-### 2. sim - the bench (bots, seeds, fault injection)
-Strategy/sim games are ideal for this tier: a simple bot plays hundreds of
-ticks over many seeds. Three kinds of checks:
+### 2. sim - the bench (bots, seeds, fault injection); optional, fits strategy/sim best
+This tier needs a simulation that runs without a screen, through
+`sim/harness_hook.gd`. Strategy and sim games have one by nature and are
+ideal for it: a simple bot plays hundreds of ticks over many seeds. A game
+without one skips this tier and the sim runner, balance cases, trace and
+fuzzing below; an empty `tests/sim/` is fine, and `check` runs the same.
+Three kinds of checks:
 - **Invariants** - must never happen, whatever the input: negative resources,
   NaN, units off the map, more population than housing, a dead player still
   acting. Implement them once in `sim/harness_hook.gd::check_invariants()`; the
@@ -100,7 +106,7 @@ The summary ends with a few lines worth knowing:
 - `DIGEST 3f9a...`: a fingerprint of all final metrics. Same command + same
   code = same digest. Comparing one line is the cheapest determinism test.
 
-### Balance cases: the situations you care about, side by side
+### Balance cases: the situations you care about, side by side (sim tier)
 `tests/cases/balance.json` is **your** file. Each case is a named situation
 (who plays, which rules are changed, how long) and, if you have one, a target:
 
@@ -140,7 +146,7 @@ The difference to sim-tier tests: a test is a gate (red blocks the commit); the
 cases are a **showcase**. An open balance problem stays visible as `OFF`
 without blocking work on something else.
 
-### Trace: read one run
+### Trace: read one run (sim tier)
 Numbers say where a run ended; a trace says how it got there.
 
 ```bash
@@ -161,7 +167,7 @@ optional `events()` method (bot decisions plus what the rules did). The file
 it names also lists every single event. Use it to replay a bug ("seed 17,
 tick 412") or to see why a case is off.
 
-### Fuzzing: the random bot
+### Fuzzing: the random bot (sim tier)
 A bot that presses random buttons, including ones that should be refused,
 reaches states no sensible player would. The example has one
 (`sim/ai/random_bot.gd`, `--param.bot=random`, test SYS-004). It finds the
@@ -215,6 +221,19 @@ your observations ends up as a test, an experiment or a change request.
 | it's readable / not visually broken | visual |
 | it's fun, the pacing feels right | playtest |
 
+Rows that name sim or a case need a simulation (strategy/sim games). In
+another game, prove the rule in unit and the rest by playtest.
+
+### A game that is mostly feel (platformer, action)
+- **unit** for the rules: damage and health, inventory, the player's state
+  machine (idle -> jump -> fall -> land), and whether level data is valid
+  (every door has a key, every spawn point is on the map).
+- **scene** for real nodes and input: the jump action starts the jump state,
+  an enemy's hit lowers health, a level loads with its spawn point.
+- **playtest** for feel: jump arcs, timing, impact. Keep these requirements
+  few and specific, so your check has a clear question. Expect more tasks to
+  end as "awaiting my check".
+
 ## The commit gate (pre-commit hook)
 `./harness/gw.sh hooks` installs a git pre-commit hook that runs
 `gw.sh check` before every commit that touches code, data or tests.
@@ -229,9 +248,11 @@ instruction the agent may forget into a rule it can't skip by accident.
   permissions template denies it.
 
 ## The CI mirror
-`harness/ci/godot-ci.yml` runs `gw.sh check` plus a balance snapshot on every
-push, on GitHub's machines. If the agent on the Mint box (or you) pushes
-something broken, the Actions tab turns red even if nobody ran the tests.
+`harness/ci/godot-ci.yml` runs `gw.sh check` on every push, on GitHub's
+machines, plus a balance snapshot for a game with a simulation (without a
+hook that step only prints an error; it never fails the run). If the agent on
+the Mint box (or you) pushes something broken, the Actions tab turns red even
+if nobody ran the tests.
 Free for public repos; private repos get a monthly allowance of minutes that
 headless tests barely touch.
 

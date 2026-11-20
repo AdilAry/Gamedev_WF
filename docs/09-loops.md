@@ -95,7 +95,7 @@ AGENTS.md rather than repeating it in every `/start`.
 There are two different "long loops", and only one spends usage:
 
 - **The model thinking for an hour**: expensive.
-- **The simulation running for an hour**: free. `./harness/gw.sh sim
+- **The simulation running for an hour** (in a game with one): free. `./harness/gw.sh sim
   --seeds=1-500 --ticks=5000` or `./harness/gw.sh cases` is your laptop's CPU.
   The agent starts it, and reads twenty lines when it is done.
 
@@ -109,6 +109,9 @@ into the conversation. You can also run these yourself, with no agent at all:
 ```bash
 ./harness/gw.sh trace --seed=7 --ticks=300
 ```
+
+A game without a simulation has less to run here: its checks are short, and
+more of them are yours (playtest).
 
 ## Who decides what
 
@@ -130,7 +133,8 @@ into the conversation. You can also run these yourself, with no agent at all:
 ## What a week can look like
 
 - **Any time, no AI:** write design in `design/`, answer `docs/QUESTIONS.md`,
-  edit `tests/cases/balance.json`, run `gw.sh cases`, play the build, and do
+  edit `tests/cases/balance.json` and run `gw.sh cases` (if the game has
+  them), play the build, and do
   the checks that are "awaiting my check".
 - **An evening (30-60 min of usage):** `/spec <system>` once, or two to four
   tasks (`/start`, OK, `/wrap`, check, clear, again), or one `/qa` and one

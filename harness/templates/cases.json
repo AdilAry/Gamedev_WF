@@ -3,19 +3,19 @@
   "cases": [
     {
       "name": "baseline",
-      "note": "BAL-001: what this situation is and why you care about it",
+      "note": "BAL-001 (strategy example): what this situation is and why you care about it",
       "params": { "bot": "greedy" },
       "expect": { "population": [20, null] }
     },
     {
       "name": "do-nothing",
-      "note": "BAL-002: a player who does nothing must lose",
+      "note": "BAL-002 (strategy example): a player who does nothing must lose",
       "params": { "bot": "idle" },
       "expect": { "population": [null, 5] }
     },
     {
       "name": "a-vs-b",
-      "note": "BAL-003: no strategy should dominate. 'win' is 1 or 0 per seed, so its mean is the win rate",
+      "note": "BAL-003 (strategy example): no strategy should dominate. 'win' is 1 or 0 per seed, so its mean is the win rate",
       "seeds": "1-100",
       "params": { "bot": "rusher", "enemy_bot": "turtle" },
       "expect": { "win": { "mean": [0.4, 0.6] } }

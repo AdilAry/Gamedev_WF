@@ -4,6 +4,36 @@ What changed in the kit, and what to do in games that already use it.
 Harness version = `HARNESS_VERSION` in `harness/godot/harness/gw.sh`
 (`./harness/gw.sh version` in a game shows its copy).
 
+## Kit 1.5.3 / Harness 1.2.2 - 2026-11-20
+
+Wording only: the kit now reads as being for any Godot game. Strategy and
+sim games still fit best, and the parts made for them (the sim tier and
+runner, bots, balance cases, `/balance`, the genre advice) are labelled as
+optional. No command step, harness file, test or data changed.
+
+**On every machine:** nothing.
+
+**In an existing game:** nothing. If you want the new template wording in
+its AGENTS.md, change these lines by hand (from `harness/templates/AGENTS.md`
+in the kit): the `tests/cases/balance.json` line under "Who decides what",
+architecture rule 4, the `tests/sim` part of the first working rule, the
+`/qa` line under "Workflow", and the `sim/` and `tests/` lines under "Files".
+A game with a simulation can keep its AGENTS.md as it is.
+
+- README and GUIDE: a genre-neutral title and intro, the honest limit (feel
+  can't be tested headless), and a list of what every game uses and what is
+  optional.
+- docs/05, 06, 07, 08, 09: the sim tier, balance cases, trace, fuzzing and
+  the time models are labelled strategy/sim. New: what to test in a game
+  that is mostly feel.
+- Commands: `/balance` and the bot parts of `/qa` say what to do in a game
+  without a simulation; `/playtest` routes balance notes to a data change
+  when there is none; `/pitch`, `/style-guide`, `/asset` and one `/define`
+  example label their strategy/sim specifics.
+- Templates: AGENTS.md, GDD, SPEC, TESTPLAN, PLAYTEST, QA_REPORT,
+  STYLE_GUIDE and cases.json label the sim-only parts and the strategy
+  examples.
+
 ## Kit 1.5.2 / Harness 1.2.2 - 2026-11-20
 
 Godot no longer imports the harness output in `reports/`. It read the

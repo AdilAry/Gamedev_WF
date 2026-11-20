@@ -46,10 +46,11 @@ store, easy to compare, and honest about size. Do NOT start designing in depth
    ## Related ideas
    ```
 
-4. **Be honest about scope.** Strategy/sim red flags to call out: multiplayer,
-   procedural worlds with many interacting systems, real-time with hundreds of
-   units on a GTX 1650 / integrated graphics, 3D characters with animation,
-   narrative with branching dialogue. Suggest the cut that keeps the core.
+4. **Be honest about scope.** Red flags to call out in any genre:
+   multiplayer, 3D characters with animation, narrative with branching
+   dialogue. For strategy/sim also: procedural worlds with many interacting
+   systems, real-time with hundreds of units on a GTX 1650 / integrated
+   graphics. Suggest the cut that keeps the core.
 
 5. If several ideas exist in `ideas/`, offer to update `ideas/INDEX.md` - a
    table sorted by Total score with one line per idea.

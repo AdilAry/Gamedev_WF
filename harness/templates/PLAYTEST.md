@@ -15,7 +15,7 @@
 | # | What happened | Expected | Repro | Test |
 |---|---|---|---|---|
 
-### Balance (each becomes a /balance experiment)
+### Balance (each becomes a /balance experiment; without a simulation, a data change to try in the next playtest)
 | # | Observation | Hypothesis | Experiment |
 |---|---|---|---|
 

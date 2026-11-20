@@ -24,7 +24,7 @@ Loaded in every session, by every agent (`CLAUDE.md` is the one-line import). Ke
 - `design/` holds my design documents. Read them; never edit them.
 - `docs/spec/<system>.md` restates my design as requirements with IDs and worked examples. It adds nothing that is not in `design/` or in an answered question.
 - A gap or contradiction in the design is a row in `docs/QUESTIONS.md` with options and your recommendation, never a guess. A requirement marked "blocked by" a question cannot be started: show me the question and offer the next unblocked task.
-- The numbers in `data/` and the targets in `tests/cases/balance.json` are design. Propose changes with evidence (`./harness/gw.sh cases`); change them after I pick.
+- The numbers in `data/` and the targets in `tests/cases/balance.json` (if the game has a simulation) are design. Propose changes with evidence (`./harness/gw.sh cases`, or a playtest); change them after I pick.
 - `harness/` belongs to the kit. Never edit it here.
 
 ## The plan
@@ -46,11 +46,11 @@ Loaded in every session, by every agent (`CLAUDE.md` is the one-line import). Ke
 1. `sim/` holds the game rules: pure `RefCounted` classes with `class_name`, no Nodes, no autoload state, no rendering. All randomness comes from a seeded `RandomNumberGenerator` owned by the simulation, so the same seed and commands give the same result.
 2. `data/` holds every tunable number (JSON). Balancing never needs a code change.
 3. `scenes/` and `ui/` are presentation: they send commands to the sim and show its state. No rules there.
-4. `sim/harness_hook.gd` connects the sim to the harness (`setup/step/metrics/is_finished`, `check_invariants`, `events`, the `bot` parameter). Keep it working.
+4. If the game has a simulation: `sim/harness_hook.gd` connects it to the harness (`setup/step/metrics/is_finished`, `check_invariants`, `events`, the `bot` parameter). Keep it working.
 5. One class per file, files under ~300 lines, functions under ~50.
 
 ## Working rules
-- Tests first, in the fastest tier that can prove the requirement: `tests/unit` (a rule or formula), `tests/sim` (many ticks, seeds, bots), `tests/scene` (real nodes and input). Each test cites its requirement ID.
+- Tests first, in the fastest tier that can prove the requirement: `tests/unit` (a rule or formula), `tests/sim` (if the game has a simulation: many ticks, seeds, bots), `tests/scene` (real nodes and input). Each test cites its requirement ID.
 - While iterating, run filtered tests (`./harness/gw.sh test unit <filter>`); slower tiers only when the faster ones are green.
 - A change of behaviour goes through `/change-request`.
 - A script error or `push_error()` fails the running test. A test that provokes one on purpose declares it with `expect_error("fragment")`.
@@ -61,7 +61,7 @@ Loaded in every session, by every agent (`CLAUDE.md` is the one-line import). Ke
 ## Workflow
 - One task per session: `/start <task>` begins it, `/wrap` ends it, then I clear the session. A fresh session must be able to continue from PROGRESS.md alone.
 - PROGRESS.md holds the current state only. Finished work goes to docs/history.md.
-- `/judge` reviews in a fresh session, never in the one that built the work. `/qa` plays the game with bots and reports; it fixes nothing.
+- `/judge` reviews in a fresh session, never in the one that built the work. `/qa` tests the game headless (with bots, if it has a simulation) and reports; it fixes nothing.
 
 ## Read only when needed
 | File | Read when |
@@ -81,9 +81,9 @@ Loaded in every session, by every agent (`CLAUDE.md` is the one-line import). Ke
 project.godot      the Godot project
 design/            my design documents (read-only for agents)
 data/              every tunable number
-sim/               rules, state, bots (sim/ai/), harness_hook.gd
+sim/               rules, state; with a simulation also bots (sim/ai/) and harness_hook.gd
 scenes/ ui/        presentation
-tests/             unit/ sim/ scene/ and cases/balance.json
+tests/             unit/ scene/; with a simulation also sim/ and cases/balance.json
 harness/           gw.sh and the runners, from the kit
 docs/              GDD, spec/, QUESTIONS, TESTPLAN, history, decisions, changes/, playtests/
 reports/ out/      harness output and long output (gitignored)

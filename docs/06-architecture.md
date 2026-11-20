@@ -1,11 +1,11 @@
-# 06 - Architecture for AI-built strategy & sim games
+# 06 - Architecture for AI-built games
 
 The Gambo pipeline turned into spaghetti within days. Better prompts don't
 fix that; **structure plus tests** do. The agent follows structure well if
 it is written down (AGENTS.md) and enforced (tests). This is the structure
 `/harness` sets up, and the example project uses it.
 
-## The split: simulation core vs presentation
+## The split: rules core vs presentation
 
 ```
 data/*.json  ──►  sim/  (rules, state, bots)  ──state──►  scenes/ + ui/  (draw, input)
@@ -16,9 +16,9 @@ data/*.json  ──►  sim/  (rules, state, bots)  ──state──►  scenes
 | Layer | Contains | Rules |
 |---|---|---|
 | `data/` | every tunable number: costs, rates, unit stats, tech tree | JSON (or `.tres` resources if you prefer the editor); validated by unit tests |
-| `sim/` | game state + rules + `step()`/`apply_command()` + seeded RNG + bots | `RefCounted` classes only; **no Nodes, no autoload state, no rendering, no `randf()` global**; deterministic |
+| `sim/` | game state + rules + `step()`/`apply_command()` + seeded RNG + bots (if the game has them) | `RefCounted` classes only; **no Nodes, no autoload state, no rendering, no `randf()` global**; deterministic |
 | `scenes/`, `ui/` | nodes, sprites, UI, camera, audio, input | read `sim.state`, send commands; **no rules** |
-| `sim/harness_hook.gd` | adapter for the sim runner | keeps the core runnable headless |
+| `sim/harness_hook.gd` | adapter for the sim runner (only in a game with a simulation) | keeps the core runnable headless |
 
 In embedded terms: `sim/` is your firmware logic, `scenes/` is the HAL and
 peripherals. You test the logic on the host and keep the hardware layer thin.
@@ -34,8 +34,17 @@ peripherals. You test the logic on the host and keep the hardware layer thin.
   a bot game" almost for free.
 - **Small files with one job** fit in the agent's context. Big tangled files
   cause the "corrupted main file" disasters the video mentions.
+- **It pays off in an action game too.** A platformer's rules (damage,
+  health, inventory, the player's state machine, level data) live in `sim/`
+  as plain classes and get unit tests in milliseconds. Movement, physics,
+  animation and camera, where the feel is, stay in `scenes/`, and you judge
+  them by playing. The thinner that layer, the more of the game a test can
+  prove.
 
-## Time models (state it in your design, or pick in /define)
+## Time models (strategy/sim: state it in your design, or pick in /define)
+
+This choice matters most in strategy and sim games; an action game usually
+runs on Godot's own physics frame.
 
 | Model | Fits | Note |
 |---|---|---|
@@ -85,7 +94,8 @@ peripherals. You test the logic on the host and keep the hardware layer thin.
   game state out of them.
 
 ## When to leave GDScript (level 10)
-Only when the sim runner's timing says the core is too slow for your target
+Only when a measurement (the sim runner's timing, or Godot's profiler in a
+game without one) says the core is too slow for your target
 (e.g. 1 000 units on the T480s). Then move **one hot function** to C# or
 GDExtension (C++), keep the GDScript version as the reference, and add a
 test that compares both on random inputs. Your embedded experience is an

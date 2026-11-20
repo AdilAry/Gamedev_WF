@@ -7,10 +7,10 @@
 | Runs | the commands, so this can be repeated |
 
 ## Bugs
-| # | What happens | Repro (seed, tick, params) | Reproducing test (below) | Severity |
+| # | What happens | Repro (seed, tick, params - or the steps) | Reproducing test (below) | Severity |
 |---|---|---|---|---|
 
-## Balance showcase
+## Balance showcase (games with a simulation; otherwise write "none: no simulation")
 The table from `./harness/gw.sh cases` (copy it from the `MD` file it printed).
 
 | case | note | metric | min | mean | max | target | verdict |
