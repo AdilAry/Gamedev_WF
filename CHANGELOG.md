@@ -24,6 +24,7 @@ WORKFLOW.md §8, "Git commands the workflow runs").
   guard extension, `package.json` and the installers' pi step are kept.
 - GUIDE: "How this kit differs from the videos" has two rows now; the "one
   agent" row is no longer a difference.
+- Example brought in line with `harness/templates/AGENTS.md` (At /start, At /wrap, Judged on); its GDD no longer points to the removed LOG and CLAUDE.md.
 
 ## Kit 1.5.0 / Harness 1.2.1 - 2026-11-19
 
