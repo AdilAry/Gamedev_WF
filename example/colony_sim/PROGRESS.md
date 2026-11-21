@@ -20,6 +20,7 @@ Updated: 2026-11-14. Current state only, under ~60 lines. Finished work is in do
 - Phase 1 simulation core, phase 2 playable UI, harness 1.2 additions (cases, trace, random bot). Details in docs/history.md.
 
 ## How to run
+Needs: Godot 4.7.x as `godot` or `$GODOT` (on Windows the `*_console.exe` build). In a copy with its own git repo, `./harness/gw.sh hooks` once per clone.
 ```
 ./harness/gw.sh check
 ./harness/gw.sh cases

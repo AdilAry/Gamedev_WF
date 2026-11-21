@@ -4,6 +4,24 @@ What changed in the kit, and what to do in games that already use it.
 Harness version = `HARNESS_VERSION` in `harness/godot/harness/gw.sh`
 (`./harness/gw.sh version` in a game shows its copy).
 
+## Kit 1.6.1 / Harness 1.2.3 - 2026-11-21
+
+Written against the short-loop workflow's contract of 21 November 2026. That
+contract adds "At /judge also" fields (this kit uses none), and `/judge` now
+starts from PROGRESS.md "How to run": the setup its `Needs:` line names is
+expected, every other step is an issue. `/harness` now fills all of
+PROGRESS.md, that line included, and leaves no bracket.
+
+**On every machine:** pull the workflow, then the kit. Linux:
+`git -C ~/Workflow pull` and `git -C ~/Gamedev_WF pull` (the commands are
+links). Windows: after the pulls, re-run the workflow's §3 copy line and
+`scripts/install.ps1`.
+
+**In an existing game:** add the `Needs:` line at the top of "How to run" in
+PROGRESS.md by hand, for example:
+`Needs: Godot 4.7.x as godot or $GODOT (on Windows the *_console.exe build), then ./harness/gw.sh hooks once per clone.`
+Without it, every `/judge` pass lists installing Godot as an issue.
+
 ## Kit 1.6.0 / Harness 1.2.3 - 2026-11-20
 
 A game without a simulation no longer gets sim scaffolding. `/harness`

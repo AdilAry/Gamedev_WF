@@ -32,7 +32,7 @@ The session routine is your own **short-loop workflow**, a separate repo this
 kit depends on and does not copy. The kit is an add-on to it: it plugs in
 through each game's AGENTS.md and uses only what the workflow's WORKFLOW.md §8
 ("Building a kit on this workflow") lists. **Written against the contract of
-20 November 2026.**
+21 November 2026.**
 
 It follows the ideas of the "10 levels of AI-assisted embedded development"
 and "Embedded AI Harness" videos (spec-driven development, agents, a

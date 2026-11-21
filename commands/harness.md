@@ -96,9 +96,17 @@ docs/changes/ docs/playtests/
   line comes from step 1. Leave no bracket
   behind: `grep -n '\[' AGENTS.md` must find nothing. Keep it under ~120
   lines; it is not a place for state.
-- Fill `PROGRESS.md`: "Now" = harness created, "Next" 1 = `/commission`,
-  2 = the first task in build order, named by its requirement IDs so that
-  `/start` can take it without asking.
+- Fill all of `PROGRESS.md`: "Updated" = today; "Now" = harness created;
+  "Next" 1 = `/commission`, 2 = the first task in build order, named by its
+  requirement IDs so that `/start` can take it without asking; "Broken" =
+  nothing known; "Waiting on me" = the questions in `docs/QUESTIONS.md` that
+  block "Next", or nothing; "Done" = harness set up. And all of "How to run",
+  like the example's: the `Needs:` line (Godot <version> as `godot` or
+  `$GODOT`, on Windows the `*_console.exe` build; then `./harness/gw.sh hooks`
+  once per clone; plus anything the game adds), then the commands
+  (`./harness/gw.sh check`, `godot --path .`). `/judge` treats what `Needs:`
+  names as expected setup and every other step as an issue. Leave no bracket
+  behind: `grep -n '\[' PROGRESS.md` must find nothing.
 
 ## 4. Git
 - `git init` if needed, then `./harness/gw.sh hooks` (installs the pre-commit
