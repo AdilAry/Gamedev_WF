@@ -24,7 +24,7 @@ own game may use fewer.
    own games will use (bigger games get one spec file per system).
 
 ## Block 2 - Agent box (1-2 h)
-1. Follow [03-setup-mint.md](03-setup-mint.md).
+1. Follow [03-setup-debian.md](03-setup-debian.md).
 2. Open the user-level file the installer created (`~/.claude/CLAUDE.md`) and
    fill its one bracket.
 3. Copy the example out of the kit. An agent started inside the kit folder

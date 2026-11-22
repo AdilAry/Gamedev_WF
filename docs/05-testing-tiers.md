@@ -197,7 +197,7 @@ fails on any runtime error. It's cheap and catches a surprising amount.
 
 ### 4. visual - the agent's eyes
 `gw.sh shot [scene] [frames]` uses Godot's Movie Maker mode to render real
-frames to PNG (on the Mint box through `xvfb`, so no monitor is needed). It
+frames to PNG (on the agent box through `xvfb`, so no monitor is needed). It
 keeps three frames (start, middle, end). Claude can open PNGs and judge them
 against `docs/STYLE_GUIDE.md`: overlapping labels, unreadable text, wrong
 colours, empty screens. Use it sparingly; images are expensive in tokens.
@@ -242,7 +242,7 @@ skip it, so a `/wrap` or your own design commit stays quick. This turns "run che
 instruction the agent may forget into a rule it can't skip by accident.
 
 - Git doesn't copy hooks when you clone, so run `./harness/gw.sh hooks` once
-  per clone (Legion and Mint). `/harness` and `/commission` do it for you.
+  per clone (Legion and agent box). `/harness` and `/commission` do it for you.
 - You, the human, can bypass it with `git commit --no-verify` (e.g. to save
   a half-done experiment). The agent is told never to, and the safe
   permissions template denies it.
@@ -250,7 +250,7 @@ instruction the agent may forget into a rule it can't skip by accident.
 ## The CI mirror
 `harness/ci/godot-ci.yml` runs `gw.sh check` on every push, on GitHub's
 machines, plus a balance snapshot for a game with a simulation (it is skipped
-without a hook). If the agent on the Mint box (or you) pushes something
+without a hook). If the agent (or you) pushes something
 broken, the Actions tab turns red even if nobody ran the tests.
 Free for public repos; private repos get a monthly allowance of minutes that
 headless tests barely touch.

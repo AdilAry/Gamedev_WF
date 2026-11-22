@@ -8,7 +8,8 @@ complexity it was built for, and some of its tools fit them best ([what
 every game uses](#what-every-game-uses-and-what-is-optional)). It assumes
 your setup: Claude Pro, mostly Claude Desktop and Claude Code (pi is for
 later: the workflow's WORKFLOW.md §6), a Windows 10 Legion Y540 as your
-main machine and a Linux Mint ThinkPad T480s you can spare.
+main machine and a ThinkPad T480s you can spare,
+running Debian 13 (KDE Plasma).
 
 > **The one-sentence version:** you design the game, in as much detail as you
 > like, in your own documents; the agent turns them into numbered
@@ -69,7 +70,7 @@ The embedded videos fix this with three things, and they all carry over:
 | Field test (real smart meter) | **playtest**: you play it; notes go back in as tests or change requests |
 | Datasheets in the project folder | **Godot API dump** of *your* version + design references in `docs/` |
 | Pi testbench = the AI's hands and eyes | `harness/gw.sh` + Godot's `--headless`, `--write-movie` screenshots |
-| VM / container with YOLO permissions | **The Mint laptop** as the agent box |
+| VM / container with YOLO permissions | **The ThinkPad** as the agent box |
 | /define /harness /commission /build | /spec (or /define), /harness, /commission as commands; the build loop is your workflow's /start and /wrap; plus /qa /balance /playtest /change-request /pitch /style-guide /asset and /judge |
 
 Strategy and sim games fit this approach best. That's not only because some
@@ -155,7 +156,7 @@ the JSON holds the value. That lets balancing happen without touching code.
 A coding agent works on the **whole project folder**: it reads, edits single
 lines, runs commands. With Claude Pro you have **Claude Code** included. Use
 it from the **Code tab in Claude Desktop** (Windows) or as the `claude`
-command in a terminal (Mint). Same account, same usage limits. See
+command in a terminal (the agent box). Same account, same usage limits. See
 [docs/04-claude-pro-playbook.md](docs/04-claude-pro-playbook.md).
 
 ### Level 4 - Git + GitHub
@@ -172,14 +173,14 @@ run the harness, git and file edits without asking every time. On **Windows
 `/harness` command installs one) or Claude Code's auto mode. Don't give it
 blanket access on that machine.
 
-### Level 6 - A sandbox box with full permissions (the Mint laptop)
+### Level 6 - A sandbox box with full permissions (the ThinkPad)
 The videos use a VM; you have something better for free: a whole spare
 laptop. The ThinkPad becomes the **agent box**: a dedicated Linux user,
 Godot, and Claude Code without permission prompts
 (`--dangerously-skip-permissions`, the `superclaude` alias), nothing
 personal on it. The agent can install, delete
-and experiment there; the worst case is reinstalling Mint. Setup:
-[docs/03-setup-mint.md](docs/03-setup-mint.md). Roles of both machines:
+and experiment there; the worst case is reinstalling Debian. Setup:
+[docs/03-setup-debian.md](docs/03-setup-debian.md). Roles of both machines:
 [docs/01-machines.md](docs/01-machines.md).
 
 ### Level 7 - Many projects in parallel, with memory
@@ -193,7 +194,7 @@ resume**:
 - `/wrap` ends every session by rewriting that snapshot, committing and pushing,
   so the next session (on either laptop, in either agent) starts with
   `/start`, which reads PROGRESS.md and only the rows of the plan it needs.
-- Run the agent in `tmux` on the Mint box, so a dropped SSH connection does
+- Run the agent in `tmux` on the agent box, so a dropped SSH connection does
   not end the session.
   Remote options (Claude Code on the web, Remote Control) let you check in
   from your phone - see the Pro playbook.
@@ -353,13 +354,13 @@ prompts for image tools, with a provenance manifest). See
 - **Bots are dumb.** Balance from bots is a starting point; a dominant way
   of playing that bots don't find still exists.
 - **Windows 10 is out of support** (see docs/01-machines.md); one more reason
-  the full-permission agent lives on the Mint box.
+  the full-permission agent lives on the agent box.
 
 ## Where to go next
 
 1. [docs/01-machines.md](docs/01-machines.md) - which laptop does what
 2. [docs/02-setup-windows.md](docs/02-setup-windows.md) - main laptop
-3. [docs/03-setup-mint.md](docs/03-setup-mint.md) - agent box
+3. [docs/03-setup-debian.md](docs/03-setup-debian.md) - agent box
 4. [docs/04-claude-pro-playbook.md](docs/04-claude-pro-playbook.md) - get the most out of Pro
 5. [docs/05-testing-tiers.md](docs/05-testing-tiers.md) - the harness in depth
 6. [docs/06-architecture.md](docs/06-architecture.md) - how to structure a game so its rules stay testable

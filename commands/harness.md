@@ -31,7 +31,7 @@ Never guess a path. You need:
   documents, `/define` when there is only an idea.
 - Godot is reachable: run `godot --version` (or `$GODOT --version`). On
   Windows it must be the `*_console.exe` build. If missing, explain how to set
-  `GODOT` (see the kit's docs/02-setup-windows.md / docs/03-setup-mint.md).
+  `GODOT` (see the kit's docs/02-setup-windows.md / docs/03-setup-debian.md).
 - **Simulation or not.** Read GDD section 5. If it doesn't say whether the
   game has a simulation (rules that run without a screen and that a bot can
   play: an economy, AI players, a world that runs by itself), ask the human

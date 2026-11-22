@@ -30,7 +30,7 @@ Worth knowing before the habits, because it changes where you spend your time:
 | Brainstorming, pitches, lore, naming, reviewing a GDD | **Claude Desktop chat / Project** with the GDD attached | no tool overhead; you're thinking, not building |
 | `/spec` (your design -> requirements) | Claude Code / Code tab, strongest model you have, **one system per session** | the reading is the expensive part; the map step reads headings only |
 | `/define` interview (idea only) | Claude Code (writes the files directly), or a chat Project and paste the result | it's a conversation either way |
-| Building, testing, balancing | **Code tab on the Legion** (supervised, allow-list) or **the agent on the Mint box** in tmux (Claude Code, no permission prompts) | closed loop; one task per session either way |
+| Building, testing, balancing | **Code tab on the Legion** (supervised, allow-list) or **Claude Code on the agent box** in tmux (no permission prompts) | closed loop; one task per session either way |
 | Small supervised edits, reading code with you | **Code tab in Claude Desktop** on Windows | you watch each step |
 | Quick checks while at your job | Claude app on your phone: a chat about the design, or Claude Code on the web / Remote Control for a project on GitHub | check the current docs for what your plan includes |
 
