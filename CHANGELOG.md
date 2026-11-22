@@ -4,6 +4,46 @@ What changed in the kit, and what to do in games that already use it.
 Harness version = `HARNESS_VERSION` in `harness/godot/harness/gw.sh`
 (`./harness/gw.sh version` in a game shows its copy).
 
+## Kit 1.6.3 / Harness 1.2.4 - 2026-11-22
+
+The agent box runs Debian 13 (KDE Plasma) instead of Linux Mint, with the
+hostname `t480s`. The setup doc is now `docs/03-setup-debian.md` (it was
+`docs/03-setup-mint.md`). Elsewhere the docs say "the agent box", so a later
+OS change touches only that doc.
+
+Also, after workflow v2.10: the game AGENTS.md template no longer has a
+"Workflow" section. The core template dropped the same section, and it
+repeated the loop, which a kit must not restate (WORKFLOW.md §8). Its `/qa`
+sentence moved to "Working rules". The contract date stays 21 November 2026.
+
+**On every machine:** pull the kit (`git -C ~/Gamedev_WF pull` on Linux).
+A box set up from the old doc keeps working; only its name differs
+(`mint-dev.local` there, `t480s.local` in the docs).
+
+**In an existing game:** nothing required. Harness 1.2.4 changes one comment
+(`gw.sh` line 4), so updating (`scripts/update-harness.sh <game folder>` from
+the kit) is optional. You may delete the "Workflow" section from the game's
+AGENTS.md; if it has the `/qa` sentence, keep that as a bullet under
+"Working rules".
+
+Changes:
+- `docs/03-setup-debian.md`: new "Installing Debian" notes (leave the root
+  password empty so your account gets sudo; hostname `t480s`; KDE Plasma),
+  and a one-line fix for an account left without sudo.
+  Lid closed: the Plasma setting plus a systemd-logind drop-in that ignores
+  the lid on AC power, which also holds with nobody logged in. Hostname
+  `t480s` in the SSH key comment, `ssh agent@t480s.local` and the Samba path.
+  The package list is unchanged (all of it is in Debian 13).
+- `docs/02-setup-windows.md`: `ssh agent@t480s.local`.
+- `docs/01-machines.md`: Debian 13.7 (KDE Plasma) in the table and diagram.
+- AGENTS.md, README.md, GUIDE.md, docs 04, 05, 08 and 10, `/harness`: "the
+  agent box" instead of "the Mint box", and the new doc name.
+- `harness/templates/AGENTS.md`: "Workflow" section removed, its `/qa`
+  sentence moved to "Working rules". `example/colony_sim/AGENTS.md`: its
+  "Workflow" section removed.
+- `docs/09-loops.md`: the loop diagram points to the stop rules in `/start`
+  instead of listing them.
+
 ## Kit 1.6.2 / Harness 1.2.3 - 2026-11-22
 
 Docs only. The workflow (v2.9) dropped "wrap at about 40% context": the stop

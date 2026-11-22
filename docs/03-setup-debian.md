@@ -1,4 +1,4 @@
-# 03 - Turning the ThinkPad into the agent box (Linux Mint)
+# 03 - Turning the ThinkPad into the agent box (Debian 13, KDE Plasma)
 
 Time: about an hour. Goal: a machine where Claude Code runs with full
 permissions on game projects, headless Godot tests/sims/screenshots work,
@@ -7,10 +7,29 @@ and you can reach it from the Legion over SSH.
 > The idea is the same as the VM in the embedded videos: the agent is the boss
 > *inside its box*, and the box contains nothing you'd be sad to lose.
 
+## Installing Debian
+Three answers in the Debian installer matter later:
+
+- **Root password: leave it empty.** Then your own account gets `sudo`,
+  which every step below uses. If you set one, Debian gives your account no
+  sudo.
+- **Hostname: `t480s`.** You reach the box as `t480s.local` from the
+  Legion. (To change it later: `sudo hostnamectl set-hostname t480s`, then
+  put the new name on the `127.0.1.1` line of `/etc/hosts` too.)
+- **Software selection: KDE Plasma.**
+
+Set a root password by mistake? Then `sudo true` says "command not found"
+or "not in the sudoers file". Fix it once (it asks for the root password),
+then log out and back in:
+
+```bash
+su - -c "apt install -y sudo && usermod -aG sudo $USER"
+```
+
 ## 0. Clean the box
 You said it was a file dump. Before giving an agent full rights, move
 anything personal off it, or at least keep it out of reach of the agent's
-user (next step). Make sure Mint is up to date:
+user (next step). Make sure Debian is up to date:
 
 ```bash
 sudo apt update && sudo apt full-upgrade -y
@@ -43,11 +62,26 @@ sudo apt install -y git curl unzip tmux openssh-server xvfb mesa-utils python3 a
 - `tmux` - the agent keeps working when your SSH connection drops.
 - `xvfb` + `mesa-utils` - a virtual screen so the agent can render screenshots
   (`gw.sh shot`) even when nobody is logged in on the desktop.
-- `avahi-daemon` - lets you reach the box as `<hostname>.local`. Set a
-  memorable hostname: `sudo hostnamectl set-hostname mint-dev`.
+- `avahi-daemon` - lets you reach the box as `t480s.local` (the hostname
+  from the installer).
 
-Keep it awake with the lid closed: Mint *Power Management* -> "When the lid
-is closed: Do nothing" (on AC power).
+Keep it awake with the lid closed, in two places. In Plasma: *System
+Settings -> Power Management -> On AC Power*, set "When laptop lid closed"
+to "Do nothing" and turn off suspending when inactive. That only holds while
+someone is logged in to Plasma, so also tell the system itself to ignore the
+lid on AC power:
+
+```bash
+sudo mkdir -p /etc/systemd/logind.conf.d
+```
+
+```bash
+printf '[Login]\nHandleLidSwitchExternalPower=ignore\n' | sudo tee /etc/systemd/logind.conf.d/lid.conf
+```
+
+```bash
+sudo reboot
+```
 
 ## 3. Godot (for everyone)
 
@@ -104,7 +138,7 @@ git config --global user.name "Your Name" && git config --global user.email "you
 ```
 
 ```bash
-ssh-keygen -t ed25519 -C "agent@mint-dev" -f ~/.ssh/id_ed25519 -N ""
+ssh-keygen -t ed25519 -C "agent@t480s" -f ~/.ssh/id_ed25519 -N ""
 ```
 
 ```bash
@@ -144,7 +178,7 @@ them with nothing to re-run. It also creates the user-level "How I work" file
 ## 7. Working on it from the Legion
 
 ```bash
-ssh agent@mint-dev.local
+ssh agent@t480s.local
 ```
 
 ```bash
@@ -183,7 +217,7 @@ Append to `/etc/samba/smb.conf`:
 sudo systemctl restart smbd
 ```
 
-In Windows Explorer: `\\mint-dev.local\games`. Open files with Obsidian or VS
+In Windows Explorer: `\\t480s.local\games`. Open files with Obsidian or VS
 Code from there. **Play and edit in Godot on Windows from a `git pull`ed
 copy**, not from the share: Godot's import cache over a network share is slow
 and can conflict with the agent's.

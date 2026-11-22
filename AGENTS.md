@@ -12,9 +12,9 @@ folder: it would load this file too.
 ## Layout
 - `GUIDE.md`, `docs/`: the human guide. Plain, practical English; the owner is a
   beginner embedded engineer, Godot hobbyist, Claude Pro user (Claude Code is
-  the only agent today; pi is for later), Windows 10 main laptop + Linux Mint
-  agent box. They design their games in detail themselves and want short,
-  human-checked loops.
+  the only agent today; pi is for later), Windows 10 main laptop + Debian 13
+  (KDE Plasma) agent box. They design their games in detail themselves and
+  want short, human-checked loops.
 - **The short-loop workflow is an external dependency** (its own repo,
   found through `$WORKFLOW_DIR`, which its installer sets). The kit uses only
   the WORKFLOW.md §8 list ("Building a kit on this workflow"); the README names

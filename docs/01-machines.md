@@ -8,7 +8,7 @@
 | GPU | GTX 1650 (4 GB) | Intel UHD 620 (integrated) |
 | RAM | 16 GB dual channel | 8 GB single channel |
 | Disk | 476 GB SSD | 380 GB SSD |
-| OS | Windows 10 | Linux Mint |
+| OS | Windows 10 | Debian 13.7 (KDE Plasma) |
 | **Role** | **You**: Godot editor, playtesting, Obsidian (your `design/` documents, answering `docs/QUESTIONS.md`), Claude Desktop (design chats + supervised Claude Code) | **The agent**: Claude Code without permission prompts (`superclaude`), headless Godot, test/sim/screenshot loops, long simulation runs |
 
 Why this split, following the embedded videos:
@@ -20,11 +20,11 @@ Why this split, following the embedded videos:
 - Playing and editing want the GTX 1650 and the bigger RAM, so they stay on
   the Legion.
 - **GitHub sits between them.** The agent pushes; you pull and play. You
-  can also open the Mint box's files from Windows (Samba share or VS Code
+  can also open the agent box's files from Windows (Samba share or VS Code
   Remote-SSH), as the video does.
 
 ```
-   Legion (Windows)                         ThinkPad (Mint)
+   Legion (Windows)                         ThinkPad (Debian)
  ┌──────────────────────┐   SSH / tmux   ┌──────────────────────────┐
  │ Claude Desktop       │ ─────────────► │ user "agent"             │
  │  - Chat: design, GDD │                │  superclaude             │
@@ -54,12 +54,12 @@ The two-laptop setup is recommended because it also lets the agent work
 while you play or use the main laptop for something else.
 
 pi, for later, never asks before it runs a command, so when it comes it
-belongs on the Mint box too, not on the Legion ([10-pi.md](10-pi.md)).
+belongs on the agent box too, not on the Legion ([10-pi.md](10-pi.md)).
 
 ## Short loops work from either machine
 
 The short loop (approve the tests, get a report, say "next") needs you at a
-keyboard, but not at a particular one: SSH into the Mint box from the Legion
+keyboard, but not at a particular one: SSH into the agent box from the Legion
 and talk to the agent in tmux, or sit at the ThinkPad. What you do between
 slices (reading the spec, answering questions, playing the build) happens on
 the Legion with no agent involved.
@@ -81,7 +81,7 @@ Practical consequences:
   to weigh: check whether the Claude Desktop app is offered for Linux when
   you decide (if not, claude.ai in the browser plus the `claude` command line
   cover the same ground), and you would test your game's Windows build less
-  often. A low-risk way to find out: use the Mint ThinkPad as your only
+  often. A low-risk way to find out: use the ThinkPad as your only
   machine for one week of game work.
 
 ## Small upgrades worth considering (optional)

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # gw.sh - Gamedev-WF harness entry point. One command for every feedback loop.
 #
-# Works on Linux (Mint, CI) and on Windows inside Git Bash (which is also the
+# Works on Linux (Debian, CI) and on Windows inside Git Bash (which is also the
 # shell Claude Code uses on Windows).
 #
 #   ./harness/gw.sh import            re-import assets, rebuild class cache
@@ -27,7 +27,7 @@
 
 set -uo pipefail
 
-HARNESS_VERSION="1.2.3"
+HARNESS_VERSION="1.2.4"
 
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_DIR" || exit 2

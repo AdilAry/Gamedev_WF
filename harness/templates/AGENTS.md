@@ -58,11 +58,7 @@ Loaded in every session, by every agent (`CLAUDE.md` is the one-line import). Ke
 - Never bypass the commit gate (`git commit --no-verify`). Commit messages name the requirement IDs.
 - No addons, Godot version changes or project settings changes without asking.
 - Every generated or downloaded asset gets a row in `assets/ASSETS.md`.
-
-## Workflow
-- One task per session: `/start <task>` begins it, `/wrap` ends it, then I clear the session. A fresh session must be able to continue from PROGRESS.md alone.
-- PROGRESS.md holds the current state only. Finished work goes to docs/history.md.
-- `/judge` reviews in a fresh session, never in the one that built the work. `/qa` tests the game headless (with bots, if it has a simulation) and reports; it fixes nothing.
+- `/qa` tests the game headless (with bots, if it has a simulation) and reports; it fixes nothing.
 
 ## Read only when needed
 | File | Read when |

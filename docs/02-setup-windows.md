@@ -11,8 +11,8 @@ play builds pulled from GitHub.
 | **Godot 4.7.x (standard, not .NET)** | the engine | godotengine.org/download |
 | **Claude Desktop** | chat + the **Code** tab (Claude Code) | claude.ai/download |
 | **Obsidian** (you probably have it) | editing GDD/IDEA/LOG Markdown nicely | obsidian.md |
-| Windows Terminal (optional) | nicer terminal for SSH to the Mint box | Microsoft Store |
-| VS Code (optional) | file tree + Remote-SSH into the Mint box | code.visualstudio.com |
+| Windows Terminal (optional) | nicer terminal for SSH to the agent box | Microsoft Store |
+| VS Code (optional) | file tree + Remote-SSH into the agent box | code.visualstudio.com |
 
 ### Godot: keep the console build
 The Windows download zip has two executables:
@@ -50,7 +50,7 @@ to `%USERPROFILE%\.claude\commands\` (so `/spec`, `/harness` etc. work in
 `%USERPROFILE%\.claude\CLAUDE.md` once and fill its one bracket. On Windows
 the commands are copies: after a `git pull`, run this script again (kit) or
 the workflow's §3 copy line (workflow). pi is for later (the workflow's
-WORKFLOW.md §6); when it comes, it goes on the Mint box, not here
+WORKFLOW.md §6); when it comes, it goes on the agent box, not here
 ([10-pi.md](10-pi.md)).
 
 ## 3. Try the example project
@@ -75,7 +75,7 @@ table, and `./harness/gw.sh shot` for screenshots in `reports/shots/`.
   "always for this project". Projects created by `/harness` also get a
   `.claude/settings.json` allow-list, so routine commands don't prompt.
 - **Don't** use full-permission/YOLO mode on this machine. That is what the
-  Mint box is for.
+  agent box is for.
 
 If you prefer a terminal: install the Claude Code CLI with the native
 installer from the Claude Code docs (PowerShell one-liner), then run
@@ -87,11 +87,11 @@ Use normal chats / **Projects** for thinking, not coding:
   project knowledge, and use it for brainstorming mechanics, naming, lore,
   and reviewing your design before `/spec`.
 
-## 6. SSH into the Mint box (after doc 03)
+## 6. SSH into the agent box (after doc 03)
 Windows 10/11 ships an OpenSSH client:
 
 ```bash
-ssh agent@mint-dev.local
+ssh agent@t480s.local
 ```
 
 Then `tmux attach` to see what the agent is doing. For a file tree, use VS

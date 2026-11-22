@@ -37,9 +37,6 @@ A tiny tick-based colony economy that shows the Gamedev-WF harness on the short-
 - `sim/harness_hook.gd`: adapter for the harness; parameter `bot` = greedy | idle | random.
 - Never bypass the commit gate.
 
-## Workflow
-- One task per session: `/start <task>` begins it, `/wrap` ends it. A fresh session continues from PROGRESS.md alone.
-
 ## Read only when needed
 | File | Read when |
 |---|---|

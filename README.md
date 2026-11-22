@@ -38,7 +38,7 @@ It follows the ideas of the "10 levels of AI-assisted embedded development"
 and "Embedded AI Harness" videos (spec-driven development, agents, a
 sandboxed machine, a harness that closes the loop), translated to game
 development and set up for **a small AI budget (Claude Pro), a Windows main
-laptop and a Linux Mint agent box**.
+laptop and a Debian 13 (KDE Plasma) agent box**.
 
 [![example-ci](https://github.com/AdilAry/Gamedev_WF/actions/workflows/example-ci.yml/badge.svg)](https://github.com/AdilAry/Gamedev_WF/actions/workflows/example-ci.yml)
 
@@ -54,7 +54,7 @@ laptop and a Linux Mint agent box**.
 | Path | What |
 |---|---|
 | [`GUIDE.md`](GUIDE.md) | the guide |
-| [`docs/`](docs/) | machines & roles, Windows setup, Mint agent-box setup, Claude Pro playbook, testing tiers, architecture, asset pipeline, first weekend, loops, pi (for later) |
+| [`docs/`](docs/) | machines & roles, Windows setup, Debian agent-box setup, Claude Pro playbook, testing tiers, architecture, asset pipeline, first weekend, loops, pi (for later) |
 | [`commands/`](commands/) | the 11 game commands, in the same format: `/pitch` `/spec` `/define` `/harness` `/commission` `/qa` `/balance` `/playtest` `/change-request` `/style-guide` `/asset` |
 | [`harness/godot/harness/`](harness/godot/harness/) | the harness copied into every game: `gw.sh`, a dependency-free test runner that also catches script errors and hangs, and, for games with a simulation, the headless sim runner (seeds, balance cases, traces) |
 | [`harness/templates/`](harness/templates/) | the game-specific files: AGENTS.md (+ CLAUDE.md import), SPEC per system, QUESTIONS (decision queue), GDD index, TESTPLAN, balance cases (optional), QA report, IDEA, STYLE_GUIDE, ASSETS manifest, CR, PLAYTEST, safe permissions |
