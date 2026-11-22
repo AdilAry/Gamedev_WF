@@ -6,10 +6,12 @@ Harness version = `HARNESS_VERSION` in `harness/godot/harness/gw.sh`
 
 ## Kit 1.6.2 / Harness 1.2.3 - 2026-11-22
 
-Docs only. The workflow (v2.8) dropped "wrap at about 40% context": the stop
+Docs only. The workflow (v2.9) dropped "wrap at about 40% context": the stop
 rules in `/start` are the real cutoff, and WORKFLOW.md §4 ("Watch the
 context") holds a token backstop. The kit restated the old rule; it now
-points to §4 instead. The contract date stays 21 November 2026.
+points to §4 instead. The contract date stays 21 November 2026: the
+workflow's list is now dated 22 November because competition material moved
+to the Pitch_WF kit, which this kit never used (WORKFLOW.md §9 says so too).
 
 **On every machine:** pull the kit (`git -C ~/Gamedev_WF pull` on Linux).
 
