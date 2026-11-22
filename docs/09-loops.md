@@ -16,9 +16,8 @@ you: /start STA-004 STA-005
           what only you can check by hand
         |  "OK"
   the agent loops on its own: test red -> code -> run -> fix -> run ...
-  it stops and reports when: "done when" passes | it must leave the plan |
-  the same failure survived 3 different fixes | the Run limit (20 harness runs) |
-  something needs your hands or the spec is ambiguous
+  it stops and reports when "done when" passes, or when one of the
+  stop rules in /start applies
         |
 you: /wrap
   Check + "done when", PROGRESS.md rewritten, TESTPLAN ticked, commit

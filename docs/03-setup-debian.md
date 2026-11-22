@@ -18,6 +18,14 @@ Three answers in the Debian installer matter later:
   put the new name on the `127.0.1.1` line of `/etc/hosts` too.)
 - **Software selection: KDE Plasma.**
 
+Set a root password by mistake? Then `sudo true` says "command not found"
+or "not in the sudoers file". Fix it once (it asks for the root password),
+then log out and back in:
+
+```bash
+su - -c "apt install -y sudo && usermod -aG sudo $USER"
+```
+
 ## 0. Clean the box
 You said it was a file dump. Before giving an agent full rights, move
 anything personal off it, or at least keep it out of reach of the agent's
