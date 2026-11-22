@@ -80,8 +80,9 @@ Then one task can carry several requirements of the same pattern:
 ```
 
 Gate 1 still shows you every test, and Gate 2 is still yours. Two honest limits:
-- The real ceiling is the context, not the run count. Past about 40% the
-  session gets worse; if `/start` proposes a split, take it.
+- The stop rules in `/start` end a session that goes wrong, and
+  WORKFLOW.md §4 ("Watch the context") holds the context backstop. If
+  `/start` proposes a split, take it.
 - There is no unattended multi-session run. Every session needs its two
   gates, so a workday you are away is not a workday the agent builds. What
   you can do from a phone on such a day is the part that costs no usage:

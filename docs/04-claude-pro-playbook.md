@@ -57,8 +57,8 @@ Worth knowing before the habits, because it changes where you spend your time:
    back to before the attempt (Esc Esc) and
    re-prompt with what you learned. "No, try B" leaves the failed attempt in
    the context, where it is paid for on every turn and keeps steering.
-   Watch the context (`/context`): around 40% full, finish the
-   step and `/wrap`. Use `/compact` only when a session really must continue.
+   Watch the context (`/context`); when to stop is in WORKFLOW.md §4
+   ("Watch the context"). Use `/compact` only when a session really must continue.
 8. **Model choice:** use the default model for the build loop. Switch to the
    strongest model your plan offers (`/model`) for design-heavy or tricky
    architecture sessions, if it's included, and switch back after.
